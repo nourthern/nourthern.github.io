@@ -1,200 +1,333 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0f172a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Travel Claims" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>Travel Claims Manager</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Claims Manager</title>
+    <!-- ical.js for parsing ICS files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+    <!-- jsPDF for exporting the claim form -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; padding: 20px; background-color: #f4f7f6; color: #333; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 20px; border: none; background: #e0e0e0; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .tab-btn.active { background: #0056b3; color: white; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <h1>Travel Claims Manager</h1>
-      <p>Local-only NHS travel expense helper. No account or server required.</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('setup')">1. Setup</button>
+        <button class="tab-btn" onclick="switchTab('shifts')">2. Shifts</button>
+        <button class="tab-btn" onclick="switchTab('claim')">3. Claim Form</button>
+        <button class="tab-btn" onclick="switchTab('log')">4. Expense Log</button>
     </div>
-    <div class="top-actions">
-      <span id="saveStatus" class="save-status">Saved locally</span>
-      <button id="installApp" class="secondary" hidden>Install app</button>
-      <button id="backupBtn" class="secondary">Save webpage data</button>
-      <label class="file-btn secondary">Load backup<input id="restoreInput" type="file" accept="application/json" hidden></label>
+
+    <!-- Tab 1: Setup -->
+    <div id="setup" class="tab-content active">
+        <h2>Personal & Commute Details</h2>
+        <div class="form-grid" oninput="saveSetup()">
+            <div class="form-group"><label>Full Name</label><input type="text" id="fullName"></div>
+            <div class="form-group"><label>Base Site</label>
+                <select id="baseSite">
+                    <option value="DPOW">DPOW (DN33 2BA)</option>
+                    <option value="SGH">SGH (DN15 7BH)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Job Title (Designation)</label><input type="text" id="designation" placeholder="e.g., IMT2 Doctor"></div>
+            <div class="form-group"><label>Home Address & Postcode</label><input type="text" id="homeAddress"></div>
+            <div class="form-group"><label>Job Role Number</label><input type="text" id="roleNumber" pattern="[0-9\-]{8,}"></div>
+            <div class="form-group"><label>Vehicle Reg (e.g. SK11 NNT)</label><input type="text" id="vehicleReg"></div>
+            <div class="form-group"><label>Engine CC</label><input type="number" id="engineCC" placeholder="e.g., 1300"></div>
+            <div class="form-group"><label>Claimable Miles (per trip)</label><input type="number" id="claimableMiles"></div>
+            <div class="form-group"><label>Passenger Miles (Optional)</label><input type="number" id="passengerMiles"></div>
+            <div class="form-group"><label>Average Commute (Mins)</label><input type="number" id="commuteMins"></div>
+            <div class="form-group"><label>Misc Commute Cost (£)</label><input type="number" id="miscCost" step="0.01"></div>
+            <div class="form-group"><label>Misc Type</label>
+                <select id="miscType">
+                    <option value="Toll">Toll Road</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Train">Train</option>
+                </select>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <nav class="tabs" role="tablist" aria-label="Travel claim sections">
-    <button class="tab active" data-tab="setup" role="tab" aria-selected="true">1. Setup</button>
-    <button class="tab" data-tab="shifts" role="tab" aria-selected="false">2. Shifts</button>
-    <button class="tab" data-tab="claim" role="tab" aria-selected="false">3. Claim form</button>
-    <button class="tab" data-tab="log" role="tab" aria-selected="false">4. Expense log</button>
-  </nav>
+    <!-- Tab 2: Shifts -->
+    <div id="shifts" class="tab-content">
+        <h2>ICS Calendar Importer</h2>
+        <input type="text" id="icsUrl" placeholder="Paste ICS URL here" style="width: 70%;">
+        <button onclick="fetchICS()">Fetch & Parse Shifts</button>
+        <table id="shiftsTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Shift</th>
+                    <th>Status / Override</th>
+                </tr>
+            </thead>
+            <tbody id="shiftsBody"></tbody>
+        </table>
+    </div>
 
-  <main>
-    <section id="setup" class="panel active" role="tabpanel">
-      <div class="section-heading">
-        <div>
-          <h2>Setup</h2>
-          <p>These details are stored locally on this device and reused on future claims.</p>
-        </div>
-        <span class="privacy-badge">Local storage only</span>
-      </div>
+    <!-- Tab 3: Claim Form -->
+    <div id="claim" class="tab-content">
+        <h2>Monthly Claim Preview</h2>
+        <button onclick="generatePDF()">Export to PDF</button>
+        <button onclick="submitClaim()" style="background: #007bff;">Mark as Submitted</button>
+        <table id="claimTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Start Time</th>
+                    <th>Reason</th>
+                    <th>End Time</th>
+                    <th>Miles</th>
+                    <th>Misc (£)</th>
+                </tr>
+            </thead>
+            <tbody id="claimBody"></tbody>
+        </table>
+    </div>
 
-      <div class="grid two">
-        <label>Full name<input id="fullName" autocomplete="name" placeholder="e.g. Nour Eddin Alwaa" /></label>
-        <label>Base site<select id="baseSite"><option value="DPOW">DPOW</option><option value="SGH">SGH</option></select></label>
-        <label>Designation / job title<input id="designation" placeholder="e.g. IMT2" /></label>
-        <label>Personal number<input id="personalNumber" inputmode="numeric" placeholder="8+ digits, hyphens allowed" /></label>
-      </div>
+    <!-- Tab 4: Expense Log -->
+    <div id="log" class="tab-content">
+        <h2>Expense Log</h2>
+        <table id="logTable">
+            <thead>
+                <tr>
+                    <th>Date Submitted</th>
+                    <th>Date Range</th>
+                    <th>Miles Owed (£0.30/m)</th>
+                    <th>Misc Owed</th>
+                    <th>Total Sum</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="logBody"></tbody>
+            <tfoot>
+                <tr><td colspan="4"><b>Cumulative Total</b></td><td colspan="2"><b id="cumulativeTotal">£0.00</b></td></tr>
+            </tfoot>
+        </table>
+    </div>
 
-      <label>Home address<textarea id="homeAddress" rows="4" placeholder="Include postcode"></textarea></label>
+    <script>
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            if(tabId === 'claim') buildClaimTable();
+            if(tabId === 'log') loadExpenseLog();
+        }
 
-      <div class="grid three">
-        <label>Vehicle registration<input id="vehicleReg" placeholder="SK11 NNT" /></label>
-        <label>Engine cc<input id="engineCc" type="number" min="0" step="1" placeholder="1598" /></label>
-        <label>Claimable miles per one-way journey<input id="claimableMiles" type="number" min="0" step="0.1" placeholder="e.g. 18.4" /></label>
-        <label>Passenger miles per journey (optional)<input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Leave blank if none" /></label>
-        <label>Average commute time to work (minutes)<input id="commuteMinutes" type="number" min="0" step="1" value="30" /></label>
-        <label>Approved mileage rate (£/mile)<input id="mileageRate" type="number" min="0" step="0.01" value="0.30" /></label>
-      </div>
+        // Auto-Save Setup Data via LocalStorage
+        function saveSetup() {
+            const inputs = document.querySelectorAll('#setup input, #setup select');
+            let data = {};
+            inputs.forEach(input => data[input.id] = input.value);
+            localStorage.setItem('setupData', JSON.stringify(data));
+        }
 
-      <div class="card">
-        <h3>Normal commute cost</h3>
-        <div class="grid three">
-          <label>Travel type<select id="commuteType"><option value="none">None</option><option value="toll">Toll road</option><option value="busrail">Bus / rail</option></select></label>
-          <label>Cost per one-way journey (£)<input id="commuteCost" type="number" min="0" step="0.01" placeholder="1.50" /></label>
-          <label>Description<input id="commuteCostLabel" value="Humber toll" placeholder="e.g. Humber toll" /></label>
-        </div>
-        <p class="hint">This cost is applied to both work-bound and home-bound rows when a claim is generated. You can edit individual rows in the claim form.</p>
-      </div>
+        function loadSetup() {
+            const data = JSON.parse(localStorage.getItem('setupData'));
+            if (data) {
+                for (const key in data) {
+                    if (document.getElementById(key)) {
+                        document.getElementById(key).value = data[key];
+                    }
+                }
+            }
+        }
 
-      <div class="warning">
-        <strong>Important:</strong> This tool automates the form; it does not decide whether a journey is actually claimable. Review every generated row against your Trust/payroll rules before signing and submitting.
-      </div>
-      <div class="actions"><a id="setupContinue" class="primary button-link" href="#shifts">Continue to Shifts</a></div>
-    </section>
+        // Fetch & Parse ICS
+        async function fetchICS() {
+            const url = document.getElementById('icsUrl').value;
+            if (!url) return alert('Please enter an ICS URL');
+            try {
+                // Using a CORS proxy to bypass cross-origin restrictions
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                const icsData = await response.text();
+                parseICS(icsData);
+            } catch (err) {
+                alert('Error fetching ICS: ' + err.message);
+            }
+        }
 
-    <section id="shifts" class="panel" role="tabpanel" hidden>
-      <div class="section-heading">
-        <div>
-          <h2>Shifts</h2>
-          <p>Paste the public ICS calendar URL, fetch it through a public CORS proxy, and review the imported shifts.</p>
-        </div>
-        <span id="icsState" class="save-status">No calendar loaded</span>
-      </div>
+        function parseICS(data) {
+            const jcalData = ICAL.parse(data);
+            const comp = new ICAL.Component(jcalData);
+            const events = comp.getAllSubcomponents('vevent');
+            let parsedShifts = [];
 
-      <div class="card">
-        <div class="inline-form">
-          <label class="grow">ICS calendar URL<input id="icsUrl" type="url" placeholder="https://example.org/my-calendar.ics" /></label>
-          <button id="fetchIcs" class="primary">Fetch calendar</button>
-          <button id="refreshIcs" class="secondary">Refresh</button>
-        </div>
-        <div class="proxy-row">
-          <span>Proxy:</span>
-          <select id="proxySelect">
-            <option value="auto">Automatic (direct + 3 proxies)</option>
-            <option value="corsproxy">corsproxy.io</option>
-            <option value="allorigins">AllOrigins</option>
-            <option value="isomorphic">isomorphic-git CORS</option>
-          </select>
-          <span class="hint">URL fetching requires HTTPS or localhost. Direct .ics import works without a proxy.</span>
-        </div>
-        <div class="local-ics">
-          <label class="file-picker">Or import an ICS file directly<input id="icsFile" type="file" accept=".ics,text/calendar,text/plain" /></label>
-          <span class="hint">This option is fully local and needs no proxy.</span>
-        </div>
-      </div>
+            events.forEach(event => {
+                const vevent = new ICAL.Event(event);
+                parsedShifts.push({
+                    date: vevent.startDate.toJSDate(),
+                    summary: vevent.summary,
+                    start: vevent.startDate.toJSDate(),
+                    end: vevent.endDate.toJSDate(),
+                    status: 'Normal'
+                });
+            });
+            
+            parsedShifts.sort((a, b) => a.date - b.date);
+            localStorage.setItem('shiftData', JSON.stringify(parsedShifts));
+            renderShifts(parsedShifts);
+        }
 
-      <div class="card">
-        <div class="section-heading compact">
-          <div><h3>Claim months</h3><p>Select one or more months. You can generate each selected month separately.</p></div>
-          <div class="month-actions"><button id="selectAllMonths" class="link-btn">Select all</button><button id="clearMonths" class="link-btn">Clear</button></div>
-        </div>
-        <div id="monthPicker" class="month-picker empty">Fetch a calendar first.</div>
-      </div>
+        function renderShifts(shifts) {
+            const tbody = document.getElementById('shiftsBody');
+            tbody.innerHTML = '';
+            shifts.forEach((shift, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${new Date(shift.date).toLocaleDateString()}</td>
+                        <td>${shift.summary}</td>
+                        <td>
+                            <select onchange="updateShiftStatus(${index}, this.value)">
+                                <option value="Normal">Normal</option>
+                                <option value="Sick">Sick Leave</option>
+                                <option value="Annual">Annual Leave</option>
+                                <option value="Unscheduled">Unscheduled/Swap</option>
+                            </select>
+                        </td>
+                    </tr>`;
+            });
+        }
 
-      <div class="section-heading compact"><div><h3>Imported shifts</h3><p>Change the status of individual shifts, or add unscheduled travel into work.</p></div><button id="addManualShift" class="secondary">+ Add unscheduled day</button></div>
-      <div id="shiftList" class="shift-list empty">No shifts loaded.</div>
-    </section>
+        // Build Claim Table logic
+        function buildClaimTable() {
+            const setup = JSON.parse(localStorage.getItem('setupData')) || {};
+            const shifts = JSON.parse(localStorage.getItem('shiftData')) || [];
+            const tbody = document.getElementById('claimBody');
+            tbody.innerHTML = '';
 
-    <section id="claim" class="panel" role="tabpanel" hidden>
-      <div class="section-heading">
-        <div><h2>Claim form</h2><p>Choose a month and review the generated rows before signing and exporting.</p></div>
-        <div class="claim-toolbar"><select id="claimMonthSelect"></select><button id="generateClaim" class="primary">Generate / refresh</button></div>
-      </div>
+            const commuteMins = parseInt(setup.commuteMins) || 0;
+            
+            shifts.forEach(shift => {
+                if(shift.status === 'Sick' || shift.status === 'Annual') return;
 
-      <div class="form-page-preview">
-        <div class="doc-page page-one" id="pageOnePreview">
-          <div class="doc-title">NORTHERN LINCOLNSHIRE &amp; GOOLE HOSPITALS NHS TRUST<br>BUSINESS AND SUNDRY TRAVELLING EXPENSES AND<br>SUBSISTENCE ALLOWANCE ONLY</div>
-          <div class="doc-meta-grid">
-            <div>Name (Block Letters)<span id="pName"></span></div><div>Claim for Month of <span id="pMonth"></span></div>
-            <div>Base<span id="pBase"></span></div><div>Personal Number<span id="pPersonal"></span></div>
-            <div>Designation<span id="pDesignation"></span></div><div>Vehicle Registration Number<span id="pVehicle"></span></div>
-            <div class="address-cell">Home Address<span id="pAddress"></span></div><div>Engine cc<span id="pEngine"></span></div>
-          </div>
-          <div class="declare"><h4>I DECLARE THAT:</h4>
-            <p><b>[a]</b> My claim is in respect of travelling expenses actually and necessarily incurred whilst engaged on the business stated and that the same, together with any claim for subsistence and / or other allowances is in accordance with my Terms and Conditions of Service, and the relevant General Council Circulars and the current Travelling Allowance Regulations.</p>
-            <p><b>[b]</b> I have not claimed for any journey or part of such journey which would have been undertaken irrespective of my employment with the Trust.</p>
-            <p><b>[c]</b> The motor Vehicle in respect of which mileage allowance is claimed, is covered, whilst the vehicle is used on official business, for Full Third Party Insurance, including injury or death of passengers and damage to property.</p>
-            <p><b>[d]</b> The information I have given on this form is correct and complete and that I have not claimed previously for travel or subsistence detailed on this claim form. I understand that if I knowingly provide false information this may result in disciplinary action and I may be liable for criminal prosecution and civil recovery proceedings. I consent to the disclosure of information from this form to and by the Trust and the NHS Counter Fraud and Security Management Service for the purpose of verification of this claim and the investigation, prevention, detection and prosecution of fraud.</p>
-          </div>
-          <div class="signature-row"><span><b>SIGNATURE (Claimant)</b> <span id="signaturePreview"></span></span><span><b>Date</b> <span id="signatureDate"></span></span></div>
-          <div class="callout"><b>TO BE SIGNED WHEN CALL-OUT JOURNEYS ARE BEING CLAIMED:</b><p>Except where indicated I certify that advice on the handling of the emergency was given before starting my emergency call-out journeys and I accept full responsibility for those aspects appropriate to my duties from that time. (Such journeys are indicated by an asterisk).</p><div class="signature-row"><span><b>SIGNATURE (Claimant)</b></span><span><b>Date</b></span></div></div>
-          <p class="manager-cert"><b>I certify that the claimant was authorised to undertake the journeys stated on this form for which payment is claimed.</b> I understand that if I knowingly authorise false information this may result in prosecution and I may be liable for prosecution and civil recovery proceedings.</p>
-          <div class="signature-row manager"><span><b>SIGNATURE (Manager)</b></span><span><b>Date</b></span></div>
-          <div class="signature-row manager"><span><b>PRINT NAME (Manager)</b></span></div>
-          <div class="submission-rule">CLAIMS MUST BE SUBMITTED TO THE PAYROLL DEPARTMENT ON A MONTHLY BASIS - TO BE RECEIVED BY THE 5TH OF THE FOLLOWING MONTH</div>
-        </div>
+                let sTime = new Date(shift.start);
+                sTime.setMinutes(sTime.getMinutes() - commuteMins);
+                
+                let eTime = new Date(shift.end);
+                eTime.setMinutes(eTime.getMinutes() + commuteMins);
 
-        <div class="doc-page page-two" id="pageTwoPreview">
-          <div class="table-scroll"><table id="claimTable"><thead><tr>
-            <th>DATE</th><th>TYPE<br>of<br>CLAIM<br>[1]</th><th>START<br>TIME</th><th>DETAILED REASON<br>FOR<br>CLAIM</th><th>END<br>TIME</th><th colspan="2">DETAILS OF JOURNEY</th><th>NO. OF<br>MILES</th><th>PASSENGER<br>MILES<br>***</th><th colspan="2">[2] MISCELLANEOUS TRAVEL &amp;<br>ANY OTHER EXPENSES [2]</th><th colspan="3">[2] SUBSISTENCE ALLOWANCE<br>(MEALS) [2]</th><th class="edit-head"></th>
-          </tr><tr>
-            <th></th><th></th><th></th><th></th><th></th><th>FROM</th><th>TO</th><th></th><th></th><th>PARKING, TOLL, HOTEL COSTS<br>BUS AND RAIL FARES ETC<br>NAME OF PASSENGERS</th><th>AMOUNT</th><th>TIME FROM</th><th>TIME TO</th><th>AMOUNT</th><th class="edit-head"></th>
-          </tr></thead><tbody id="claimRows"></tbody><tfoot><tr><td colspan="7"></td><td id="totalMiles"></td><td id="totalPassengerMiles"></td><td>TOTAL</td><td id="totalMisc"></td><td></td><td></td><td id="totalMeals"></td><td class="edit-foot"></td></tr></tfoot></table></div>
-          <div class="legend"><div><b><u>[1] TYPE OF CLAIM MUST BE COMPLETED</u></b><p><b>S</b>&nbsp;&nbsp; STANDARD USER<br><b>R</b>&nbsp;&nbsp; REGULAR USER<br><b>L</b>&nbsp;&nbsp; LEASE CAR USER<br><b>PTR</b>&nbsp;&nbsp; *PUBLIC TRANSPORT RATE</p></div><div><b>*** PASSENGER MILEAGE WILL ONLY BE PAID IF THE PASSENGER(S) ARE NAMED</b><p><b>* PUBLIC TRANSPORT RATE</b> SHOULD BE CLAIMED FOR ALL MILEAGE IN RELATION TO STUDY LEAVE EXPENSES<br><b>COURSE / CONFERENCE / WORKSHOP / SEMINAR EXPENSES</b><br>EXCEPT WHERE A LEASE CAR IS USED THEN LEASE CAR MILEAGE SHOULD BE CLAIMED<br><br>WHERE A LEASE CAR USER GIVES UP HIS/HER RIGHT TO A LEASE CAR THEN ALL MILEAGE IS PAID AT PUBLIC TRANSPORT RATE</p></div></div>
-          <div class="receipt-rule">[2] ALL CLAIMS MUST BE SUPPORTED BY RECEIPTS (INCLUDING TOLLS, TAXIS AND CAR PARKING</div>
-          <div class="footer-rule">ALL DETAILS ON THIS CLAIM FORM MUST BE COMPLETED IN FULL TO AVOID IT BEING RETURNED TO THE CLAIMANT.</div>
-        </div>
-      </div>
+                // Work Bound
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${sTime.toLocaleDateString()}</td>
+                        <td>R</td>
+                        <td>${sTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+                        <td>Work bound, Day</td>
+                        <td>-</td>
+                        <td>${setup.claimableMiles || 0}</td>
+                        <td>${setup.miscCost || 0}</td>
+                    </tr>`;
+                
+                // Home Bound
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${eTime.toLocaleDateString()}</td>
+                        <td>R</td>
+                        <td>-</td>
+                        <td>Home bound, Day</td>
+                        <td>${eTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+                        <td>${setup.claimableMiles || 0}</td>
+                        <td>${setup.miscCost || 0}</td>
+                    </tr>`;
+            });
+        }
 
-      <div class="claim-actions">
-        <button id="editRows" class="secondary">Edit rows</button>
-        <button id="signForm" class="secondary">Add / change signature</button>
-        <button id="exportPdf" class="primary">Export PDF</button>
-        <button id="markSubmitted" class="success">Mark submitted</button>
-      </div>
-      <div class="hint">Manager signature/name fields are intentionally left blank for completion by the manager. Subsistence columns are left empty unless you manually edit a row.</div>
-    </section>
+        // Generate PDF imitating the specific NHS Trust format
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const setup = JSON.parse(localStorage.getItem('setupData')) || {};
 
-    <section id="log" class="panel" role="tabpanel" hidden>
-      <div class="section-heading"><div><h2>Expense log</h2><p>Submitted claims are logged locally. You can delete individual entries or export the data for your records.</p></div></div>
-      <div class="table-wrap"><table class="log-table"><thead><tr><th>Date form submitted</th><th>Range of dates</th><th>Miles owed</th><th>Miscellaneous owed</th><th>Total owed</th><th></th></tr></thead><tbody id="logBody"></tbody><tfoot><tr><th colspan="4">Cumulative total</th><th id="logTotal">£0.00</th><th></th></tr></tfoot></table></div>
-    </section>
-  </main>
+            doc.setFontSize(10);
+            doc.text("NORTHERN LINCOLNSHIRE & GOOLE HOSPITALS NHS TRUST", 14, 15);
+            doc.text("BUSINESS AND SUNDRY TRAVELLING EXPENSES", 14, 20);
+            
+            doc.text(`Name: ${setup.fullName || ''}`, 14, 30);
+            doc.text(`Base: ${setup.baseSite || ''}`, 100, 30);
+            doc.text(`Designation: ${setup.designation || ''}`, 14, 35);
+            doc.text(`Vehicle Reg: ${setup.vehicleReg || ''}`, 100, 35);
 
-  <div id="toast" class="toast" aria-live="polite"></div>
-  <div id="installHelp" class="install-help" hidden></div>
+            doc.autoTable({
+                html: '#claimTable',
+                startY: 50,
+                theme: 'grid',
+                headStyles: { fillColor: [242, 242, 242], textColor: 0 }
+            });
+            
+            doc.text("CLAIMS MUST BE SUBMITTED TO THE PAYROLL DEPARTMENT ON A MONTHLY BASIS", 14, doc.lastAutoTable.finalY + 10);
+            doc.text("TO BE RECEIVED BY THE 5TH OF THE FOLLOWING MONTH", 14, doc.lastAutoTable.finalY + 15);
+            
+            doc.save("Travel Claim Form.pdf");
+        }
 
-  <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button value="cancel" class="icon-btn">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" required></label><label>Reason<input id="manualReason" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" required></label><label>End time<input id="manualEnd" type="time" required></label></div><div class="dialog-actions"><button value="cancel" class="secondary">Cancel</button><button id="saveManualShift" value="default" class="primary">Add day</button></div></form></dialog>
-  <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn">×</button></div><canvas id="signaturePad" width="700" height="220"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary">Clear</button><button id="saveSig" class="primary">Use signature</button></div></dialog>
+        // Expense Log Logic
+        function submitClaim() {
+            let log = JSON.parse(localStorage.getItem('expenseLog')) || [];
+            const setup = JSON.parse(localStorage.getItem('setupData')) || {};
+            const shifts = JSON.parse(localStorage.getItem('shiftData')) || [];
+            
+            // Rough calculation for prototype
+            let miles = shifts.length * 2 * (setup.claimableMiles || 0);
+            let misc = shifts.length * 2 * (setup.miscCost || 0);
+            let owedMiles = miles * 0.30;
+            
+            log.push({
+                date: new Date().toLocaleDateString(),
+                range: "Current Month",
+                milesOwed: owedMiles,
+                miscOwed: misc,
+                total: owedMiles + misc
+            });
+            
+            localStorage.setItem('expenseLog', JSON.stringify(log));
+            alert("Claim saved to Expense Log");
+            switchTab('log');
+        }
 
-  <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
-    let deferredInstallPrompt;
-    const installBtn = document.getElementById('installApp');
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstallPrompt=e; installBtn.hidden=false; });
-    installBtn.addEventListener('click', async () => {
-      if (deferredInstallPrompt) { deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt=null; installBtn.hidden=true; }
-      else if (isIOS && !isStandalone) { alert('In Safari, tap Share, then Add to Home Screen, then turn on Open as Web App.'); }
-    });
-    if (isIOS && !isStandalone) installBtn.hidden=false;
-  </script>
+        function loadExpenseLog() {
+            let log = JSON.parse(localStorage.getItem('expenseLog')) || [];
+            const tbody = document.getElementById('logBody');
+            tbody.innerHTML = '';
+            let cumTotal = 0;
+
+            log.forEach((entry, i) => {
+                cumTotal += entry.total;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.range}</td>
+                        <td>£${entry.milesOwed.toFixed(2)}</td>
+                        <td>£${entry.miscOwed.toFixed(2)}</td>
+                        <td>£${entry.total.toFixed(2)}</td>
+                        <td><button onclick="deleteLog(${i})">Delete</button></td>
+                    </tr>`;
+            });
+            document.getElementById('cumulativeTotal').innerText = `£${cumTotal.toFixed(2)}`;
+        }
+
+        window.onload = loadSetup;
+    </script>
 </body>
 </html>
