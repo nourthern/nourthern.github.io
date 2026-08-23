@@ -4,6 +4,7 @@
   "main": "worker.js",
   "compatibility_date": "2026-08-23",
   "compatibility_flags": ["nodejs_compat"],
+  "preview_urls": false,
   "vars": {
     "ALLOWED_ORIGIN": "https://nourthern.github.io",
     "VAPID_SUBJECT": "https://nourthern.github.io"
