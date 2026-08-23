@@ -1,0 +1,32 @@
+name: Deploy Travel Claims Manager v11
+
+on:
+  push:
+    paths:
+      - '.deploy-v11/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reconstruct v11 source
+        shell: bash
+        run: |
+          cat .deploy-v11/part-* | tr -d '\n' | base64 -d > /tmp/travel-claims-v11.tgz
+          tar -xzf /tmp/travel-claims-v11.tgz -C .
+      - name: Commit v11
+        shell: bash
+        run: |
+          rm -rf .deploy-v11
+          git rm --ignore-unmatch .github/workflows/deploy-v11.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy Travel Claims Manager v11"
+          git push
