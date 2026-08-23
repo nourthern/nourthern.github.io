@@ -1,0 +1,34 @@
+'use strict';
+'use strict';
+const STORAGE_KEY='travelClaimsManagerStateV2';
+const COOKIE_KEY='travelClaimsManagerVersion';
+const CACHE_NAME='travel-claims-manager-state-v2';
+const BASES={DPOW:{name:'DPOW',postcode:'DN33 2BA'},SGH:{name:'SGH',postcode:'DN15 7BH'},Goole:{name:'Goole',postcode:'DN14 6RX'}};
+const BAKED_WORKER_URL='https://travel-claims-ics.n-e-alwaa.workers.dev';
+const DEFAULT_STATE={settings:{fullName:'',baseSite:'',baseSiteConfirmed:false,designation:'',personalNumber:'',homeAddress:'',vehicleReg:'',engineCc:'',claimableMiles:'',passengerMiles:'',passengerNames:'',commuteMinutes:30,mileageRate:0.30,commuteType:'none',commuteCost:''},icsUrl:'',workerUrl:BAKED_WORKER_URL,events:[],selectedMonths:[],manualEvents:[],claims:{},expenseLog:[],activeMonth:'',signature:null,signatureDate:'',reminders:{calendarDay:1,calendarTime:'17:00',pushEnabled:false,pushMonthly:true,pushDeadline:true,pushRota:true,pushUnfinished:true,pushReminderTime:'18:00',pushMonthlyDay:1,pushDeadlineDays:3,pushUnfinishedDay:3,pushDeadlineToday:true,installationId:'',deviceToken:''}};
+function clone(o){return JSON.parse(JSON.stringify(o));}
+let state=loadState();let saveTimer;let deferredInstallPrompt=null;
+const $=id=>document.getElementById(id),qsa=s=>Array.from(document.querySelectorAll(s));
+function mergeState(saved){const base=clone(DEFAULT_STATE);if(!saved||typeof saved!=='object')return base;const settings={...base.settings,...(saved.settings||{})};if(!saved.settings?.baseSiteConfirmed&&settings.baseSite==='DPOW')settings.baseSite='';if(settings.commuteType==='toll')settings.commuteType='humber';if(settings.commuteType==='bus'||settings.commuteType==='train')settings.commuteType='busrail';return {...base,...saved,workerUrl:BAKED_WORKER_URL,settings,reminders:{...base.reminders,...(saved.reminders||{})},claims:saved.claims||{},events:Array.isArray(saved.events)?saved.events:[],manualEvents:Array.isArray(saved.manualEvents)?saved.manualEvents:[],selectedMonths:Array.isArray(saved.selectedMonths)?saved.selectedMonths:[],expenseLog:Array.isArray(saved.expenseLog)?saved.expenseLog:[]};}
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)return mergeState(JSON.parse(raw));}catch(e){}try{const raw=localStorage.getItem('travelClaimsManagerStateV1');if(raw)return mergeState(JSON.parse(raw));}catch(e){}return clone(DEFAULT_STATE);}
+async function recoverFromCache(){try{if(localStorage.getItem(STORAGE_KEY)||!window.caches)return;const c=await caches.open(CACHE_NAME);const r=await c.match(new Request(location.origin+'/__travel_claims_state__'));if(r){state=mergeState(await r.json());bindSettings(true);bindReminderSettings(true);renderAll();showToast('Recovered your latest local draft.');}}catch(e){}}
+function saveState(){clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{const serial=JSON.stringify(state);localStorage.setItem(STORAGE_KEY,serial);document.cookie=COOKIE_KEY+'=2; max-age=31536000; samesite=lax; path=/';if(window.caches&&location.protocol!=='file:'){const c=await caches.open(CACHE_NAME);await c.put(new Request(location.origin+'/__travel_claims_state__'),new Response(serial,{headers:{'Content-Type':'application/json'}}));}$('saveStatus').textContent='Saved locally · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});queuePushStateSync();}catch(e){$('saveStatus').textContent='Local save warning';}},150);}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2600);}
+const VALID_TABS=['setup','shifts','claim','log'];
+function parseRouteHash(){const raw=(location.hash||'#setup').slice(1),[tabPart,query='']=raw.split('?'),params=new URLSearchParams(query);return {tab:VALID_TABS.includes(tabPart)?tabPart:'setup',month:params.get('month')||''};}
+function routeFor(tab,month=''){return '#'+tab+(month?`?month=${encodeURIComponent(month)}`:'');}
+function applyRouteMonth(tab,month){if(!/^\d{4}-\d{2}$/.test(month||''))return;if(!state.selectedMonths.includes(month))state.selectedMonths=[...state.selectedMonths,month].sort();state.activeMonth=month;if(tab==='shifts'){renderMonths();renderShifts();}if(tab==='claim'){prepareSelectedClaims();renderClaimsStack();setTimeout(()=>document.querySelector(`.claim-month-card[data-month="${CSS.escape(month)}"]`)?.scrollIntoView({behavior:'smooth',block:'start'}),80);}}
+function switchTab(name,month=''){if(!VALID_TABS.includes(name))name='setup';if(name!=='setup'&&requiredSetupMissing().length){name='setup';if(location.hash!=='#setup')history.replaceState(null,'','#setup');month='';}qsa('.tab').forEach(b=>{const active=b.dataset.tab===name;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});qsa('.panel').forEach(p=>{const active=p.id===name;p.classList.toggle('active',active);p.hidden=!active;});if(month)applyRouteMonth(name,month);if(name==='claim'){prepareSelectedClaims();renderClaimsStack();if(month)applyRouteMonth(name,month);}if(name==='shifts')setTimeout(()=>loadIcs(true),0);if(name==='log')renderExpenseLog();}
+function navigate(name,month=''){if(!VALID_TABS.includes(name))return;if(name!=='setup'&&!validateSetup()){switchTab('setup');location.hash='setup';return}const target=routeFor(name,month);if(location.hash!==target)location.hash=target;else switchTab(name,month);window.scrollTo({top:0,behavior:'smooth'});}
+qsa('.tab').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();navigate(b.dataset.tab);}));
+$('setupContinue').addEventListener('click',e=>{e.preventDefault();if(validateSetup())navigate('shifts');});
+window.addEventListener('hashchange',()=>{const r=parseRouteHash();switchTab(r.tab,r.month);});
+function updateWorkflowHints(){
+  const hint=$('shiftsContinueHint');
+  if(hint) hint.textContent=state.selectedMonths.length?`${state.selectedMonths.length} month${state.selectedMonths.length===1?'':'s'} selected.`:'Select at least one claim month first.';
+  const feedback=$('exportFeedback');
+  if(feedback){const saved=state.selectedMonths.filter(m=>state.claims[m]?.exportedAt).length;feedback.textContent=saved?`${saved} selected month${saved===1?' has':'s have'} a saved PDF. You can save selected months again after making changes.`:'Review the selected months, then sign and save the PDFs.';feedback.className=saved?'calendar-feedback success subtle':'calendar-feedback subtle';}
+  const hs=$('humberBridge'); if(hs) hs.hidden=state.settings.commuteType!=='humber';
+  const mark=$('passengerNamesRequiredMark'); if(mark) mark.hidden=!(Number(state.settings.passengerMiles)>0);
+  const ss=$('setupSignatureStatus'); if(ss) ss.textContent=state.signature?'Signature saved locally ✓':'No signature saved';const sp=$('setupSignaturePreview');if(sp){sp.hidden=!state.signature;if(state.signature)sp.src=state.signature;}updatePushUi();
+}
