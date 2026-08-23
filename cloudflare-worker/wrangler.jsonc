@@ -8,6 +8,13 @@
     "ALLOWED_ORIGIN": "https://nourthern.github.io",
     "VAPID_SUBJECT": "https://nourthern.github.io"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "travel-claims-reminders",
+      "database_id": "245e7146-ec5c-41b3-ba83-9e502298f094"
+    }
+  ],
   "triggers": {
     "crons": ["0 * * * *"]
   },
@@ -16,3 +23,4 @@
     "head_sampling_rate": 1
   }
 }
+
