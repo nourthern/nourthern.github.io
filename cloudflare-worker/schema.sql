@@ -1,4 +1,4 @@
--- Travel Claims Manager v11 reminder database.
+-- Travel Claims Manager v12 reminder database.
 -- Deliberately excludes names, addresses, personal numbers, registrations,
 -- calendar URLs, shift details, journey rows, signatures and PDF contents.
 

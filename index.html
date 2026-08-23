@@ -53,7 +53,7 @@
       <label>Home address *<textarea id="homeAddress" rows="4" placeholder="Include postcode" required></textarea></label>
 
       <div class="grid three">
-        <label>Vehicle registration *<input id="vehicleReg" placeholder="P4Y M3" required /></label>
+        <label>Vehicle registration *<input id="vehicleReg" class="uppercase-input" placeholder="P4Y M3" autocapitalize="characters" spellcheck="false" required /></label>
         <label>Engine cc *<input id="engineCc" type="number" min="1" step="1" placeholder="1598" required /></label>
         <label>Claimable miles per one-way journey *<input id="claimableMiles" type="number" min="0" step="0.1" placeholder="e.g. 18.4" required /></label>
         <label>Passenger miles per journey (optional)<input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Leave blank if none" /></label>
@@ -174,6 +174,7 @@
 
     <section id="claim" class="panel" role="tabpanel" hidden>
       <div class="section-heading"><div><h2>Claim form</h2><p>Review every selected month below. The earliest selected month is shown first.</p></div></div>
+      <div class="preview-toolbar"><button id="regenerateClaims" class="secondary" type="button">Regenerate claim contents</button><span class="hint">Use this after changing Setup or shifts. It replaces edits made directly in the claim tables.</span></div>
       <div id="claimsStack" class="claims-stack"></div>
       <div class="claim-actions"><button id="signAndSaveSelected" class="primary" type="button">Sign and save selected PDFs</button></div>
       <div id="exportFeedback" class="calendar-feedback subtle" role="status" aria-live="polite">Review the selected months, then sign and save the PDFs.</div>

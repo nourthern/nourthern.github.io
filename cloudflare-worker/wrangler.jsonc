@@ -1,9 +1,18 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "$schema": "../node_modules/wrangler/config-schema.json",
   "name": "travel-claims-ics",
   "main": "worker.js",
   "compatibility_date": "2026-08-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "ALLOWED_ORIGIN": "https://nourthern.github.io",
+    "VAPID_SUBJECT": "https://nourthern.github.io"
+  },
   "triggers": {
     "crons": ["0 * * * *"]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
   }
 }

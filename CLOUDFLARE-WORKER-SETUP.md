@@ -1,4 +1,4 @@
-# Cloudflare setup — Travel Claims Manager v11
+# Cloudflare setup — Travel Claims Manager v12
 
 This version keeps the existing ICS proxy and adds **optional Web Push reminders using Cloudflare D1**.
 
@@ -23,7 +23,7 @@ D1 does **not** store names, addresses, personal numbers, registrations, signatu
 2. Open **Workers & Pages**.
 3. Select your existing `travel-claims-ics` Worker.
 4. Choose **Edit code**.
-5. Replace the existing code with `cloudflare-worker/worker.js` from this v11 package.
+5. Replace the existing code with `cloudflare-worker/worker.js` from this v12 package.
 6. Deploy/save the Worker.
 
 Keep the same Worker address:

@@ -1,4 +1,4 @@
-# Travel Claims Manager v11 — test results
+# Travel Claims Manager v12 — test results
 
 ## Passed
 
@@ -17,6 +17,14 @@
 - D1 storage model checked to exclude claim rows, names, addresses, personal numbers, vehicle registrations, signatures, ICS URLs, shift details, mileage and expense amounts.
 - Signature dialog wording confirmed as **Save signature** and saved-signature preview element confirmed on Setup.
 - Payroll email wording confirmed to use **and proof of toll crossings** when Humber toll is configured.
+- Vehicle registration input and restored data confirmed to normalise to uppercase.
+- Claim regeneration tested after changing Setup; the preview recalculated all rows and totals.
+- Edited subsistence start/end times and amount confirmed visible after leaving edit mode.
+- A 26-row, three-page June claim was rendered and visually checked: page 2 has no totals row; page 3 alone shows 429 miles, 52 passenger miles, £39.00 miscellaneous and £5.25 subsistence.
+- The generated PDF shows **START** on one line and renders subsistence row values.
+- Payroll month wording regression-tested for one month, multiple months in one year, unsorted duplicates and the cross-year phrase **“October, November and December 2026, and January 2027”**.
+- The downloaded calendar file was inspected and confirmed to contain the requested description line break and location.
+- `tests/regression-checks.cjs` provides repeatable checks for month wording, calendar content and final-page PDF totals logic.
 
 ## Reminder behaviour implemented
 
