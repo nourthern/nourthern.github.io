@@ -1,42 +1,35 @@
-# Travel Claims Manager v9 - test report
+# Travel Claims Manager v11 — test results
 
-## Automated/static checks
+## Passed
 
-- `node --check app.js`: PASS
-- Every JavaScript `$('<id>')` reference has a matching HTML element: PASS
-- Service-worker cache updated for v9: PASS
-- ZIP integrity test: PASS
+- `app.js` JavaScript syntax check.
+- `sw.js` service-worker syntax check.
+- Cloudflare Worker syntax check.
+- Static DOM reference check: every `$('...')` element reference in the application exists in `index.html`.
+- D1 `schema.sql` executed successfully against an in-memory SQLite database and created the expected four tables.
+- Existing ICS Worker tests still pass, including allowed-host and CORS-origin checks.
+- Push-config route tested with and without D1/VAPID configuration.
+- Push-registration route tested with SQL placeholder/binding-count validation.
+- VAPID signing + empty Web Push request path tested using a generated P-256 key pair and a mocked FCM push endpoint; test returned success.
+- Reminder UI controls confirmed present: local calendar reminder, four push categories, advanced timing controls, enable/disable/test controls.
+- Deep-link targets confirmed in the notification Worker for Shifts and Claim Form month routes.
+- Service-worker notification click handler implemented to focus an existing app window where possible, otherwise open the relevant deep link.
+- D1 storage model checked to exclude claim rows, names, addresses, personal numbers, vehicle registrations, signatures, ICS URLs, shift details, mileage and expense amounts.
+- Signature dialog wording confirmed as **Save signature** and saved-signature preview element confirmed on Setup.
+- Payroll email wording confirmed to use **and proof of toll crossings** when Humber toll is configured.
 
-## Workflow checks
+## Reminder behaviour implemented
 
-- Mandatory Setup field list includes all nine requested fields plus sample signature: PASS
-- Navigation to Shifts/Claim/Expense Log is blocked when required Setup data is incomplete: PASS
-- Personal number still requires at least eight digits: PASS
-- Opening Shifts invokes automatic live ICS refresh: PASS (code-path validation)
-- Calendar comparison reports added, removed and changed event counts: PASS (logic review)
-- Manual ICS-file import remains present: PASS
-- Claim selector exposes all selected claim months with previous/next review controls: PASS
-- Humber Bridge button is disabled unless `Toll road` is selected: PASS
-- Payroll mailto address/subject/body generation: PASS (static validation)
+- Monthly claim reminder.
+- Deadline warning before the 5th.
+- Optional deadline-day reminder on the 5th.
+- One overdue/not-marked-submitted reminder after the usual deadline.
+- Unfinished-claim reminder.
+- Immediate rota-change browser/PWA notification when an ICS refresh detects added, removed or changed shifts.
+- Notifications stop for months reported as submitted.
+- Notification lock-screen text contains only generic month/count information; detailed shifts remain local.
+- Calendar reminder is generated locally as a recurring `.ics` event with a Europe/London timezone definition.
 
-## PDF regression checks
+## Important deployment limitation
 
-The July and August trial PDFs supplied by the tester were visually reviewed. Page 1 showed the old `200` suffix and slash pattern behind the personal number, while page 2 showed a small extra strip below the header, body/header column misalignment, detached totals and partially obscured legend headings.
-
-v9 redraws those areas. A 1404×992 page-2 geometry render was generated from the actual template and visually inspected:
-
-- body starts at the header boundary: PASS
-- journey vertical rules align with header rules: PASS
-- blank original journey rows are removed: PASS
-- total boxes connect to the table and align under their columns: PASS
-- `[1] TYPE OF CLAIM MUST BE COMPLETED` and passenger-mileage legend remain fully visible: PASS
-
-A page-1 mask/overlay regression render was also inspected:
-
-- `200` suffix removed: PASS
-- preprinted personal-number slashes removed: PASS
-- clean replacement lines remain visible: PASS
-
-## Environment limitation
-
-The sandbox could not make an outbound DNS request to the deployed Cloudflare Worker, so the user's live Allocate URL could not be end-to-end fetched from this environment. The existing Worker path and direct ICS fallback are unchanged apart from automatic invocation and comparison logic.
+A true end-to-end Web Push delivery test to a real Android/iOS/browser subscription cannot be performed inside this build environment because it does not own a user-device push subscription. The Worker-side VAPID request path was tested with a mocked push service. After configuring D1/VAPID in Cloudflare, use **Send test notification** on a real device to validate the final browser/push-service leg.
