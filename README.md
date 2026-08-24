@@ -1,6 +1,15 @@
-# Travel Claims Manager v12
+# Travel Claims Manager v13
 
 Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
+
+## v13 highlights
+
+- Calendar-link help with direct Loop/iCalendar links, clipboard import and an illustrated guide.
+- Clearer Android/iOS push-notification setup guidance.
+- Study-event warning, mobile preview-to-edit prompt, monthly calendar recurrence wording.
+- PDF page numbering and final-page-only footer.
+- DRAFT Help, About, privacy and bug-reporting panels.
+- Privacy-preserving aggregate usage telemetry, including active-user count and a replaceable all-users three-month claim total; telemetry can be disabled.
 
 ## v12 highlights
 
@@ -31,10 +40,10 @@ ICS fetching continues to use:
 
 `https://travel-claims-ics.n-e-alwaa.workers.dev/`
 
-The Worker must be updated to the v12 `cloudflare-worker/worker.js` for push notifications. See `CLOUDFLARE-WORKER-SETUP.md`.
+The Worker and D1 schema must be updated to v13 for telemetry, aggregated About figures and bug reporting. See `CLOUDFLARE-WORKER-SETUP.md`.
 
 Calendar `.ics` reminders work even if push/D1 is not configured.
 
 ## Privacy boundary
 
-Claim forms, names, addresses, personal numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores only the minimal pseudonymous subscription/preferences and coarse monthly state required to decide whether a reminder is due.
+Claim forms, names, addresses, personal numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, one replaceable three-month cumulative amount per installation, and deliberately submitted bug reports. It does not store claim rows or individual claim history.

@@ -21,8 +21,7 @@
     <div class="top-actions">
       <span id="saveStatus" class="save-status">Saved locally</span>
       <button id="installApp" class="secondary" hidden>Install app</button>
-      <button id="backupBtn" class="secondary">Save webpage data</button>
-      <label class="file-btn secondary">Load backup<input id="restoreInput" type="file" accept="application/json" hidden></label>
+      <button id="backupBtn" class="secondary">Backup site data</button>
     </div>
   </header>
 
@@ -43,6 +42,16 @@
         <span class="privacy-badge">Local storage only</span>
       </div>
 
+      <div class="setup-local-tools">
+        <label class="file-btn secondary">Load backup<input id="restoreInput" type="file" accept="application/json" hidden></label>
+        <p class="privacy-notice">Some privacy-preserving usage data is collected to help improve Travel Claims Manager. <button id="openPrivacy" class="text-link" type="button">Find out more</button></p>
+      </div>
+
+      <div class="card calendar-connection-card">
+        <div class="card-title-row"><h3>Calendar connection</h3><button id="openCalendarHelp" class="link-btn" type="button">Don’t have a link?</button></div>
+        <label>ICS calendar URL<input id="icsUrl" type="url" placeholder="https://.../ical/..." autocomplete="url" /></label><p class="hint">The ICS link is saved only on this device and reused for future claims. Calendar fetching uses the Travel Claims Manager's built-in Cloudflare Worker.</p>
+      </div>
+
       <div class="grid two">
         <label>Full name *<input id="fullName" autocomplete="name" placeholder="e.g. Nour Eddin Alwaa" required /></label>
         <label>Base site *<select id="baseSite" required><option value="">Choose one…</option><option value="DPOW">DPOW</option><option value="SGH">SGH</option><option value="Goole">Goole</option></select></label>
@@ -59,11 +68,6 @@
         <label>Passenger miles per journey (optional)<input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Leave blank if none" /></label>
         <label>Average commute time to work (minutes) *<input id="commuteMinutes" type="number" min="1" step="1" value="30" required /></label>
         <label>Approved mileage rate (£/mile)<input id="mileageRate" type="number" min="0" step="0.01" value="0.30" /></label>
-      </div>
-
-      <div class="card">
-        <h3>Calendar connection</h3>
-        <label>ICS calendar URL<input id="icsUrl" type="url" placeholder="https://.../ical/..." autocomplete="url" /></label><p class="hint">The ICS link is saved only on this device and reused for future claims. Calendar fetching uses the Travel Claims Manager's built-in Cloudflare Worker.</p>
       </div>
 
       <div class="card">
@@ -99,7 +103,7 @@
         <div class="reminder-grid">
           <div class="reminder-option">
             <h4>Calendar reminder</h4>
-            <p class="hint">Creates a recurring monthly .ics reminder locally. No calendar account is connected to this site.</p>
+            <p class="hint">Creates a recurring monthly .ics reminder locally. It repeats every month until you delete it from your calendar. No calendar account is connected to this site.</p>
             <div class="grid two compact-grid">
               <label>Reminder day of month<input id="calendarReminderDay" type="number" min="1" max="28" value="1"></label>
               <label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label>
@@ -151,6 +155,7 @@
       <div class="card">
         <div class="inline-form"><span id="calendarSourceLabel" class="hint">Your saved calendar is refreshed automatically whenever this tab is opened.</span></div>
         <div id="calendarFeedback" class="calendar-feedback" role="status" aria-live="polite">Ready. Your saved calendar will refresh automatically when this tab opens.</div>
+        <div id="studyReviewAlert" class="study-review-alert" role="alert" hidden><strong>Study-related calendar events found.</strong> Review the shifts highlighted in orange before creating your claim.</div>
         <div class="local-ics">
           <label class="file-picker">Or import an ICS file directly<input id="icsFile" type="file" accept=".ics,text/calendar,text/plain" /></label>
           <span class="hint">This option is fully local and needs no proxy.</span>
@@ -189,10 +194,25 @@
     </section>
   </main>
 
+  <footer class="site-footer">
+    <button id="openHelp" class="text-link" type="button">Help &amp; tutorial</button>
+    <button id="openAbout" class="text-link" type="button">About this tool</button>
+    <button id="openBugReport" class="text-link" type="button">Report a bug</button>
+  </footer>
+
   <div id="toast" class="toast" aria-live="polite"></div>
   <div id="installHelp" class="install-help" hidden></div>
   <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button type="button" data-close-manual class="icon-btn">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" required></label><label>Reason<input id="manualReason" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" required></label><label>End time<input id="manualEnd" type="time" required></label></div><div class="dialog-actions"><button type="button" data-close-manual class="secondary">Cancel</button><button id="saveManualShift" type="submit" class="primary">Add day</button></div></form></dialog>
   <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn">×</button></div><canvas id="signaturePad" width="700" height="220"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary">Clear</button><button id="saveSig" class="primary">Save signature</button></div></dialog>
+  <dialog id="calendarHelpDialog"><div class="dialog-head"><div><span class="draft-label">DRAFT</span><h3>Find your iCalendar link</h3></div><button type="button" data-close-dialog="calendarHelpDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body calendar-help-steps"><ol><li><p>Log in to the eRostering system.</p><a class="secondary button-link" href="https://web.loop.allocate-cloud.co.uk/loop/login" target="_blank" rel="noopener noreferrer">Loop sign-in page</a></li><li><p>Return here, then open the iCalendar page.</p><a class="secondary button-link" href="https://web.loop.allocate-cloud.co.uk/EmployeeOnlineHealth/NLAGLIVE/ICalendar" target="_blank" rel="noopener noreferrer">iCalendar page</a></li><li><p>Copy the ICS link (URL), as shown below.</p><img class="calendar-help-image" src="icalendar-page-guide.jpg" alt="The Allocate iCalendar Links page showing where an ICS link appears. The example link is deliberately cut short."></li><li><p>Return here and import the copied link.</p><button id="importCopiedLink" class="primary" type="button">Import copied link</button><p id="clipboardFeedback" class="hint" aria-live="polite"></p></li></ol></div><div class="dialog-actions"><button type="button" data-close-dialog="calendarHelpDialog" class="secondary">Close</button></div></dialog>
+
+  <dialog id="privacyDialog"><div class="dialog-head"><div><span class="draft-label">DRAFT</span><h3>Privacy and usage data</h3></div><button type="button" data-close-dialog="privacyDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body prose"><p>Travel Claims Manager stores your claim information locally on this device. A small amount of privacy-preserving usage data is sent to help improve the tool.</p><h4>What is collected</h4><ul><li>A random installation ID and the date the app was last used</li><li>App version and broad feature-use counts, such as calendar imports, PDFs created, backups and notification setup</li><li>Your current cumulative total claimed in the last three months, sent only as a single total and used for an all-users total</li><li>Optional push-notification subscription details and coarse monthly status flags when push is enabled</li></ul><details><summary>This app never collects</summary><ul><li>Names, addresses, postcodes or personal numbers</li><li>Registration numbers</li><li>Calendar URLs, tokens or login details</li><li>Shift names, dates, times or locations</li><li>Claim rows, mileage, toll costs or individual financial totals</li><li>Form contents or exported documents</li><li>Clipboard contents</li><li>Persistent device fingerprints</li><li>Screenshots unless you deliberately attach one after checking it</li></ul></details><details><summary>Additional data gathered for diagnostics</summary><ul><li>Generated only when something fails or you open <strong>Report a bug</strong></li><li>Shown to you in <strong>Review technical details</strong> before submission</li><li>Removable by you before submission; the technical details themselves are read-only</li><li>Retained briefly, for 90 days</li><li>Linked using a one-off report ID, not your installation ID</li></ul></details><p>You can turn ordinary usage telemetry off below. Push notifications are controlled separately.</p><label class="toggle-line"><input id="telemetryEnabled" type="checkbox" checked> Share privacy-preserving usage data</label><div id="telemetryFeedback" class="hint" aria-live="polite"></div></div><div class="dialog-actions"><button type="button" data-close-dialog="privacyDialog" class="primary">Done</button></div></dialog>
+
+  <dialog id="helpDialog"><div class="dialog-head"><div><span class="draft-label">DRAFT</span><h3>Help &amp; tutorial</h3></div><button type="button" data-close-dialog="helpDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body prose"><ol><li><strong>Setup:</strong> connect your calendar and enter the details used on your claim form. Add a sample signature and optionally configure reminders.</li><li><strong>Shifts:</strong> choose one or more claim months, then check every imported shift. Study-related events appear in orange and default to “Do not claim”.</li><li><strong>Claim form:</strong> review each document preview. Tap or click a preview, or use <strong>Edit table</strong>, to change individual cells. Then sign and save the selected PDFs.</li><li><strong>Expense log:</strong> use the local log to track submitted claims. Delete an entry if it should no longer be included in your cumulative total.</li></ol><p><strong>Backups:</strong> use <strong>Backup site data</strong> regularly, particularly before clearing browser data or changing device.</p><p>This tool assists with form preparation only. You remain responsible for checking eligibility and accuracy against Trust and payroll rules.</p></div><div class="dialog-actions"><button type="button" data-close-dialog="helpDialog" class="primary">Close</button></div></dialog>
+
+  <dialog id="aboutDialog"><div class="dialog-head"><div><span class="draft-label">DRAFT</span><h3>About this tool</h3></div><button type="button" data-close-dialog="aboutDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body prose"><p>Travel Claims Manager is a privacy-first tool designed to reduce repetitive work when preparing NHS travel expense claims. Claim details remain on your device.</p><div class="stats-grid"><div><strong id="aboutUsers">—</strong><span>estimated users in the last 90 days (active installations)</span></div><div><strong id="aboutClaimed">—</strong><span>claimed by all users in the last 3 months</span></div></div><p class="hint" id="aboutStatsStatus">Aggregated figures contain no names or individual claim records.</p><p>A “buy me a coffee” link may be added here in a later version.</p></div><div class="dialog-actions"><button type="button" data-close-dialog="aboutDialog" class="primary">Close</button></div></dialog>
+
+  <dialog id="bugReportDialog"><form id="bugReportForm"><div class="dialog-head"><div><span class="draft-label">DRAFT</span><h3>Report a bug</h3></div><button type="button" data-close-dialog="bugReportDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body prose"><p>Please do not include names, calendar links, patient information or claim details.</p><label>What went wrong? *<textarea id="bugDescription" rows="5" maxlength="2000" required placeholder="Describe what you expected and what happened."></textarea></label><details id="technicalDetailsReview"><summary>Review technical details</summary><p class="hint">These details are read-only. Untick the box to remove all technical details from this report.</p><label class="toggle-line"><input id="includeTechnicalDetails" type="checkbox" checked> Include technical details</label><pre id="technicalDetails"></pre></details><div id="bugReportFeedback" class="hint" aria-live="polite"></div></div><div class="dialog-actions"><button type="button" data-close-dialog="bugReportDialog" class="secondary">Cancel</button><button id="submitBugReport" class="primary" type="submit">Submit report</button></div></form></dialog>
   <script src="app.js"></script>
 </body>
 </html>

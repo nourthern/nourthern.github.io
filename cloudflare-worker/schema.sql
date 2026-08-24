@@ -1,4 +1,4 @@
--- Travel Claims Manager v12 reminder database.
+-- Travel Claims Manager v13 reminder, telemetry and diagnostics database.
 -- Deliberately excludes names, addresses, personal numbers, registrations,
 -- calendar URLs, shift details, journey rows, signatures and PDF contents.
 
@@ -51,3 +51,29 @@ CREATE TABLE IF NOT EXISTS notification_log (
 
 CREATE INDEX IF NOT EXISTS idx_claim_state_month ON claim_state(month);
 CREATE INDEX IF NOT EXISTS idx_notification_log_sent ON notification_log(sent_at);
+
+-- One current, non-identifying aggregate contribution per installation.
+-- No individual claim values or claim history are stored.
+CREATE TABLE IF NOT EXISTS telemetry_installations (
+  installation_id TEXT PRIMARY KEY,
+  token_hash TEXT NOT NULL,
+  app_version TEXT NOT NULL,
+  claimed_last_3_months_pence INTEGER NOT NULL DEFAULT 0,
+  calendar_imports INTEGER NOT NULL DEFAULT 0,
+  pdfs_created INTEGER NOT NULL DEFAULT 0,
+  backups_created INTEGER NOT NULL DEFAULT 0,
+  notification_setups INTEGER NOT NULL DEFAULT 0,
+  last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_telemetry_last_seen ON telemetry_installations(last_seen_at);
+
+CREATE TABLE IF NOT EXISTS bug_reports (
+  report_id TEXT PRIMARY KEY,
+  description TEXT NOT NULL,
+  technical_details TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_bug_reports_expires ON bug_reports(expires_at);

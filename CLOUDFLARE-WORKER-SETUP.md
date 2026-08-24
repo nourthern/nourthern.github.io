@@ -1,12 +1,12 @@
-# Cloudflare setup — Travel Claims Manager v12
+# Cloudflare setup — Travel Claims Manager v13
 
-This version keeps the existing ICS proxy and adds **optional Web Push reminders using Cloudflare D1**.
+This version keeps the existing ICS proxy and Web Push reminders, and adds **privacy-preserving telemetry, aggregate About statistics and time-limited bug reports using Cloudflare D1**.
 
 The calendar-reminder `.ics` button works without D1. You only need the steps below if you want phone/browser push notifications.
 
 ## What is stored in D1
 
-Only reminder-delivery data:
+Reminder-delivery data:
 
 - a random installation ID (not the user's name)
 - a one-way hash of a random device token
@@ -15,7 +15,15 @@ Only reminder-delivery data:
 - coarse month-level flags: rota present, claim created, PDF saved, submitted, number of study/SDT shifts needing review
 - notification de-duplication records
 
-D1 does **not** store names, addresses, personal numbers, registrations, signatures, ICS URLs, shift details/times, journey rows, PDFs, mileage values or expense amounts.
+Telemetry data:
+
+- the same random installation ID and one-way token hash
+- app version, last-seen date and coarse lifetime feature-use counts
+- one current cumulative claim total for the last three months, in pence; it replaces the previous value and is used only for an all-users total
+
+Bug reports contain the user's description and optional coarse technical details, linked by a one-off report ID. They expire after 90 days.
+
+D1 does **not** store names, addresses, personal numbers, registrations, signatures, ICS URLs, shift details/times, journey rows, PDFs, mileage values, toll values or individual claim totals/history.
 
 ## Part A — update the existing Worker
 
@@ -23,7 +31,7 @@ D1 does **not** store names, addresses, personal numbers, registrations, signatu
 2. Open **Workers & Pages**.
 3. Select your existing `travel-claims-ics` Worker.
 4. Choose **Edit code**.
-5. Replace the existing code with `cloudflare-worker/worker.js` from this v12 package.
+5. Replace the existing code with `cloudflare-worker/worker.js` from this v13 package.
 6. Deploy/save the Worker.
 
 Keep the same Worker address:
@@ -42,7 +50,7 @@ The website already has this address built in.
 6. Open the database's **Console**.
 7. Copy all of `cloudflare-worker/schema.sql`, paste it into the D1 console and run it.
 
-You should now have four tables: `installations`, `claim_state`, `pending_notifications`, and `notification_log`.
+If the database already exists, running the full schema is safe: it preserves the four reminder tables and adds `telemetry_installations` and `bug_reports`.
 
 ## Part C — bind D1 to your existing Worker
 
