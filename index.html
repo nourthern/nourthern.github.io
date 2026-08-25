@@ -23,8 +23,8 @@
     <div class="topbar-controls">
       <div class="top-actions">
         <button id="backupBtn" class="header-icon-btn" type="button" aria-label="Back up site data" title="Back up site data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v6h8V3M8 21v-7h8v7"></path></svg></button>
-        <span id="saveStatus" class="save-status">Saved locally</span>
         <button id="installApp" class="secondary" hidden>Install app</button>
+        <span id="saveStatus" class="save-status">Saved locally</span>
       </div>
       <div class="header-tools" aria-label="Travel Claims Manager tools">
         <button id="openAbout" class="header-icon-btn plain-symbol" type="button" aria-label="About this tool" title="About this tool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v7M12 7h.01"></path></svg></button>
@@ -77,8 +77,8 @@
         <label>Claimable miles per one-way journey *<input id="claimableMiles" type="number" min="0" step="0.1" placeholder="e.g. 18.4" required /></label>
         <label>Passenger names <span id="passengerNamesRequiredMark" hidden>*</span><input id="passengerNames" placeholder="Required if passenger miles are entered" /></label>
         <label>Passenger miles per journey <span id="passengerMilesRequiredMark" hidden>*</span><input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Leave blank if none" /></label>
-        <label>Average commute time to work (minutes) *<input id="commuteMinutes" type="number" min="1" step="1" value="30" required /></label>
-        <label>Approved mileage rate (£/mile)<input id="mileageRate" type="number" min="0" step="0.01" value="0.30" /></label>
+        <label>Average commute time (minutes) *<input id="commuteMinutes" type="number" min="1" step="1" value="30" required /></label>
+        <label>Approved mileage rate (£/mile)<input id="mileageRate" type="number" min="0" step="0.01" value="0.30" /><span class="hint field-note">This only affects expense log records, not claim forms or generated PDFs.</span></label>
       </div>
 
       <div class="card">
@@ -88,9 +88,10 @@
           <label>Cost <span id="commuteCostRequiredMark" hidden>*</span><input id="commuteCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
           <label>Above price frequency<select id="expenseFrequency"><option id="perJourneyFrequencyOption" value="journey">Per journey</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
         </div>
-        <div id="otherExpenseFields" class="grid two conditional-expense" hidden>
-          <label>Other additional expense<select id="otherExpenseType"><option value="">e.g. toll/parking</option><option value="humber">Humber toll</option><option value="parking">Parking ticket</option></select></label>
+        <div id="otherExpenseFields" class="grid three conditional-expense" hidden>
+          <label>Other additional expense<select id="otherExpenseType"><option value="">e.g. toll/parking</option><option id="otherHumberOption" value="humber">Humber toll</option><option id="otherParkingOption" value="parking">Parking ticket</option></select></label>
           <label>Cost <span id="otherExpenseCostRequiredMark" hidden>*</span><input id="otherExpenseCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
+          <label>Above price frequency<select id="otherExpenseFrequency"><option id="otherPerJourneyFrequencyOption" value="journey">Per journey</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
         </div>
         <p id="expenseFrequencyAdvice" class="hint" hidden>Fare tickets with daily, weekly or monthly frequency are placed on the first applicable journey or shift. Review and amend the generated cells where needed so they reflect the tickets actually purchased.</p>
         <p class="hint">Passenger names and passenger miles are both required when either is entered. Expenses share the existing description and amount columns in the claim form; combined costs are added together. You can edit individual rows in the claim form.</p>

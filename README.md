@@ -13,6 +13,9 @@ Privacy-first static PWA for preparing monthly travel claims from an Allocate IC
 - All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
 - Automatic release checks and page refreshes keep the installed/offline-capable site current without clearing its local data.
 - The About panel identifies Travel Claims Manager as an independent project not affiliated with NLaG Trust or Humber Health Partnership.
+- Setup supports independent frequency rules for a second parking expense and prevents the same parking/toll category being selected twice.
+- Claim types can be edited per row, miscellaneous headings reflect only configured expenses/passengers, and passenger names no longer carry a redundant prefix.
+- Intermediate PDF table pages use the available page height, and filenames include the claimant's first initial and surname.
 
 ## v13 highlights
 

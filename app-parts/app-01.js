@@ -1,6 +1,6 @@
 'use strict';
 function requiredSetupMissing(){
-  const fields=[['fullName','Full name'],['baseSite','Base site'],['designation','Job title'],['personalNumber','Payroll assignment no.'],['homeAddress','Home address'],['vehicleReg','Vehicle registration'],['engineCc','Engine cc'],['claimableMiles','Claimable miles per one-way journey'],['commuteMinutes','Average commute time to work']];
+  const fields=[['fullName','Full name'],['baseSite','Base site'],['designation','Job title'],['personalNumber','Payroll assignment no.'],['homeAddress','Home address'],['vehicleReg','Vehicle registration'],['engineCc','Engine cc'],['claimableMiles','Claimable miles per one-way journey'],['commuteMinutes','Average commute time']];
   const missing=fields.filter(([id])=>!String($(id)?.value??'').trim()).map(([id,label])=>({id,label}));
   const passengerMiles=String($('passengerMiles')?.value||'').trim(),passengerNames=String($('passengerNames')?.value||'').trim();
   if(passengerMiles&&!passengerNames)missing.push({id:'passengerNames',label:'Passenger names'});
@@ -36,16 +36,19 @@ function updateAdditionalExpenseUi(){
   const type=typeSelect?.value||'none',hasExpense=type!=='none'&&type!=='';
   if(type==='none'&&state.settings.commuteCost!=='0'){state.settings.commuteCost='0';if($('commuteCost'))$('commuteCost').value='£0.00';}
   if($('commuteCostRequiredMark'))$('commuteCostRequiredMark').hidden=!hasExpense;
-  const showOther=type==='humber'||type==='parking';if($('otherExpenseFields'))$('otherExpenseFields').hidden=!showOther;
-  if(!showOther&&state.settings.otherExpenseType){state.settings.otherExpenseType='';state.settings.otherExpenseCost='';if($('otherExpenseType'))$('otherExpenseType').value='';if($('otherExpenseCost'))$('otherExpenseCost').value='';}
-  const otherChosen=showOther&&!!($('otherExpenseType')?.value||'');if($('otherExpenseCostRequiredMark'))$('otherExpenseCostRequiredMark').hidden=!otherChosen;
+  const showOther=type==='humber'||type==='parking',otherTypeSelect=$('otherExpenseType'),otherHumber=$('otherHumberOption'),otherParking=$('otherParkingOption');if($('otherExpenseFields'))$('otherExpenseFields').hidden=!showOther;
+  if(otherHumber){otherHumber.hidden=type==='humber';otherHumber.disabled=type==='humber';}if(otherParking){otherParking.hidden=type==='parking';otherParking.disabled=type==='parking';}
+  if(showOther&&otherTypeSelect?.value===type){otherTypeSelect.value='';state.settings.otherExpenseType='';state.settings.otherExpenseCost='';state.settings.otherExpenseFrequency='journey';if($('otherExpenseCost'))$('otherExpenseCost').value='';}
+  if(!showOther&&state.settings.otherExpenseType){state.settings.otherExpenseType='';state.settings.otherExpenseCost='';state.settings.otherExpenseFrequency='journey';if(otherTypeSelect)otherTypeSelect.value='';if($('otherExpenseCost'))$('otherExpenseCost').value='';}
+  const otherType=otherTypeSelect?.value||'',otherChosen=showOther&&!!otherType;if($('otherExpenseCostRequiredMark'))$('otherExpenseCostRequiredMark').hidden=!otherChosen;
   const frequencyEnabled=type==='parking'||type==='busrail',frequency=$('expenseFrequency'),journeyOption=$('perJourneyFrequencyOption');if(journeyOption){journeyOption.hidden=type==='parking';journeyOption.disabled=type==='parking';}if(frequency){frequency.disabled=!frequencyEnabled;if(type==='parking'&&!['daily','weekly','monthly'].includes(frequency.value)){frequency.value='daily';state.settings.expenseFrequency='daily';}else if(!frequencyEnabled){frequency.value='journey';state.settings.expenseFrequency='journey';}}
+  const otherFrequency=$('otherExpenseFrequency'),otherJourney=$('otherPerJourneyFrequencyOption'),otherFrequencyEnabled=otherType==='parking';if(otherJourney){otherJourney.hidden=otherFrequencyEnabled;otherJourney.disabled=otherFrequencyEnabled;}if(otherFrequency){otherFrequency.disabled=!otherFrequencyEnabled;if(otherFrequencyEnabled&&!['daily','weekly','monthly'].includes(otherFrequency.value)){otherFrequency.value='daily';state.settings.otherExpenseFrequency='daily';}else if(!otherFrequencyEnabled){otherFrequency.value='journey';state.settings.otherExpenseFrequency='journey';}}
   if($('expenseFrequencyAdvice'))$('expenseFrequencyAdvice').hidden=!(type==='busrail'&&state.settings.expenseFrequency!=='journey');
   updateSetupFieldStates();
 }
 function bindMoneyField(id,key,rebind){const el=$(id);if(!el)return;el.value=state.settings[key]!==''?'£'+Number(state.settings[key]||0).toFixed(2):'';if(!rebind&&!el.dataset.bound){el.addEventListener('focus',()=>{el.value=state.settings[key]??'';});el.addEventListener('input',()=>{state.settings[key]=el.value.replace(/[^0-9.]/g,'');el.classList.remove('field-error');updateAdditionalExpenseUi();saveState();});el.addEventListener('blur',()=>{const n=Number(state.settings[key]);el.value=state.settings[key]!==''&&Number.isFinite(n)?'£'+n.toFixed(2):'';updateSetupFieldStates();});el.dataset.bound='1';}}
 function bindSettings(rebind=false){
-  const ids=['fullName','baseSite','designation','personalNumber','homeAddress','vehicleReg','engineCc','claimableMiles','passengerMiles','passengerNames','commuteMinutes','mileageRate','commuteType','otherExpenseType','expenseFrequency'];
+  const ids=['fullName','baseSite','designation','personalNumber','homeAddress','vehicleReg','engineCc','claimableMiles','passengerMiles','passengerNames','commuteMinutes','mileageRate','commuteType','otherExpenseType','expenseFrequency','otherExpenseFrequency'];
   ids.forEach(id=>{const el=$(id);if(!el)return;el.value=id==='vehicleReg'?String(state.settings[id]??'').toUpperCase():(state.settings[id]??'');if(id==='vehicleReg')state.settings[id]=el.value;if(!rebind&&!el.dataset.bound){const save=()=>{if(id==='vehicleReg')el.value=el.value.toUpperCase();state.settings[id]=el.value;if(id==='baseSite')state.settings.baseSiteConfirmed=!!el.value;el.classList.remove('field-error');updateWorkflowHints();saveState();};el.addEventListener('input',save);el.addEventListener('change',save);el.dataset.bound='1';}});
   bindMoneyField('commuteCost','commuteCost',rebind);bindMoneyField('otherExpenseCost','otherExpenseCost',rebind);
   $('icsUrl').value=state.icsUrl||'';state.workerUrl=BAKED_WORKER_URL;
