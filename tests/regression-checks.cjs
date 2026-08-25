@@ -72,6 +72,7 @@ assert.match(app01, /type==='parking'&&!\['daily','weekly','monthly'\]\.includes
 assert.match(app03, /state\.settings\.commuteType!=='parking'/);
 assert.match(app03, /state\.settings\.otherExpenseType!=='parking'/);
 assert.match(styles, /#setup input\.has-value,#setup select\.has-value,#setup textarea\.has-value\{background:#fff!important\}/);
+assert.match(styles, /\.header-icon-btn\.plain-symbol svg\{width:26px;height:26px;stroke-width:2\.2\}/);
 assert.match(worker, /\/api\/telemetry/);
 assert.match(worker, /\/api\/stats/);
 assert.match(worker, /\/api\/bug-report/);
