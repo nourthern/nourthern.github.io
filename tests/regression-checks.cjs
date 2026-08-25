@@ -11,6 +11,7 @@ const app04 = fs.readFileSync(path.join(root, 'app-parts', 'app-04.js'), 'utf8')
 const app05 = fs.readFileSync(path.join(root, 'app-parts', 'app-05.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const worker = fs.readFileSync(path.join(root, 'cloudflare-worker', 'worker.js'), 'utf8');
 
 const phraseStart = app04.indexOf('function naturalJoin');
@@ -73,6 +74,10 @@ assert.match(app03, /state\.settings\.commuteType!=='parking'/);
 assert.match(app03, /state\.settings\.otherExpenseType!=='parking'/);
 assert.match(styles, /#setup input\.has-value,#setup select\.has-value,#setup textarea\.has-value\{background:#fff!important\}/);
 assert.match(styles, /\.header-icon-btn\.plain-symbol svg\{width:26px;height:26px;stroke-width:2\.2\}/);
+assert.match(html, /Not affiliated with NLaG Trust or Humber Health Partnership\./);
+assert.match(app04, /serviceWorker\.addEventListener\('controllerchange'/);
+assert.match(app04, /updateViaCache:'none'/);
+assert.match(sw, /fetch\(e\.request,\{cache:'no-cache'\}\)/);
 assert.match(worker, /\/api\/telemetry/);
 assert.match(worker, /\/api\/stats/);
 assert.match(worker, /\/api\/bug-report/);

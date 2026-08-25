@@ -11,6 +11,8 @@ Privacy-first static PWA for preparing monthly travel claims from an Allocate IC
 - Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
 - Larger generated PDF text, with uniform raised page-one data, a compact final-page legend and no trailing table-edge artefact.
 - All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
+- Automatic release checks and page refreshes keep the installed/offline-capable site current without clearing its local data.
+- The About panel identifies Travel Claims Manager as an independent project not affiliated with NLaG Trust or Humber Health Partnership.
 
 ## v13 highlights
 
