@@ -17,18 +17,20 @@
     <div class="brand-block">
       <div class="brand-title-row">
         <h1>Travel Claims Manager</h1>
-        <div class="header-tools" aria-label="Travel Claims Manager tools">
-          <button id="openAbout" class="header-icon-btn" type="button" aria-label="About this tool" title="About this tool"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 10v7M12 7h.01"></path></svg></button>
-          <button id="openHelp" class="header-icon-btn" type="button" aria-label="Help, tutorial, or report a problem" title="Help, tutorial, or report a problem"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.4 2.4 0 1 1 3.5 2.1c-.9.5-1.3 1-1.3 2M12 17h.01"></path></svg></button>
-          <button id="openNotifications" class="header-icon-btn notification-bell" type="button" aria-label="Notification settings" title="Notification settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path><path class="bell-forbidden" d="M4 4l16 16"></path></svg></button>
-          <button id="backupBtn" class="header-icon-btn" type="button" aria-label="Back up site data" title="Back up site data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v6h8V3M8 21v-7h8v7"></path></svg></button>
-        </div>
       </div>
       <p>Privacy-first NHS travel expense helper. No account required.</p>
     </div>
-    <div class="top-actions">
-      <span id="saveStatus" class="save-status">Saved locally</span>
-      <button id="installApp" class="secondary" hidden>Install app</button>
+    <div class="topbar-controls">
+      <div class="top-actions">
+        <button id="backupBtn" class="header-icon-btn" type="button" aria-label="Back up site data" title="Back up site data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v6h8V3M8 21v-7h8v7"></path></svg></button>
+        <span id="saveStatus" class="save-status">Saved locally</span>
+        <button id="installApp" class="secondary" hidden>Install app</button>
+      </div>
+      <div class="header-tools" aria-label="Travel Claims Manager tools">
+        <button id="openAbout" class="header-icon-btn plain-symbol" type="button" aria-label="About this tool" title="About this tool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v7M12 7h.01"></path></svg></button>
+        <button id="openHelp" class="header-icon-btn plain-symbol" type="button" aria-label="Help, tutorial, or report a problem" title="Help, tutorial, or report a problem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.8 9a2.4 2.4 0 1 1 3.5 2.1c-.9.5-1.3 1-1.3 2M12 17h.01"></path></svg></button>
+        <button id="openNotifications" class="header-icon-btn notification-bell" type="button" aria-label="Notification settings" title="Notification settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path><path class="bell-forbidden" d="M4 4l16 16"></path></svg></button>
+      </div>
     </div>
   </header>
 
@@ -82,13 +84,13 @@
       <div class="card">
         <h3>Regular additional expense</h3>
         <div class="grid three regular-expense-grid">
-          <label>Description<select id="commuteType"><option value="" disabled>e.g. fares, toll, parking</option><option value="busrail">Bus/rail fares</option><option value="humber">Humber toll</option><option value="parking">Parking tickets</option><option value="none">None</option></select></label>
-          <label>Cost per one-way journey <span id="commuteCostRequiredMark" hidden>*</span><input id="commuteCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
-          <label>Frequency<select id="expenseFrequency"><option value="journey">Per journey</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
+          <label>Description<select id="commuteType"><option value="" disabled>e.g. fares, toll, parking</option><option id="busRailOption" value="busrail">Bus/rail fares</option><option value="humber">Humber toll</option><option value="parking">Parking tickets</option><option value="none">None</option></select></label>
+          <label>Cost <span id="commuteCostRequiredMark" hidden>*</span><input id="commuteCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
+          <label>Above price frequency<select id="expenseFrequency"><option id="perJourneyFrequencyOption" value="journey">Per journey</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
         </div>
         <div id="otherExpenseFields" class="grid two conditional-expense" hidden>
           <label>Other additional expense<select id="otherExpenseType"><option value="">e.g. toll/parking</option><option value="humber">Humber toll</option><option value="parking">Parking ticket</option></select></label>
-          <label>Cost per one-way journey <span id="otherExpenseCostRequiredMark" hidden>*</span><input id="otherExpenseCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
+          <label>Cost <span id="otherExpenseCostRequiredMark" hidden>*</span><input id="otherExpenseCost" type="text" inputmode="decimal" placeholder="e.g. £1.50" /></label>
         </div>
         <p id="expenseFrequencyAdvice" class="hint" hidden>Fare tickets with daily, weekly or monthly frequency are placed on the first applicable journey or shift. Review and amend the generated cells where needed so they reflect the tickets actually purchased.</p>
         <p class="hint">Passenger names and passenger miles are both required when either is entered. Expenses share the existing description and amount columns in the claim form; combined costs are added together. You can edit individual rows in the claim form.</p>

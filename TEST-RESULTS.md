@@ -7,16 +7,17 @@
 - The Cloudflare Worker production build completed successfully with only the D1 database, allowed-origin and VAPID-subject bindings.
 - The existing remote D1 database was inspected before migration. Six additive v15 columns were then applied successfully without replacing existing tables or records.
 - Worker v15 deployed successfully. Live checks confirmed push is configured and `/api/stats` returns both three-month and current-year aggregate fields.
-- Desktop and narrow mobile layouts were visually checked. The four header actions wrap cleanly and dialogs remain usable.
+- Desktop and 762 × 642 layouts were visually checked. Backup sits immediately before **Saved locally**, while About, Help and notifications align at the banner's lower right without the inner circles around “i” and “?”.
 - The example-data button populated synthetic Setup details, a sample signature and 22 shifts in the current month.
 - Calendar-source behaviour was checked: a saved iCalendar link hides file import on Shifts; local ICS use shows the last update date and the manual-update reminder.
 - Required Setup validation marks missing inputs in red, including paired passenger fields and expense-cost dependencies.
-- Additional-expense generation was checked for per-journey, daily, weekly and monthly frequency placement. Frequency is changeable only for parking and bus/rail fares.
+- Populated Setup controls render white while empty controls remain shaded. Passenger details hide/disable bus and rail fares, **None** sets cost to £0.00, and parking offers only daily, weekly and monthly frequency choices.
+- Additional-expense generation was checked for per-journey, daily, weekly and monthly placement. A 34-row parking claim contained 17 outbound parking charges and zero homebound parking charges.
 - Notification state handling was checked for calendar setup, push setup, no configured reminder, and failed push delivery.
 - Screenshot attachment preparation was checked using the supplied image: preview, resizing/compression and removal worked without submitting the image as a live report.
 - A synthetic August claim containing 22 shifts was exported as a three-page PDF and every page was rendered for visual inspection.
-- The PDF table and cell widths are unchanged. Entered row data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping.
-- The claim-type and receipt legend is absent from intermediate page 2 and displayed on final page 3 only. Page numbers remain visible and totals remain on the final page only.
+- The PDF table and cell widths are unchanged. Entered row data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping. Page-one imported data is larger, consistently sized and raised clear of its underline.
+- The claim-type and receipt legend is absent from intermediate page 2 and displayed directly below the final table on page 3. The trailing right-edge line artefact is removed; page numbers and final-page-only totals remain intact.
 
 ## Deliberately retained for testing
 

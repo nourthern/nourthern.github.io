@@ -6,7 +6,7 @@ function requiredSetupMissing(){
   if(passengerMiles&&!passengerNames)missing.push({id:'passengerNames',label:'Passenger names'});
   if(passengerNames&&!passengerMiles)missing.push({id:'passengerMiles',label:'Passenger miles per journey'});
   const expense=String($('commuteType')?.value||'none');
-  if(expense!=='none'&&!String(state.settings.commuteCost||'').trim())missing.push({id:'commuteCost',label:'Cost per one-way journey'});
+  if(expense!=='none'&&!String(state.settings.commuteCost||'').trim())missing.push({id:'commuteCost',label:'Cost'});
   if(String($('otherExpenseType')?.value||'')&&!String(state.settings.otherExpenseCost||'').trim())missing.push({id:'otherExpenseCost',label:'Other additional expense cost'});
   if(!state.signature)missing.push({id:'setupSignature',label:'Sample signature'});
   return missing;
@@ -30,12 +30,16 @@ function formatPersonalNumber(v){const raw=String(v||'').trim();const digits=raw
 function formatAddressLines(v){let parts=String(v||'').split(/\r?\n|,/).map(x=>x.trim()).filter(Boolean);if(!parts.length)return [];const pc=getPostcode(v);if(pc){parts=parts.map(x=>x.replace(new RegExp(pc.replace(' ','\\s*'),'i'),'').trim()).filter(Boolean);parts.push(pc);}return parts.slice(0,5);}
 function updateSetupFieldStates(){qsa('#setup input:not([type="file"]):not([type="checkbox"]):not([type="hidden"]),#setup select,#setup textarea').forEach(el=>el.classList.toggle('has-value',String(el.value||'').trim()!==''));}
 function updateAdditionalExpenseUi(){
-  const type=$('commuteType')?.value||'none',hasExpense=type!=='none'&&type!=='';
+  const passengerUsed=!!(String($('passengerNames')?.value||'').trim()||String($('passengerMiles')?.value||'').trim()),busRailOption=$('busRailOption'),typeSelect=$('commuteType');
+  if(busRailOption){busRailOption.hidden=passengerUsed;busRailOption.disabled=passengerUsed;}
+  if(passengerUsed&&typeSelect?.value==='busrail'){typeSelect.value='none';state.settings.commuteType='none';state.settings.commuteCost='0';state.settings.expenseFrequency='journey';}
+  const type=typeSelect?.value||'none',hasExpense=type!=='none'&&type!=='';
+  if(type==='none'&&state.settings.commuteCost!=='0'){state.settings.commuteCost='0';if($('commuteCost'))$('commuteCost').value='£0.00';}
   if($('commuteCostRequiredMark'))$('commuteCostRequiredMark').hidden=!hasExpense;
   const showOther=type==='humber'||type==='parking';if($('otherExpenseFields'))$('otherExpenseFields').hidden=!showOther;
   if(!showOther&&state.settings.otherExpenseType){state.settings.otherExpenseType='';state.settings.otherExpenseCost='';if($('otherExpenseType'))$('otherExpenseType').value='';if($('otherExpenseCost'))$('otherExpenseCost').value='';}
   const otherChosen=showOther&&!!($('otherExpenseType')?.value||'');if($('otherExpenseCostRequiredMark'))$('otherExpenseCostRequiredMark').hidden=!otherChosen;
-  const frequencyEnabled=type==='parking'||type==='busrail',frequency=$('expenseFrequency');if(frequency){frequency.disabled=!frequencyEnabled;if(!frequencyEnabled){frequency.value='journey';state.settings.expenseFrequency='journey';}}
+  const frequencyEnabled=type==='parking'||type==='busrail',frequency=$('expenseFrequency'),journeyOption=$('perJourneyFrequencyOption');if(journeyOption){journeyOption.hidden=type==='parking';journeyOption.disabled=type==='parking';}if(frequency){frequency.disabled=!frequencyEnabled;if(type==='parking'&&!['daily','weekly','monthly'].includes(frequency.value)){frequency.value='daily';state.settings.expenseFrequency='daily';}else if(!frequencyEnabled){frequency.value='journey';state.settings.expenseFrequency='journey';}}
   if($('expenseFrequencyAdvice'))$('expenseFrequencyAdvice').hidden=!(type==='busrail'&&state.settings.expenseFrequency!=='journey');
   updateSetupFieldStates();
 }

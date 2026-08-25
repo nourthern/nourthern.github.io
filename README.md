@@ -4,12 +4,12 @@ Privacy-first static PWA for preparing monthly travel claims from an Allocate IC
 
 ## v15 highlights
 
-- Professional header shortcuts for About, Help/feedback, notification settings and local-data backup.
+- Professional header shortcuts with About, Help and notifications at the banner's lower right, and backup beside the local-save status.
 - Notification health indicator, simplified reminder pop-ups and server-reported push delivery failures.
 - End-to-end example data generator with 22 synthetic shifts for pre-release human testing.
-- Flexible recurring fares/parking/toll expenses with per-journey, daily, weekly and monthly placement.
+- Flexible recurring fares/parking/toll expenses, with passenger/fare conflict prevention and outbound-only daily, weekly or monthly parking charges.
 - Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
-- Larger generated PDF row text, with the template legend shown on the final page only.
+- Larger generated PDF text, with uniform raised page-one data, a compact final-page legend and no trailing table-edge artefact.
 - All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
 
 ## v13 highlights
