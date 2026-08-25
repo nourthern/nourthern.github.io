@@ -9,7 +9,7 @@ Privacy-first static PWA for preparing monthly travel claims from an Allocate IC
 - End-to-end example data generator with 22 synthetic shifts for pre-release human testing.
 - Flexible recurring fares/parking/toll expenses with per-journey, daily, weekly and monthly placement.
 - Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
-- Larger generated PDF row text and clean continuation pages without the template legend/footer.
+- Larger generated PDF row text, with the template legend shown on the final page only.
 - All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
 
 ## v13 highlights

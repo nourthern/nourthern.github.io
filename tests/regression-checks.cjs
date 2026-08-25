@@ -32,9 +32,9 @@ assert.equal(
 assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\\nOpen Travel Claims Manager:/);
 assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
 assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
-assert.match(app04, /drawPage2\(c\.getContext\('2d'\),img2,chunk,isLast\?claimTotals:null\)/);
+assert.match(app04, /drawPage2\(c\.getContext\('2d'\),img2,chunk,isLast\?claimTotals:null,isLast\)/);
 assert.match(app04, /function drawPageNumber\(ctx,page,total\)/);
-assert.match(app04, /ctx\.fillRect\(0,752,1404,240\)/);
+assert.match(app04, /if\(!showLegend\)\{ctx\.fillStyle='#fff';ctx\.fillRect\(0,752,1404,240\);\}/);
 assert.match(app04, /drawWrappedTextFit/);
 assert.match(app04, /ctx\.fillText\(fmtNum\(claimTotals\.pass\),869,bottom\+12\)/);
 assert.match(app04, /drawTextFit\(ctx,r\.mealFrom\|\|'',1195,y/);

@@ -3,7 +3,7 @@
 ## Passed
 
 - JavaScript syntax checks passed for the application, all six application parts, service worker and Cloudflare Worker.
-- `tests/regression-checks.cjs` passed, including DOM references, reminder ICS content, PDF continuation-page masking, yearly telemetry, screenshot feedback, notification status and the 22-shift example-data control.
+- `tests/regression-checks.cjs` passed, including DOM references, reminder ICS content, intermediate-page legend masking, yearly telemetry, screenshot feedback, notification status and the 22-shift example-data control.
 - The Cloudflare Worker production build completed successfully with only the D1 database, allowed-origin and VAPID-subject bindings.
 - The existing remote D1 database was inspected before migration. Six additive v15 columns were then applied successfully without replacing existing tables or records.
 - Worker v15 deployed successfully. Live checks confirmed push is configured and `/api/stats` returns both three-month and current-year aggregate fields.
@@ -16,7 +16,7 @@
 - Screenshot attachment preparation was checked using the supplied image: preview, resizing/compression and removal worked without submitting the image as a live report.
 - A synthetic August claim containing 22 shifts was exported as a three-page PDF and every page was rendered for visual inspection.
 - The PDF table and cell widths are unchanged. Entered row data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping.
-- The claim-type and receipt legend is absent from continuation pages 2 and 3. Page numbers remain visible and totals remain on the final page only.
+- The claim-type and receipt legend is absent from intermediate page 2 and displayed on final page 3 only. Page numbers remain visible and totals remain on the final page only.
 
 ## Deliberately retained for testing
 
