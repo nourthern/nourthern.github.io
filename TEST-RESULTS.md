@@ -1,12 +1,12 @@
-# Travel Claims Manager v15 — test results
+# Travel Claims Manager v16 — test results
 
 ## Passed
 
 - JavaScript syntax checks passed for the application, all six application parts, service worker and Cloudflare Worker.
-- `tests/regression-checks.cjs` passed, including DOM references, reminder ICS content, intermediate-page legend masking, yearly telemetry, screenshot feedback, notification status and the 22-shift example-data control.
+- `tests/regression-checks.cjs` passed, including DOM references, reminder ICS content, intermediate-page legend masking, rolling telemetry, screenshot feedback, notification status and the 22-shift example-data control.
 - The Cloudflare Worker production build completed successfully with only the D1 database, allowed-origin and VAPID-subject bindings.
 - The existing remote D1 database was inspected before migration. Six additive v15 columns were then applied successfully without replacing existing tables or records.
-- Worker v15 deployed successfully. Live checks confirmed push is configured and `/api/stats` returns both three-month and current-year aggregate fields.
+- Worker v16 deployed successfully. Live checks confirmed push is configured and `/api/stats` returns both three-month and rolling 12-month aggregate fields.
 - Desktop and 762 × 642 layouts were visually checked. Backup sits immediately before **Saved locally**, while About, Help and notifications align at the banner's lower right without the inner circles around “i” and “?”.
 - Header ordering was checked with **Install app** immediately after the save icon and before the local-save status.
 - The example-data button populated synthetic Setup details, a sample signature and 22 shifts in the current month.

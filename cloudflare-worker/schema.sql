@@ -1,4 +1,4 @@
--- Travel Claims Manager v15 reminder, telemetry and diagnostics database.
+-- Travel Claims Manager v16 reminder, telemetry and diagnostics database.
 -- Deliberately excludes names, addresses, personal numbers, registrations,
 -- calendar URLs, shift details, journey rows, signatures and PDF contents.
 
@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS telemetry_installations (
   app_version TEXT NOT NULL,
   claimed_last_3_months_pence INTEGER NOT NULL DEFAULT 0,
   claimed_current_year_pence INTEGER NOT NULL DEFAULT 0,
+  claimed_last_12_months_pence INTEGER NOT NULL DEFAULT 0,
   calendar_imports INTEGER NOT NULL DEFAULT 0,
   pdfs_created INTEGER NOT NULL DEFAULT 0,
   backups_created INTEGER NOT NULL DEFAULT 0,

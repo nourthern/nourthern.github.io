@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='15';
+const APP_VERSION='16';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -123,7 +123,7 @@ function claimedLastThreeMonthsPence(){
   return Math.max(0,Math.round(total*100));
 }
 
-function claimedCurrentYearPence(){const year=String(new Date().getFullYear());const total=state.expenseLog.filter(item=>String(item.month||'').startsWith(year+'-')).reduce((sum,item)=>sum+num(item.total),0);return Math.max(0,Math.round(total*100));}
+function claimedLastTwelveMonthsPence(){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-12);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);return Math.max(0,Math.round(total*100));}
 
 async function telemetryRequest(path,init={}){
   const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+path,{cache:'no-store',...init,headers:{'Content-Type':'application/json',...(init.headers||{})}});
@@ -141,7 +141,8 @@ async function syncTelemetry(){
     deviceToken:identity.deviceToken,
     appVersion:APP_VERSION,
     claimedLastThreeMonthsPence:claimedLastThreeMonthsPence(),
-    claimedCurrentYearPence:claimedCurrentYearPence(),
+    claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence(),
+    claimedCurrentYearPence:claimedLastTwelveMonthsPence(),
     counts:telemetry.counts
   })});
   telemetry.lastSyncedAt=new Date().toISOString();
@@ -175,15 +176,15 @@ if(telemetryToggle){
 }
 
 async function loadAboutStats(){
-  const status=$('aboutStatsStatus'),showYear=new Date().getMonth()>=4;$('aboutYearCard').hidden=!showYear;
+  const status=$('aboutStatsStatus'),twelveMonthCard=$('aboutYearCard');twelveMonthCard.hidden=false;twelveMonthCard.querySelector('span').textContent='claimed by all users in the last 12 months on record';
   try{
     const stats=await telemetryRequest('/api/stats',{method:'GET',headers:{}});
     $('aboutUsers').textContent=Number(stats.users||0).toLocaleString('en-GB');
     $('aboutClaimed').textContent=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(stats.claimedLastThreeMonthsPence||0)/100);
-    if(showYear)$('aboutClaimedYear').textContent=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(stats.claimedCurrentYearPence||0)/100);
+    $('aboutClaimedYear').textContent=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(stats.claimedLastTwelveMonthsPence??stats.claimedCurrentYearPence??0)/100);
     status.textContent='Aggregated figures contain no names or individual claim records.';
   }catch(error){
-    $('aboutUsers').textContent='Unavailable';$('aboutClaimed').textContent='Unavailable';if(!$('aboutYearCard').hidden)$('aboutClaimedYear').textContent='Unavailable';
+    $('aboutUsers').textContent='Unavailable';$('aboutClaimed').textContent='Unavailable';$('aboutClaimedYear').textContent='Unavailable';
     status.textContent='Aggregated figures could not be loaded at the moment.';
   }
 }
@@ -215,6 +216,8 @@ async function compressScreenshot(file){
   const maxDimension=1600,scale=Math.min(1,maxDimension/Math.max(source.width,source.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(source.width*scale));canvas.height=Math.max(1,Math.round(source.height*scale));canvas.getContext('2d').drawImage(source,0,0,canvas.width,canvas.height);source.close?.();if(revokeUrl)URL.revokeObjectURL(revokeUrl);
   let quality=.82,blob=null;for(let attempt=0;attempt<4;attempt++){blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));if(blob&&blob.size<=1400*1024)break;quality-=.14;}if(!blob||blob.size>1500*1024)throw new Error('The screenshot is still too large after resizing. Please crop it and try again.');return blob;
 }
+
+{const privacyAggregateItem=qsa('#privacyDialog li').find(item=>item.textContent.includes('current calendar year'));if(privacyAggregateItem)privacyAggregateItem.textContent=privacyAggregateItem.textContent.replace('the current calendar year','the last 12 months on record');}
 function prepareBugReport(){
   $('bugDescription').value='';$('includeTechnicalDetails').checked=true;
   $('technicalDetails').textContent=JSON.stringify(technicalSnapshot(),null,2);

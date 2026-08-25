@@ -1,5 +1,5 @@
 /**
- * Travel Claims Manager Worker v15
+ * Travel Claims Manager Worker v16
  * - POST /ics: privacy-conscious Allocate ICS fetcher.
  * - /api/push/*: optional Web Push + D1 reminder service.
  * - /api/telemetry, /api/stats and /api/bug-report: minimal aggregate telemetry.
@@ -69,14 +69,14 @@ async function updateTelemetry(request,env){
   if(!id||id.length>100||!token)return jsonError(request,env,400,'Missing installation credentials.');
   const existing=await env.DB.prepare('SELECT token_hash FROM telemetry_installations WHERE installation_id=?').bind(id).first(),tokenHash=await sha256Hex(token);
   if(existing&&!await safeTextEqual(existing.token_hash,tokenHash))return jsonError(request,env,403,'Installation credentials do not match.');
-  const counts=body.counts||{},claimed=Math.min(1000000000,Math.max(0,Math.round(Number(body.claimedLastThreeMonthsPence)||0))),claimedYear=Math.min(2000000000,Math.max(0,Math.round(Number(body.claimedCurrentYearPence)||0))),version=String(body.appVersion||'unknown').slice(0,20);
-  await env.DB.prepare(`INSERT INTO telemetry_installations (installation_id,token_hash,app_version,claimed_last_3_months_pence,claimed_current_year_pence,calendar_imports,pdfs_created,backups_created,notification_setups,last_seen_at)
-VALUES (?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-ON CONFLICT(installation_id) DO UPDATE SET app_version=excluded.app_version,claimed_last_3_months_pence=excluded.claimed_last_3_months_pence,claimed_current_year_pence=excluded.claimed_current_year_pence,calendar_imports=excluded.calendar_imports,pdfs_created=excluded.pdfs_created,backups_created=excluded.backups_created,notification_setups=excluded.notification_setups,last_seen_at=CURRENT_TIMESTAMP`).bind(id,tokenHash,version,claimed,claimedYear,boundedCount(counts.calendarImports),boundedCount(counts.pdfsCreated),boundedCount(counts.backupsCreated),boundedCount(counts.notificationSetups)).run();
+  const counts=body.counts||{},claimed=Math.min(1000000000,Math.max(0,Math.round(Number(body.claimedLastThreeMonthsPence)||0))),claimedYear=Math.min(2000000000,Math.max(0,Math.round(Number(body.claimedCurrentYearPence)||0))),claimedTwelve=Math.min(2000000000,Math.max(claimed,Math.round(Number(body.claimedLastTwelveMonthsPence??claimedYear)||0))),version=String(body.appVersion||'unknown').slice(0,20);
+  await env.DB.prepare(`INSERT INTO telemetry_installations (installation_id,token_hash,app_version,claimed_last_3_months_pence,claimed_current_year_pence,claimed_last_12_months_pence,calendar_imports,pdfs_created,backups_created,notification_setups,last_seen_at)
+VALUES (?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+ON CONFLICT(installation_id) DO UPDATE SET app_version=excluded.app_version,claimed_last_3_months_pence=excluded.claimed_last_3_months_pence,claimed_current_year_pence=excluded.claimed_current_year_pence,claimed_last_12_months_pence=excluded.claimed_last_12_months_pence,calendar_imports=excluded.calendar_imports,pdfs_created=excluded.pdfs_created,backups_created=excluded.backups_created,notification_setups=excluded.notification_setups,last_seen_at=CURRENT_TIMESTAMP`).bind(id,tokenHash,version,claimed,claimedYear,claimedTwelve,boundedCount(counts.calendarImports),boundedCount(counts.pdfsCreated),boundedCount(counts.backupsCreated),boundedCount(counts.notificationSetups)).run();
   return json(request,env,{ok:true});
 }
 async function removeTelemetry(request,env){const body=await readJson(request),id=String(body.installationId||'');if(!await authenticateTelemetry(request,env,id))return jsonError(request,env,403,'Installation authentication failed.');await env.DB.prepare('DELETE FROM telemetry_installations WHERE installation_id=?').bind(id).run();return json(request,env,{ok:true});}
-async function aggregateStats(request,env){if(!env.DB)return jsonError(request,env,503,'Usage statistics are not configured.');const row=await env.DB.prepare(`SELECT COUNT(*) AS users, COALESCE(SUM(claimed_last_3_months_pence),0) AS claimed, COALESCE(SUM(claimed_current_year_pence),0) AS claimed_year FROM telemetry_installations WHERE last_seen_at >= datetime('now','-90 days')`).first();return json(request,env,{ok:true,users:Number(row?.users)||0,claimedLastThreeMonthsPence:Number(row?.claimed)||0,claimedCurrentYearPence:Number(row?.claimed_year)||0});}
+async function aggregateStats(request,env){if(!env.DB)return jsonError(request,env,503,'Usage statistics are not configured.');const row=await env.DB.prepare(`SELECT COUNT(*) AS users, COALESCE(SUM(claimed_last_3_months_pence),0) AS claimed, COALESCE(SUM(claimed_last_12_months_pence),0) AS claimed_twelve FROM telemetry_installations WHERE last_seen_at >= datetime('now','-90 days')`).first(),claimedTwelve=Number(row?.claimed_twelve)||0;return json(request,env,{ok:true,users:Number(row?.users)||0,claimedLastThreeMonthsPence:Number(row?.claimed)||0,claimedLastTwelveMonthsPence:claimedTwelve,claimedCurrentYearPence:claimedTwelve});}
 async function purgeExpiredBugReports(env){await env.DB.prepare('DELETE FROM bug_reports WHERE expires_at <= CURRENT_TIMESTAMP').run();}
 async function createBugReport(request,env){
   if(!env.DB)return jsonError(request,env,503,'Bug reporting is not configured.');

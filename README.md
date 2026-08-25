@@ -1,6 +1,11 @@
-# Travel Claims Manager v15
+# Travel Claims Manager v16
 
 Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
+
+## v16 highlights
+
+- About statistics now compare the rolling last three months with the rolling last 12 months on record, using the same locally held expense-log history.
+- Existing aggregate contributions are migrated to a safe baseline that cannot make the 12-month figure smaller than the three-month figure.
 
 ## v15 highlights
 
@@ -10,7 +15,7 @@ Privacy-first static PWA for preparing monthly travel claims from an Allocate IC
 - Flexible recurring fares/parking/toll expenses, with passenger/fare conflict prevention and outbound-only daily, weekly or monthly parking charges.
 - Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
 - Larger generated PDF text, with uniform raised page-one data, a compact final-page legend and no trailing table-edge artefact.
-- All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
+- All-user longer-period claim aggregate alongside the rolling three-month figure.
 - Automatic release checks and page refreshes keep the installed/offline-capable site current without clearing its local data.
 - The About panel identifies Travel Claims Manager as an independent project not affiliated with NLaG Trust or Humber Health Partnership.
 - Setup supports independent frequency rules for a second parking expense and prevents the same parking/toll category being selected twice.
@@ -55,10 +60,10 @@ ICS fetching continues to use:
 
 `https://travel-claims-ics.n-e-alwaa.workers.dev/`
 
-The Worker and D1 schema must be updated to v15 for notification health, annual telemetry and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
+The Worker and D1 schema must be updated to v16 for notification health, rolling aggregate telemetry and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
 
 Calendar `.ics` reminders work even if push/D1 is not configured.
 
 ## Privacy boundary
 
-Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and current-year cumulative amounts per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.
+Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and rolling 12-month cumulative amounts per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.

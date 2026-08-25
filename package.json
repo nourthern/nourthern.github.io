@@ -8,7 +8,7 @@
     "cf:deploy": "wrangler deploy --config cloudflare-worker/wrangler.jsonc"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260822.1",
+    "@cloudflare/workers-types": "^5.20260825.1",
     "@types/node": "^26.2.0",
     "wrangler": "^4.125.0"
   }

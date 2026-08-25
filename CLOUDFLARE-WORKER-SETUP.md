@@ -1,6 +1,6 @@
-# Cloudflare setup — Travel Claims Manager v15
+# Cloudflare setup — Travel Claims Manager v16
 
-This version keeps the existing ICS proxy and Web Push reminders, and adds **push-delivery health, annual aggregate statistics, and optional time-limited compressed feedback screenshots in D1**.
+This version keeps the existing ICS proxy and Web Push reminders, and includes **push-delivery health, rolling aggregate statistics, and optional time-limited compressed feedback screenshots in D1**.
 
 The calendar-reminder `.ics` button works without D1. You only need the steps below if you want phone/browser push notifications.
 
@@ -20,7 +20,7 @@ Telemetry data:
 
 - the same random installation ID and one-way token hash
 - app version, last-seen date and coarse lifetime feature-use counts
-- current cumulative claim totals for the last three months and current calendar year, in pence; each replaces its previous value and is used only for all-user totals
+- current cumulative claim totals for the last three months and the last 12 months on record, in pence; each replaces its previous value and is used only for all-user totals
 
 Feedback reports contain the user's description and optional coarse technical details, linked by a one-off report ID. An optional resized screenshot is stored in the same private D1 record. Reports and screenshots expire after 90 days.
 
@@ -32,7 +32,7 @@ Outside content a user deliberately includes in feedback text or a screenshot, D
 2. Open **Workers & Pages**.
 3. Select your existing `travel-claims-ics` Worker.
 4. Choose **Edit code**.
-5. Replace the existing code with `cloudflare-worker/worker.js` from this v15 package.
+5. Replace the existing code with `cloudflare-worker/worker.js` from this v16 package.
 6. Deploy/save the Worker.
 
 Keep the same Worker address:
@@ -51,7 +51,7 @@ The website already has this address built in.
 6. Open the database's **Console**.
 7. Copy all of `cloudflare-worker/schema.sql`, paste it into the D1 console and run it.
 
-For a new database, run `cloudflare-worker/schema.sql`. For an existing v13/v14 database, run `cloudflare-worker/migrate-v15.sql` once before deploying the v15 Worker.
+For a new database, run `cloudflare-worker/schema.sql`. For an existing v15 database, run `cloudflare-worker/migrate-v16.sql` once before deploying the v16 Worker. Older databases must first apply the earlier numbered migrations in order.
 
 ## Part C — bind D1 to your existing Worker
 
