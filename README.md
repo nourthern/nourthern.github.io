@@ -1,6 +1,16 @@
-# Travel Claims Manager v13
+# Travel Claims Manager v15
 
 Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
+
+## v15 highlights
+
+- Professional header shortcuts for About, Help/feedback, notification settings and local-data backup.
+- Notification health indicator, simplified reminder pop-ups and server-reported push delivery failures.
+- End-to-end example data generator with 22 synthetic shifts for pre-release human testing.
+- Flexible recurring fares/parking/toll expenses with per-journey, daily, weekly and monthly placement.
+- Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
+- Larger generated PDF row text and clean continuation pages without the template legend/footer.
+- All-user current-year claim aggregate, shown from May onward alongside the rolling three-month figure.
 
 ## v13 highlights
 
@@ -40,10 +50,10 @@ ICS fetching continues to use:
 
 `https://travel-claims-ics.n-e-alwaa.workers.dev/`
 
-The Worker and D1 schema must be updated to v13 for telemetry, aggregated About figures and bug reporting. See `CLOUDFLARE-WORKER-SETUP.md`.
+The Worker and D1 schema must be updated to v15 for notification health, annual telemetry and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
 
 Calendar `.ics` reminders work even if push/D1 is not configured.
 
 ## Privacy boundary
 
-Claim forms, names, addresses, personal numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, one replaceable three-month cumulative amount per installation, and deliberately submitted bug reports. It does not store claim rows or individual claim history.
+Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and current-year cumulative amounts per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.

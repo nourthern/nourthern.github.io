@@ -1,55 +1,27 @@
-# Travel Claims Manager v13 — test results
+# Travel Claims Manager v15 — test results
 
 ## Passed
 
-- `app.js` JavaScript syntax check.
-- `sw.js` service-worker syntax check.
-- Cloudflare Worker syntax check.
-- Static DOM reference check: every `$('...')` element reference in the application exists in `index.html`.
-- D1 `schema.sql` executed twice successfully against an in-memory SQLite database (idempotency check) and created the expected six tables.
-- Existing ICS Worker tests still pass, including allowed-host and CORS-origin checks.
-- Push-config route tested with and without D1/VAPID configuration.
-- Push-registration route tested with SQL placeholder/binding-count validation.
-- VAPID signing + empty Web Push request path tested using a generated P-256 key pair and a mocked FCM push endpoint; test returned success.
-- Reminder UI controls confirmed present: local calendar reminder, four push categories, advanced timing controls, enable/disable/test controls.
-- Deep-link targets confirmed in the notification Worker for Shifts and Claim Form month routes.
-- Service-worker notification click handler implemented to focus an existing app window where possible, otherwise open the relevant deep link.
-- D1 storage model checked to exclude claim rows, names, addresses, personal numbers, vehicle registrations, signatures, ICS URLs, shift details, mileage, toll values and individual claim totals/history. The only financial contribution is one replaceable three-month cumulative amount per installation.
-- Signature dialog wording confirmed as **Save signature** and saved-signature preview element confirmed on Setup.
-- Payroll email wording confirmed to use **and proof of toll crossings** when Humber toll is configured.
-- Vehicle registration input and restored data confirmed to normalise to uppercase.
-- Claim regeneration tested after changing Setup; the preview recalculated all rows and totals.
-- Edited subsistence start/end times and amount confirmed visible after leaving edit mode.
-- A 26-row, three-page June claim was rendered and visually checked: page 2 has no totals row; page 3 alone shows 429 miles, 52 passenger miles, £39.00 miscellaneous and £5.25 subsistence.
-- The generated PDF shows **START** on one line and renders subsistence row values.
-- Payroll month wording regression-tested for one month, multiple months in one year, unsorted duplicates and the cross-year phrase **“October, November and December 2026, and January 2027”**.
-- The downloaded calendar file was inspected and confirmed to contain the requested description line break and location.
-- `tests/regression-checks.cjs` provides repeatable checks for month wording, calendar content and final-page PDF totals logic.
-- Setup order and wording confirmed: calendar connection precedes personal details; **Load backup** is inside Setup; the top action is **Backup site data**.
-- Calendar-link dialog confirmed to include close controls, direct Loop/iCalendar links, the supplied illustrated guide and clipboard import.
-- Study-event alert and orange-review wording confirmed.
-- Mobile/desktop document-preview tap handler confirmed to expose **Edit cells?** and switch the relevant month into table-edit mode.
-- Monthly calendar reminder confirmed to contain an unlimited `RRULE:FREQ=MONTHLY;INTERVAL=1` recurrence.
-- PDF generation regression checks confirm page counts on every page and final-page-only footer/totals behaviour.
-- DRAFT Help, About, privacy and bug-report dialogs confirmed present with close controls.
-- Telemetry endpoints, opt-out deletion, aggregate statistics and 90-day bug-report expiry/cleanup confirmed in code and schema validation.
+- JavaScript syntax checks passed for the application, all six application parts, service worker and Cloudflare Worker.
+- `tests/regression-checks.cjs` passed, including DOM references, reminder ICS content, PDF continuation-page masking, yearly telemetry, screenshot feedback, notification status and the 22-shift example-data control.
+- The Cloudflare Worker production build completed successfully with only the D1 database, allowed-origin and VAPID-subject bindings.
+- The existing remote D1 database was inspected before migration. Six additive v15 columns were then applied successfully without replacing existing tables or records.
+- Worker v15 deployed successfully. Live checks confirmed push is configured and `/api/stats` returns both three-month and current-year aggregate fields.
+- Desktop and narrow mobile layouts were visually checked. The four header actions wrap cleanly and dialogs remain usable.
+- The example-data button populated synthetic Setup details, a sample signature and 22 shifts in the current month.
+- Calendar-source behaviour was checked: a saved iCalendar link hides file import on Shifts; local ICS use shows the last update date and the manual-update reminder.
+- Required Setup validation marks missing inputs in red, including paired passenger fields and expense-cost dependencies.
+- Additional-expense generation was checked for per-journey, daily, weekly and monthly frequency placement. Frequency is changeable only for parking and bus/rail fares.
+- Notification state handling was checked for calendar setup, push setup, no configured reminder, and failed push delivery.
+- Screenshot attachment preparation was checked using the supplied image: preview, resizing/compression and removal worked without submitting the image as a live report.
+- A synthetic August claim containing 22 shifts was exported as a three-page PDF and every page was rendered for visual inspection.
+- The PDF table and cell widths are unchanged. Entered row data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping.
+- The claim-type and receipt legend is absent from continuation pages 2 and 3. Page numbers remain visible and totals remain on the final page only.
 
-## Reminder behaviour implemented
+## Deliberately retained for testing
 
-- Monthly claim reminder.
-- Deadline warning before the 5th.
-- Optional deadline-day reminder on the 5th.
-- One overdue/not-marked-submitted reminder after the usual deadline.
-- Unfinished-claim reminder.
-- Immediate rota-change browser/PWA notification when an ICS refresh detects added, removed or changed shifts.
-- Notifications stop for months reported as submitted.
-- Notification lock-screen text contains only generic month/count information; detailed shifts remain local.
-- Calendar reminder is generated locally as a recurring `.ics` event with a Europe/London timezone definition.
+- The **Fill with example data and shifts** button and its on-page warning remain visible while the website is under development. Remove this control before the site is shared as final.
 
-## Important deployment limitation
+## Remaining real-device check
 
-A true end-to-end Web Push delivery test to a real Android/iOS/browser subscription cannot be performed inside this build environment because it does not own a user-device push subscription. The Worker-side VAPID request path was tested with a mocked push service. After configuring D1/VAPID in Cloudflare, use **Send test notification** on a real device to validate the final browser/push-service leg.
-
-The local Chromium executable required for automated visual browser screenshots was not available. Static DOM/asset checks, JavaScript syntax checks and regression tests passed, but the release should still receive a brief real-device smoke test on Android Chrome and an installed iOS Home Screen app.
-
-Cloudflare deployment was not performed because the current environment requires explicit user approval before transmitting the changed Worker bundle. Apply `cloudflare-worker/schema.sql` to the existing remote D1 database before deploying `cloudflare-worker/worker.js`.
+- Browser push delivery still needs one final smoke test using **Send test notification** on each supported real-device/browser combination. The server, VAPID configuration and failure-reporting paths are deployed and responding.

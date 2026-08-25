@@ -24,16 +24,22 @@ function generatedShiftLabel(e){
   return 'Day shift';
 }
 function groupLinkedEvents(events){const groups=[];for(const e of events){const start=new Date(e.start),end=new Date(e.end||e.start);const last=groups[groups.length-1];if(last){const prevEnd=new Date(last[last.length-1].end||last[last.length-1].start);const gap=start-prevEnd;if(Math.abs(gap)<=60*60*1000){last.push(e);continue;}}groups.push([e]);}return groups;}
+function expenseWeekKey(date){const d=new Date(date);d.setHours(0,0,0,0);const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
 'use strict';
 function makeClaimRows(key){
-  const rows=[],commute=Number(state.settings.commuteMinutes)||0,miles=state.settings.claimableMiles===''?'':Number(state.settings.claimableMiles),passenger=state.settings.passengerMiles===''?'':Number(state.settings.passengerMiles),miscCost=Number(state.settings.commuteCost)||0,expenseLabels={parking:'PARKING',humber:'Humber toll',busrail:'BUS/ RAIL FARES'},expenseLabel=expenseLabels[state.settings.commuteType]||'',passengerNames=String(state.settings.passengerNames||'').trim(),miscLabel=[expenseLabel,passengerNames?`Passenger(s): ${passengerNames}`:''].filter(Boolean).join(' · '),base=BASES[state.settings.baseSite]||{postcode:''},home=getPostcode(state.settings.homeAddress);
+  const rows=[],commute=Number(state.settings.commuteMinutes)||0,miles=state.settings.claimableMiles===''?'':Number(state.settings.claimableMiles),passenger=state.settings.passengerMiles===''?'':Number(state.settings.passengerMiles),mainCost=Number(state.settings.commuteCost)||0,otherCost=Number(state.settings.otherExpenseCost)||0,expenseLabels={parking:'Parking tickets',humber:'Humber toll',busrail:'Bus/rail fares'},otherLabels={parking:'Parking ticket',humber:'Humber toll'},expenseLabel=expenseLabels[state.settings.commuteType]||'',otherExpenseLabel=(state.settings.commuteType==='humber'||state.settings.commuteType==='parking')?(otherLabels[state.settings.otherExpenseType]||''):'',passengerNames=String(state.settings.passengerNames||'').trim(),passengerLabel=passengerNames?`Passenger(s): ${passengerNames}`:'',base=BASES[state.settings.baseSite]||{postcode:''},home=getPostcode(state.settings.homeAddress),frequencyAllowed=state.settings.commuteType==='parking'||state.settings.commuteType==='busrail',frequency=frequencyAllowed?(state.settings.expenseFrequency||'journey'):'journey',usedFrequencyKeys=new Set();
   for(const group of groupLinkedEvents(claimableEvents())){
     const first=group[0],last=group[group.length-1],firstStart=new Date(first.start),lastEnd=new Date(last.end||last.start),outDate=addMinutes(firstStart,-commute),homeArrive=addMinutes(lastEnd,commute);
     const firstLabel=generatedShiftLabel(first),lastLabel=generatedShiftLabel(last);
+    let frequencyKey='';if(frequency==='daily')frequencyKey=`day:${monthKey(outDate)}-${String(outDate.getDate()).padStart(2,'0')}`;else if(frequency==='weekly')frequencyKey='week:'+expenseWeekKey(outDate);else if(frequency==='monthly')frequencyKey='month:'+key;
+    const outboundInClaim=monthKey(outDate)===key,applyOutbound=frequency==='journey'||(outboundInClaim&&!usedFrequencyKeys.has(frequencyKey));if(frequency!=='journey'&&applyOutbound)usedFrequencyKeys.add(frequencyKey);
+    const expenseParts=[expenseLabel,otherExpenseLabel].filter(Boolean),expenseTotal=(expenseLabel?mainCost:0)+(otherExpenseLabel?otherCost:0);
+    const rowExpense=(apply,includePassenger=true)=>({miscLabel:[...(apply?expenseParts:[]),includePassenger?passengerLabel:''].filter(Boolean).join(' · '),miscAmount:apply&&expenseParts.length?expenseTotal:''});
+    const outExpense=rowExpense(applyOutbound),homeExpense=rowExpense(frequency==='journey');
     const generated=[
-      {id:first.id+'-out',date:outDate,start:outDate,end:firstStart,detail:`Work bound, ${firstLabel}`,from:home,to:base.postcode,miles,passengerMiles:passenger,miscLabel,miscAmount:expenseLabel?miscCost:'',mealFrom:'',mealTo:'',mealAmount:'',direction:'out',eventId:first.id},
-      {id:last.id+'-home',date:lastEnd,start:lastEnd,end:homeArrive,detail:`Home bound, ${lastLabel}`,from:base.postcode,to:home,miles,passengerMiles:passenger,miscLabel,miscAmount:expenseLabel?miscCost:'',mealFrom:'',mealTo:'',mealAmount:'',direction:'home',eventId:last.id}
+      {id:first.id+'-out',date:outDate,start:outDate,end:firstStart,detail:`Work bound, ${firstLabel}`,from:home,to:base.postcode,miles,passengerMiles:passenger,...outExpense,mealFrom:'',mealTo:'',mealAmount:'',direction:'out',eventId:first.id},
+      {id:last.id+'-home',date:lastEnd,start:lastEnd,end:homeArrive,detail:`Home bound, ${lastLabel}`,from:base.postcode,to:home,miles,passengerMiles:passenger,...homeExpense,mealFrom:'',mealTo:'',mealAmount:'',direction:'home',eventId:last.id}
     ];
     rows.push(...generated.filter(r=>monthKey(r.date)===key));
   }

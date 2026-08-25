@@ -1,4 +1,4 @@
-const CACHE='travel-claims-manager-v14';
+const CACHE='travel-claims-manager-v16';
 const SHELL=['./','./index.html','./styles.css','./app.js','./app-parts/app-00.js','./app-parts/app-01.js','./app-parts/app-02.js','./app-parts/app-03.js','./app-parts/app-04.js','./app-parts/app-05.js','./manifest.json','./icons/icon-192.png','./icons/icon-512.png','./template/page-1.jpg','./template/page-2.jpg','./icalendar-page-guide.jpg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('travel-claims-manager-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
