@@ -1,6 +1,11 @@
-# Travel Claims Manager v16
+# Travel Claims Manager v17
 
 Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
+
+## v17 highlights
+
+- Generated claim rows are taller and use larger fit-to-cell text without changing any column width.
+- Final-page totals now match the journey-row type size, and page numbers are centred.
 
 ## v16 highlights
 

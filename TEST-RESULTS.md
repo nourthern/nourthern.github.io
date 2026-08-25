@@ -1,4 +1,4 @@
-# Travel Claims Manager v16 — test results
+# Travel Claims Manager v17 — test results
 
 ## Passed
 
@@ -18,9 +18,9 @@
 - Notification state handling was checked for calendar setup, push setup, no configured reminder, and failed push delivery.
 - Screenshot attachment preparation was checked using the supplied image: preview, resizing/compression and removal worked without submitting the image as a live report.
 - A synthetic August claim containing 22 shifts was exported as a three-page PDF and every page was rendered for visual inspection.
-- The PDF table and cell widths are unchanged. Entered row data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping. Page-one imported data is larger, consistently sized and raised clear of its underline.
+- The PDF table and cell widths are unchanged. Journey rows are 28 px high and entered data uses larger fit-to-cell text, with automatic reduction only where needed to prevent clipping. Page-one imported data remains larger, consistently sized and raised clear of its underline.
 - The claim-type and receipt legend is absent from intermediate page 2 and displayed directly below the final table on page 3. The trailing right-edge line artefact is removed; page numbers and final-page-only totals remain intact.
-- A 34-row QA claim placed 33 unchanged-height rows on intermediate page 2 and reserved the final row, totals and legend for page 3. The output remained a valid three-page landscape A4 PDF.
+- A 34-row QA claim placed 29 taller rows on intermediate page 2 and reserved the final five rows, totals and legend for page 3. Final totals use the same 15 px scale as the rows, and every page number is centred. The output remained a valid three-page landscape A4 PDF.
 - Per-row claim type editing was verified with `PTR` carried into the PDF. The miscellaneous header displayed only **PARKING** and **NAME OF PASSENGERS**, omitted hotel costs, and row values contained the passenger name without a “Passenger(s):” prefix.
 - The generated filename was `Travel Claim - A Example - 2026-08.pdf`, confirming first-initial and surname naming.
 
