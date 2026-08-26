@@ -68,10 +68,10 @@ dialog{background:#fffdf9}
 /* PIER visual identity: approved coastal palette and extracted custom wordmark. */
 html,body{font-family:"Avenir Next","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
 h1,h2,h3,h4,.tab,.primary,.secondary{font-family:"Avenir Next Demi Bold","Segoe UI Semibold",Arial,sans-serif}
-.topbar{display:flex;align-items:center;padding:18px 28px;background:linear-gradient(112deg,#fffdf9 0%,#f5f0e8 54%,var(--shore-sand) 100%);color:var(--cool-dusk);border-bottom:4px solid var(--sunset-amber);box-shadow:0 7px 24px rgba(52,77,97,.16)}
-.brand-block{width:auto;margin:0}.brand-title-row{display:flex}.brand-logo{display:block;width:clamp(184px,21vw,292px);height:auto}.brand-block p{margin:4px 0 0 3px;text-align:left;color:var(--coastal-blue);font-size:clamp(14px,1.6vw,20px);font-weight:700;letter-spacing:.01em}
-.topbar-controls{width:auto;flex:1;margin-top:0}.topbar .save-status{color:var(--cool-dusk)}
-.header-icon-btn{color:var(--cool-dusk);border-color:rgba(52,77,97,.35);background:rgba(255,253,249,.5)}
+.topbar{position:relative;display:flex;min-height:280px;align-items:center;justify-content:center;padding:28px;background-image:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(52,77,97,.08) 58%,rgba(16,37,54,.45) 100%),url("icons/pier-sunset-hero.png");background-size:cover;background-position:center 56%;color:var(--cool-dusk);border-bottom:4px solid var(--sunset-amber);box-shadow:0 7px 24px rgba(52,77,97,.2);overflow:hidden}
+.brand-block{width:auto;margin:0 0 34px;text-align:center}.brand-title-row{display:flex;justify-content:center}.brand-logo{display:block;width:clamp(224px,24vw,340px);height:auto;filter:drop-shadow(0 2px 3px rgba(255,245,222,.42))}.brand-block p{margin:5px 0 0;text-align:center;color:var(--cool-dusk);font-size:clamp(16px,1.7vw,22px);font-weight:800;letter-spacing:.01em;text-shadow:0 1px 2px rgba(255,245,222,.78)}
+.topbar-controls{position:absolute;right:22px;bottom:16px;left:22px;width:auto;flex:1;margin-top:0}.topbar .save-status{color:#fff;text-shadow:0 1px 3px rgba(16,37,54,.8)}
+.header-icon-btn{color:var(--cool-dusk);border-color:rgba(255,255,255,.72);background:rgba(255,253,249,.78);backdrop-filter:blur(5px)}
 .header-icon-btn:hover,.header-icon-btn:focus-visible{color:#fff;background:var(--cool-dusk);border-color:var(--cool-dusk)}
 .notification-bell.needs-attention{color:var(--cool-dusk);border-color:var(--sunset-amber);background:var(--sunlit-gold)}
 .tabs{background:#fffdf9;border-color:var(--shore-sand);box-shadow:0 3px 12px rgba(52,77,97,.08)}
@@ -102,4 +102,4 @@ body.colour-blind-mode .shift.status-claim{border-color:#0072B2;background:repea
 body.colour-blind-mode .shift.status-no-claim{border-color:#5e6472;background:repeating-linear-gradient(45deg,#f3f3f3,#f3f3f3 8px,#e5e7eb 8px,#e5e7eb 16px);box-shadow:inset 5px 0 0 #5e6472}
 body.colour-blind-mode .shift.shift-study{border-color:#8a4f7d!important;border-left-color:#8a4f7d!important;background:repeating-linear-gradient(135deg,#f7eef5,#f7eef5 9px,#eddde9 9px,#eddde9 18px)!important;box-shadow:inset 5px 0 0 #8a4f7d}
 body.colour-blind-mode .study-review-alert{border-color:#8a4f7d!important;border-left-color:#8a4f7d!important;background:#f7eef5!important;color:var(--cool-dusk)}
-@media(max-width:700px){.topbar{align-items:flex-start;flex-direction:column}.topbar-controls{width:100%}.brand-logo{width:220px}.accessibility-toolbar{justify-content:flex-start}.accessibility-toolbar .toggle-line{border-radius:12px}.stats-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.topbar{min-height:255px;align-items:center;flex-direction:column;padding:24px 18px;background-position:35% center}.brand-block{margin:0 0 42px}.topbar-controls{right:14px;bottom:12px;left:14px;width:auto}.brand-logo{width:230px}.brand-block p{font-size:16px}.accessibility-toolbar{justify-content:flex-start}.accessibility-toolbar .toggle-line{border-radius:12px}.stats-grid{grid-template-columns:1fr 1fr}}
