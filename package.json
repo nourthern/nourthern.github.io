@@ -2,10 +2,12 @@
   "name": "travel-claims-manager",
   "private": true,
   "scripts": {
+    "build:site": "node scripts/build-site.mjs",
     "test": "node tests/regression-checks.cjs && node --check app.js && node --check sw.js && node --check cloudflare-worker/worker.js",
     "cf:types": "wrangler types --config cloudflare-worker/wrangler.jsonc cloudflare-worker/worker-configuration.d.ts",
     "cf:dry-run": "wrangler deploy --dry-run --config cloudflare-worker/wrangler.jsonc",
-    "cf:deploy": "wrangler deploy --config cloudflare-worker/wrangler.jsonc"
+    "cf:deploy": "wrangler deploy --config cloudflare-worker/wrangler.jsonc",
+    "cf:deploy:beta": "npm run build:site && wrangler deploy --config cloudflare-worker/wrangler.beta.jsonc"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260825.1",

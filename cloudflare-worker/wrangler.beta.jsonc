@@ -1,10 +1,14 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  "name": "travel-claims-ics",
+  "name": "pier-beta",
   "main": "worker.js",
   "compatibility_date": "2026-08-24",
   "compatibility_flags": ["nodejs_compat"],
   "preview_urls": false,
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "beta.pier.bynour.uk", "custom_domain": true }
+  ],
   "vars": {
     "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk",
     "VAPID_SUBJECT": "https://pier.bynour.uk"
@@ -16,12 +20,14 @@
       "database_id": "245e7146-ec5c-41b3-ba83-9e502298f094"
     }
   ],
-  "triggers": {
-    "crons": ["0 * * * *"]
+  "assets": {
+    "directory": "../site-dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/dashboard*", "/api/dashboard/*"]
   },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
   }
 }
-

@@ -64,7 +64,7 @@ function ensureReminderIdentity(){
 }
 function bindReminderSettings(rebind=false){
   const r=ensureReminderIdentity();
-  const defs=[['calendarReminderDay','calendarDay','number'],['calendarReminderTime','calendarTime','text'],['pushMonthly','pushMonthly','check'],['pushDeadline','pushDeadline','check'],['pushRota','pushRota','check'],['pushUnfinished','pushUnfinished','check'],['pushReminderTime','pushReminderTime','text'],['pushMonthlyDay','pushMonthlyDay','number'],['pushDeadlineDays','pushDeadlineDays','number'],['pushUnfinishedDay','pushUnfinishedDay','number'],['pushDeadlineToday','pushDeadlineToday','check']];
+  const defs=[['calendarReminderDay','calendarDay','number'],['calendarReminderTime','calendarTime','text'],['pushMonthly','pushMonthly','check'],['pushDeadline','pushDeadline','check'],['pushRota','pushRota','check'],['pushUnfinished','pushUnfinished','check'],['pushReminderTime','pushReminderTime','text'],['pushDeadlineDays','pushDeadlineDays','number'],['pushUnfinishedDay','pushUnfinishedDay','number']];
   defs.forEach(([id,key,kind])=>{const el=$(id);if(!el)return;if(kind==='check')el.checked=!!r[key];else el.value=r[key]??'';if(!rebind&&!el.dataset.bound){const save=()=>{r[key]=kind==='check'?el.checked:(kind==='number'?Number(el.value):el.value);saveState();if(r.pushEnabled)syncPushRegistration().catch(markPushFailure);};el.addEventListener('change',save);el.addEventListener('input',save);el.dataset.bound='1';}});
   updatePushUi();
 }

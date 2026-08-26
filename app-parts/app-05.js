@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='18';
+const APP_VERSION='19';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -113,7 +113,7 @@ function incrementTelemetry(key,amount=1){
 }
 
 const exportPdfForMonthBase=exportPdfForMonth;
-exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);incrementTelemetry('pdfsCreated');return pages;};
+exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);state.telemetry.lastPdfCreatedAt=new Date().toISOString();incrementTelemetry('pdfsCreated');return pages;};
 $('backupBtn')?.addEventListener('click',()=>incrementTelemetry('backupsCreated'));
 $('enablePush')?.addEventListener('click',()=>setTimeout(()=>{if(state.reminders?.pushEnabled)incrementTelemetry('notificationSetups');},1200));
 
@@ -124,6 +124,8 @@ function claimedLastThreeMonthsPence(){
 }
 
 function claimedLastTwelveMonthsPence(){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-12);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);return Math.max(0,Math.round(total*100));}
+
+function milesClaimedSince(months){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-months);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.miles),0);return Math.max(0,Math.round(total*10));}
 
 async function telemetryRequest(path,init={}){
   const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+path,{cache:'no-store',...init,headers:{'Content-Type':'application/json',...(init.headers||{})}});
@@ -143,6 +145,9 @@ async function syncTelemetry(){
     claimedLastThreeMonthsPence:claimedLastThreeMonthsPence(),
     claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence(),
     claimedCurrentYearPence:claimedLastTwelveMonthsPence(),
+    milesLastThreeMonthsTenths:milesClaimedSince(3),
+    milesLastTwelveMonthsTenths:milesClaimedSince(12),
+    lastPdfCreatedAt:telemetry.lastPdfCreatedAt||'',
     counts:telemetry.counts
   })});
   telemetry.lastSyncedAt=new Date().toISOString();
@@ -176,15 +181,17 @@ if(telemetryToggle){
 }
 
 async function loadAboutStats(){
-  const status=$('aboutStatsStatus'),twelveMonthCard=$('aboutYearCard');twelveMonthCard.hidden=false;twelveMonthCard.querySelector('span').textContent='claimed by all users in the last 12 months on record';
+  const status=$('aboutStatsStatus');
   try{
     const stats=await telemetryRequest('/api/stats',{method:'GET',headers:{}});
     $('aboutUsers').textContent=Number(stats.users||0).toLocaleString('en-GB');
     $('aboutClaimed').textContent=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(stats.claimedLastThreeMonthsPence||0)/100);
     $('aboutClaimedYear').textContent=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(Number(stats.claimedLastTwelveMonthsPence??stats.claimedCurrentYearPence??0)/100);
+    $('aboutMiles').textContent=new Intl.NumberFormat('en-GB',{maximumFractionDigits:0}).format(Number(stats.milesLastThreeMonthsTenths||0)/10);
+    $('aboutMilesYear').textContent=new Intl.NumberFormat('en-GB',{maximumFractionDigits:0}).format(Number(stats.milesLastTwelveMonthsTenths||0)/10);
     status.textContent='Aggregated figures contain no names or individual claim records.';
   }catch(error){
-    $('aboutUsers').textContent='Unavailable';$('aboutClaimed').textContent='Unavailable';$('aboutClaimedYear').textContent='Unavailable';
+    $('aboutUsers').textContent='Unavailable';$('aboutClaimed').textContent='Unavailable';$('aboutClaimedYear').textContent='Unavailable';$('aboutMiles').textContent='Unavailable';$('aboutMilesYear').textContent='Unavailable';
     status.textContent='Aggregated figures could not be loaded at the moment.';
   }
 }
@@ -243,6 +250,13 @@ $('bugReportForm')?.addEventListener('submit',async event=>{
 });
 
 queueTelemetrySync(true);
+
+const colourBlindToggle=$('colourBlindMode');
+if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);saveState();});}
+
+const betaTools=/^beta\./i.test(location.hostname)||['localhost','127.0.0.1'].includes(location.hostname);
+if($('prefillExampleData'))$('prefillExampleData').hidden=!betaTools;
+document.querySelector('.dev-reminder')?.toggleAttribute('hidden',!betaTools);
 
 $('prefillExampleData')?.addEventListener('click',()=>{
   const hasExisting=!!String(state.settings.fullName||'').trim()||state.events.length>0;if(hasExisting&&!confirm('Replace the current Setup details and imported shifts with example testing data?'))return;

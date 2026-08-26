@@ -1,6 +1,6 @@
 (async()=>{
 'use strict';
-const APP_SHELL_VERSION='18';
+const APP_SHELL_VERSION='19';
 const parts=['app-parts/app-00.js','app-parts/app-01.js','app-parts/app-02.js','app-parts/app-03.js','app-parts/app-04.js','app-parts/app-05.js'];
 for(const src of parts){
   await new Promise((resolve,reject)=>{

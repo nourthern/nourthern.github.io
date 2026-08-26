@@ -1,4 +1,12 @@
-# Travel Claims Manager v17
+# PIER · Travel Expense Manager v19
+
+## v19 highlights
+
+- PIER visual identity, custom wordmark, approved coastal palette and square app mark.
+- Optional colour-blind friendly shift patterns and local ICS-file dating.
+- Final Help/About copy with claim-form-only user counts and rolling aggregate mileage.
+- More reliable push testing with delivery acknowledgement and a visible local fallback.
+- Password-protected operations dashboard and a separately deployed beta site.
 
 Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
 
@@ -65,10 +73,10 @@ ICS fetching continues to use:
 
 `https://travel-claims-ics.n-e-alwaa.workers.dev/`
 
-The Worker and D1 schema must be updated to v16 for notification health, rolling aggregate telemetry and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
+The Worker and D1 schema must be updated to v19 for notification health, rolling aggregate telemetry, mileage statistics, the private dashboard and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
 
 Calendar `.ics` reminders work even if push/D1 is not configured.
 
 ## Privacy boundary
 
-Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and rolling 12-month cumulative amounts per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.
+Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and rolling 12-month cumulative amount/mileage aggregates per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.

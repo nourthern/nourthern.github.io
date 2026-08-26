@@ -1,3 +1,5 @@
 node_modules/
+.pnpm-store/
 .wrangler/
 cloudflare-worker/worker-configuration.d.ts
+site-dist/
