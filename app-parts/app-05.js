@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='22';
+const APP_VERSION='23';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -255,7 +255,7 @@ queueTelemetrySync(true);
 const colourBlindToggle=$('colourBlindMode');
 if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();saveState();});}
 
-const betaTools=/^beta\./i.test(location.hostname)||['localhost','127.0.0.1'].includes(location.hostname);
+const betaTools=/^(?:beta\.pier\.bynour\.uk|pier-beta\.n-e-alwaa\.workers\.dev)$/i.test(location.hostname)||['localhost','127.0.0.1'].includes(location.hostname);
 if($('prefillExampleData'))$('prefillExampleData').hidden=!betaTools;
 document.querySelector('.dev-reminder')?.toggleAttribute('hidden',!betaTools);
 
