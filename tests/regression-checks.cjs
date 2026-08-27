@@ -200,6 +200,7 @@ assert.match(worker, /last_pdf_created_at/);
 assert.match(worker, /dashboardAuthenticated/);
 assert.match(workerConfig, /"APP_CHANNEL": "live"/);
 assert.match(betaWorkerConfig, /"APP_CHANNEL": "beta"/);
+assert.match(betaWorkerConfig, /"run_worker_first": \["\/dashboard\*", "\/api\/\*"\]/);
 assert.match(worker, /excluded_from_aggregates=0/);
 assert.match(worker, /\/api\/dashboard\/telemetry\/exclusion/);
 assert.match(worker, /\/api\/site-config/);
