@@ -81,7 +81,7 @@ h1,h2,h3,h4,.tab,.primary,.secondary{font-family:"Avenir Next Demi Bold","Segoe 
 .primary,.secondary,.success,.file-btn{background:var(--coastal-blue);color:#fff}
 .primary:hover,.primary:focus-visible,.primary:active,.secondary:hover,.secondary:focus-visible,.secondary:active,.success:hover,.success:focus-visible,.success:active,.file-btn:hover,.file-btn:focus-visible,.file-btn:active{background:var(--cool-dusk);color:#fff}
 .button-link.primary[id$="Continue"]{background:var(--sunset-amber);color:var(--cool-dusk)}.button-link.primary[id$="Continue"]:hover,.button-link.primary[id$="Continue"]:focus-visible,.button-link.primary[id$="Continue"]:active{background:var(--sunlit-gold);color:var(--cool-dusk)}
-.month-chip{border-color:var(--shore-sand);background:var(--shore-sand);color:var(--cool-dusk)}.month-chip:has(input:checked){border-color:var(--sunlit-gold);background:var(--sunlit-gold);color:var(--cool-dusk)}
+.month-chip{border-color:var(--shore-sand);background:#fff;color:var(--cool-dusk)}.month-chip:has(input:checked){border-color:var(--sunlit-gold);background:var(--sunlit-gold);color:var(--cool-dusk)}
 .link-btn,.text-link,.stats-grid strong,.privacy-plain-english h4{color:var(--cool-dusk)}
 .privacy-badge{background:var(--sunlit-gold);color:var(--cool-dusk)}
 .card,.claim-month-card,.log-table,.month-chip,.shift,.reminder-option,input,select,textarea{border-color:var(--shore-sand)}
