@@ -80,6 +80,7 @@ const calendarHelpDialog = html.match(/<dialog id="calendarHelpDialog">[\s\S]*?<
 assert.doesNotMatch(calendarHelpDialog, /draft-label|>DRAFT</);
 assert.match(html, /id="studyReviewAlert"/);
 assert.match(html, /id="privacyDialog"/);
+assert.doesNotMatch(html, />Local storage only</);
 const privacyDialog = html.match(/<dialog id="privacyDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
 assert.doesNotMatch(privacyDialog, /draft-label|>DRAFT</);
 assert.match(privacyDialog, /How PIER Handles Your Data/);
