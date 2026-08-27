@@ -77,7 +77,7 @@ h1,h2,h3,h4,.tab,.primary,.secondary{font-family:"Avenir Next Demi Bold","Segoe 
 .tabs{background:#fffdf9;border-color:var(--shore-sand);box-shadow:0 3px 12px rgba(52,77,97,.08)}
 .tab{background:var(--sunlit-gold);color:var(--cool-dusk)}
 .tab:hover,.tab:focus-visible{background:var(--coastal-blue);color:#fff}
-.tab.active{background:var(--coastal-blue);color:#fff}
+.tab.active{background:var(--sunset-amber);color:var(--cool-dusk)}
 .primary,.secondary,.success,.file-btn{background:var(--cool-dusk);color:#fff}
 .primary:hover,.primary:focus-visible,.secondary:hover,.secondary:focus-visible,.success:hover,.success:focus-visible,.file-btn:hover,.file-btn:focus-visible{background:var(--coastal-blue);color:#fff}
 .month-chip{background:var(--cool-dusk);color:#fff}.month-chip:has(input:checked){background:var(--coastal-blue);color:#fff}
