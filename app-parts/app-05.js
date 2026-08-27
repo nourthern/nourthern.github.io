@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='19';
+const APP_VERSION='22';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -66,7 +66,8 @@ function updateStudyReviewAlert(){
   if(!alertBox)return;
   const count=state.events.filter(event=>event.category==='study').length;
   alertBox.hidden=count===0;
-  if(count)alertBox.innerHTML=`<strong>${count} study-related calendar event${count===1?' was':'s were'} found.</strong> Review the shifts highlighted in orange before creating your claim.`;
+  const colour=$('colourBlindMode')?.checked?'purple':'orange';
+  if(count)alertBox.innerHTML=`<strong>${count} study-related calendar event${count===1?' was':'s were'} found.</strong> Review the shifts highlighted in <span id="studyHighlightColour">${colour}</span> before creating your claim.`;
 }
 
 const applyCalendarTextBase=applyCalendarText;
@@ -252,7 +253,7 @@ $('bugReportForm')?.addEventListener('submit',async event=>{
 queueTelemetrySync(true);
 
 const colourBlindToggle=$('colourBlindMode');
-if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);saveState();});}
+if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();saveState();});}
 
 const betaTools=/^beta\./i.test(location.hostname)||['localhost','127.0.0.1'].includes(location.hostname);
 if($('prefillExampleData'))$('prefillExampleData').hidden=!betaTools;
