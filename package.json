@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build:site": "node scripts/build-site.mjs",
-    "test": "node tests/regression-checks.cjs && node --check app.js && node --check sw.js && node --check cloudflare-worker/worker.js",
+    "test": "node tests/regression-checks.cjs && node --check app.js && node --check sw.js && node --check cloudflare-worker/worker.js && node --check cloudflare-worker/dashboard.js",
     "cf:types": "wrangler types --config cloudflare-worker/wrangler.jsonc cloudflare-worker/worker-configuration.d.ts",
     "cf:dry-run": "wrangler deploy --dry-run --config cloudflare-worker/wrangler.jsonc",
     "cf:deploy": "wrangler deploy --config cloudflare-worker/wrangler.jsonc",

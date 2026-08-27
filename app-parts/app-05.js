@@ -1,8 +1,33 @@
 'use strict';
 
-const APP_VERSION='24';
+const APP_VERSION='25';
 const runtimeErrors=[];
 let telemetryTimer=null;
+
+function sanitizeConfiguredHtml(html){
+  const template=document.createElement('template');template.innerHTML=String(html||'');
+  const allowed=new Set(['A','BR','EM','H4','LI','OL','P','STRONG','UL']);
+  template.content.querySelectorAll('*').forEach(node=>{
+    if(!allowed.has(node.tagName)){node.replaceWith(...node.childNodes);return;}
+    const href=node.tagName==='A'?String(node.getAttribute('href')||''):'';
+    for(const attr of [...node.attributes])node.removeAttribute(attr.name);
+    if(node.tagName==='A'){
+      if(!/^(?:https?:|mailto:)/i.test(href)){node.replaceWith(...node.childNodes);return;}
+      node.setAttribute('href',href);node.setAttribute('target','_blank');node.setAttribute('rel','noopener noreferrer');
+    }
+  });
+  return template.innerHTML;
+}
+
+function applySiteCustomization(data={}){
+  const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
+  for(const [key,variables] of Object.entries(colourMap)){const value=config.colours?.[key];if(/^#[0-9a-f]{6}$/i.test(value||''))variables.forEach(variable=>root.style.setProperty(variable,value));}
+  for(const element of qsa('[data-config-text]')){const value=config.text?.[element.dataset.configText];if(typeof value==='string'&&value.trim())element.textContent=value.trim();}
+  for(const element of qsa('[data-config-html]')){const value=config.text?.[element.dataset.configHtml];if(typeof value==='string'&&value.trim())element.innerHTML=sanitizeConfiguredHtml(value);}
+  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now());root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?v=${version}")`);}
+}
+
+async function loadSiteCustomization(){try{const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config',{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
 
 function sanitizeDiagnostic(value){
   return String(value||'')
@@ -32,6 +57,7 @@ for(const [button,dialog] of [['openPrivacy','privacyDialog'],['footerOpenPrivac
 qsa('[data-close-dialog]').forEach(button=>button.addEventListener('click',()=>closeDialog(button.dataset.closeDialog)));
 qsa('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();}));
 $('helpOpenBugReport')?.addEventListener('click',()=>{closeDialog('helpDialog');prepareBugReport();openDialog('bugReportDialog');});
+qsa('[data-install-platform]').forEach(button=>button.addEventListener('click',()=>{const platform=button.dataset.installPlatform;qsa('[data-install-panel]').forEach(panel=>panel.hidden=panel.dataset.installPanel!==platform);qsa('[data-install-platform]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));}));
 
 function showReminderView(view='menu'){
   const menu=$('reminderMenu'),calendar=$('calendarReminderPanel'),push=$('pushReminderPanel');
@@ -114,19 +140,20 @@ function incrementTelemetry(key,amount=1){
 }
 
 const exportPdfForMonthBase=exportPdfForMonth;
-exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);state.telemetry.lastPdfCreatedAt=new Date().toISOString();incrementTelemetry('pdfsCreated');return pages;};
+exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);state.telemetry.lastPdfCreatedAt=new Date().toISOString();recordClaimMetric(key);incrementTelemetry('pdfsCreated');return pages;};
 $('backupBtn')?.addEventListener('click',()=>incrementTelemetry('backupsCreated'));
 $('enablePush')?.addEventListener('click',()=>setTimeout(()=>{if(state.reminders?.pushEnabled)incrementTelemetry('notificationSetups');},1200));
 
-function claimedLastThreeMonthsPence(){
-  const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-3);
-  const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);
-  return Math.max(0,Math.round(total*100));
+function recordClaimMetric(key,existingOnly=false){
+  const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),ledger=telemetry.claimMonths||(telemetry.claimMonths={});if(existingOnly&&!ledger[key])return false;
+  const rows=state.claims[key]?.rows||[],miles=rows.reduce((sum,row)=>sum+num(row.miles),0),misc=rows.reduce((sum,row)=>sum+num(row.miscAmount),0),claimed=miles*(Number(state.settings.mileageRate)||0.30)+misc;
+  ledger[key]={updatedAt:new Date().toISOString(),claimedPence:Math.max(0,Math.round(claimed*100)),milesTenths:Math.max(0,Math.round(miles*10))};saveState();return true;
 }
 
-function claimedLastTwelveMonthsPence(){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-12);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);return Math.max(0,Math.round(total*100));}
-
-function milesClaimedSince(months){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-months);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.miles),0);return Math.max(0,Math.round(total*10));}
+function metricLedgerSince(months){const cutoff=new Date();cutoff.setDate(1);cutoff.setHours(0,0,0,0);cutoff.setMonth(cutoff.getMonth()-(months-1));return Object.entries(state.telemetry?.claimMonths||{}).filter(([key])=>/^\d{4}-\d{2}$/.test(key)&&new Date(Number(key.slice(0,4)),Number(key.slice(5,7))-1,1)>=cutoff).map(([,value])=>value||{});}
+function claimedLastThreeMonthsPence(){return metricLedgerSince(3).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.claimedPence)||0)),0);}
+function claimedLastTwelveMonthsPence(){return metricLedgerSince(12).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.claimedPence)||0)),0);}
+function milesClaimedSince(months){return metricLedgerSince(months).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.milesTenths)||0)),0);}
 
 async function telemetryRequest(path,init={}){
   const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+path,{cache:'no-store',...init,headers:{'Content-Type':'application/json',...(init.headers||{})}});
@@ -143,6 +170,7 @@ async function syncTelemetry(){
     installationId:identity.installationId,
     deviceToken:identity.deviceToken,
     appVersion:APP_VERSION,
+    channel:APP_CHANNEL,
     claimedLastThreeMonthsPence:claimedLastThreeMonthsPence(),
     claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence(),
     claimedCurrentYearPence:claimedLastTwelveMonthsPence(),
@@ -251,6 +279,7 @@ $('bugReportForm')?.addEventListener('submit',async event=>{
 });
 
 queueTelemetrySync(true);
+loadSiteCustomization();
 
 const colourBlindToggle=$('colourBlindMode');
 if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();saveState();});}
