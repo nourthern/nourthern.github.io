@@ -69,18 +69,19 @@ dialog{background:#fffdf9}
 html,body{font-family:"Avenir Next","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
 h1,h2,h3,h4,.tab,.primary,.secondary{font-family:"Avenir Next Demi Bold","Segoe UI Semibold",Arial,sans-serif}
 .topbar{position:relative;display:flex;min-height:280px;align-items:center;justify-content:center;padding:28px;background-image:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(52,77,97,.08) 58%,rgba(16,37,54,.45) 100%),url("icons/pier-sunset-hero.png");background-size:cover;background-position:center 56%;color:var(--cool-dusk);border-bottom:4px solid var(--sunset-amber);box-shadow:0 7px 24px rgba(52,77,97,.2);overflow:hidden}
-.brand-block{width:auto;margin:0 0 34px;text-align:left}.brand-title-row{display:flex;justify-content:flex-start}.brand-logo{display:block;width:clamp(260px,28vw,390px);height:auto;mix-blend-mode:multiply;filter:drop-shadow(0 2px 3px rgba(255,245,222,.42))}.brand-block p{margin:5px 0 0;text-align:left;color:var(--cool-dusk);font-family:"Avenir Next Demi Bold","Montserrat","Segoe UI Semibold",Arial,sans-serif;font-size:clamp(16px,1.7vw,22px);font-weight:800;letter-spacing:.025em;text-shadow:0 1px 2px rgba(255,245,222,.78)}
+.brand-block{width:auto;margin:0 0 34px;text-align:left}.brand-title-row{display:flex;justify-content:flex-start}.brand-logo{display:block;width:clamp(260px,28vw,390px);height:auto;mix-blend-mode:multiply;filter:drop-shadow(0 2px 3px rgba(255,245,222,.42))}.brand-block p{margin:0;text-align:left;color:var(--cool-dusk);font-family:"Avenir Next Demi Bold","Montserrat","Segoe UI Semibold",Arial,sans-serif;font-size:clamp(16px,1.7vw,22px);font-weight:800;letter-spacing:.025em;text-shadow:0 1px 2px rgba(255,245,222,.78)}
 .topbar-controls{position:absolute;right:22px;bottom:16px;left:22px;width:auto;flex:1;margin-top:0}.topbar .save-status{color:#fff;text-shadow:0 1px 3px rgba(16,37,54,.8)}
 .header-icon-btn{color:var(--cool-dusk);border-color:rgba(255,255,255,.72);background:rgba(255,253,249,.78);backdrop-filter:blur(5px)}
 .header-icon-btn:hover,.header-icon-btn:focus-visible{color:#fff;background:var(--cool-dusk);border-color:var(--cool-dusk)}
 .notification-bell.needs-attention{color:var(--cool-dusk);border-color:var(--sunset-amber);background:var(--sunlit-gold)}
 .tabs{background:#fffdf9;border-color:var(--shore-sand);box-shadow:0 3px 12px rgba(52,77,97,.08)}
 .tab{background:var(--sunlit-gold);color:var(--cool-dusk)}
-.tab:hover,.tab:focus-visible{background:var(--coastal-blue);color:#fff}
+.tab:hover,.tab:focus-visible{background:var(--sunset-amber);color:var(--cool-dusk)}
 .tab.active{background:var(--sunset-amber);color:var(--cool-dusk)}
-.primary,.secondary,.success,.file-btn{background:var(--cool-dusk);color:#fff}
-.primary:hover,.primary:focus-visible,.secondary:hover,.secondary:focus-visible,.success:hover,.success:focus-visible,.file-btn:hover,.file-btn:focus-visible{background:var(--coastal-blue);color:#fff}
-.month-chip{background:var(--cool-dusk);color:#fff}.month-chip:has(input:checked){background:var(--coastal-blue);color:#fff}
+.primary,.secondary,.success,.file-btn{background:var(--coastal-blue);color:#fff}
+.primary:hover,.primary:focus-visible,.primary:active,.secondary:hover,.secondary:focus-visible,.secondary:active,.success:hover,.success:focus-visible,.success:active,.file-btn:hover,.file-btn:focus-visible,.file-btn:active{background:var(--cool-dusk);color:#fff}
+.button-link.primary[id$="Continue"]{background:var(--sunset-amber);color:var(--cool-dusk)}.button-link.primary[id$="Continue"]:hover,.button-link.primary[id$="Continue"]:focus-visible,.button-link.primary[id$="Continue"]:active{background:var(--sunlit-gold);color:var(--cool-dusk)}
+.month-chip{border-color:var(--shore-sand);background:var(--shore-sand);color:var(--cool-dusk)}.month-chip:has(input:checked){border-color:var(--sunlit-gold);background:var(--sunlit-gold);color:var(--cool-dusk)}
 .link-btn,.text-link,.stats-grid strong,.privacy-plain-english h4{color:var(--cool-dusk)}
 .privacy-badge{background:var(--sunlit-gold);color:var(--cool-dusk)}
 .card,.claim-month-card,.log-table,.month-chip,.shift,.reminder-option,input,select,textarea{border-color:var(--shore-sand)}

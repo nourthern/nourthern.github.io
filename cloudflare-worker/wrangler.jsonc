@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "preview_urls": false,
   "vars": {
-    "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk",
+    "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk,https://pier-beta.n-e-alwaa.workers.dev",
     "VAPID_SUBJECT": "https://pier.bynour.uk"
   },
   "d1_databases": [
