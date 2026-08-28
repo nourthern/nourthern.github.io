@@ -104,7 +104,7 @@ body.colour-blind-mode .shift.status-claim{border-color:#0072B2;background:repea
 body.colour-blind-mode .shift.status-no-claim{border-color:#5e6472;background:repeating-linear-gradient(45deg,#f3f3f3,#f3f3f3 8px,#e5e7eb 8px,#e5e7eb 16px);box-shadow:inset 5px 0 0 #5e6472}
 body.colour-blind-mode .shift.shift-study{border-color:#8a4f7d!important;border-left-color:#8a4f7d!important;background:repeating-linear-gradient(135deg,#f7eef5,#f7eef5 9px,#eddde9 9px,#eddde9 18px)!important;box-shadow:inset 5px 0 0 #8a4f7d}
 body.colour-blind-mode .study-review-alert{border-color:#8a4f7d!important;border-left-color:#8a4f7d!important;background:#f7eef5!important;color:var(--cool-dusk)}
-@media(min-width:901px){.topbar{justify-content:flex-start;padding-right:clamp(28px,6vw,96px);padding-left:clamp(28px,6vw,96px)}}
+@media(min-width:901px){.topbar{justify-content:flex-start;padding-right:clamp(24px,4vw,64px);padding-left:clamp(24px,4vw,64px)}}
 @media(max-width:700px){.topbar{min-height:255px;align-items:center;flex-direction:column;padding:24px 18px;background-position:35% center}.brand-block{margin:0 0 42px}.topbar-controls{right:14px;bottom:12px;left:14px;width:auto}.brand-logo{width:250px}.brand-block p{font-size:16px}.accessibility-toolbar{justify-content:flex-start}.accessibility-toolbar .toggle-line{border-radius:12px}.stats-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* PIER v26 button palette and optional outcome survey. */
