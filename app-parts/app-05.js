@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='25';
+const APP_VERSION='26';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -20,14 +20,14 @@ function sanitizeConfiguredHtml(html){
 }
 
 function applySiteCustomization(data={}){
-  const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
+  const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--navy-blue','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--steel-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
   for(const [key,variables] of Object.entries(colourMap)){const value=config.colours?.[key];if(/^#[0-9a-f]{6}$/i.test(value||''))variables.forEach(variable=>root.style.setProperty(variable,value));}
   for(const element of qsa('[data-config-text]')){const value=config.text?.[element.dataset.configText];if(typeof value==='string'&&value.trim())element.textContent=value.trim();}
   for(const element of qsa('[data-config-html]')){const value=config.text?.[element.dataset.configHtml];if(typeof value==='string'&&value.trim())element.innerHTML=sanitizeConfiguredHtml(value);}
-  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now());root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?v=${version}")`);}
+  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now()),preview=data.previewToken?'&preview='+encodeURIComponent(data.previewToken):'';root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?v=${version}${preview}")`);}
 }
 
-async function loadSiteCustomization(){try{const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config',{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
+async function loadSiteCustomization(){try{const preview=new URLSearchParams(location.search).get('pier_preview'),url=BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config'+(preview?'?preview='+encodeURIComponent(preview):'');const response=await fetch(url,{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
 
 function sanitizeDiagnostic(value){
   return String(value||'')
@@ -100,7 +100,7 @@ const applyCalendarTextBase=applyCalendarText;
 applyCalendarText=function(text,source){
   const result=applyCalendarTextBase(text,source);
   updateStudyReviewAlert();
-  incrementTelemetry('calendarImports');
+  recordCalendarAttempt(true,source);
   return result;
 };
 updateStudyReviewAlert();
@@ -139,10 +139,35 @@ function incrementTelemetry(key,amount=1){
   queueTelemetrySync();
 }
 
+const FUNNEL_ORDER=['opened','calendar','shifts','claim','pdf','log'];
+function advanceFunnel(stage){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),current=FUNNEL_ORDER.indexOf(telemetry.funnelStage||'opened'),next=FUNNEL_ORDER.indexOf(stage);if(next>current)telemetry.funnelStage=stage;}
+function workflowMonth(key){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),months=telemetry.workflowMonths||(telemetry.workflowMonths={});return months[key]||(months[key]={imported:0,editedIds:{},added:0});}
+function refreshWorkflowTotals(){const telemetry=state.telemetry,months=Object.values(telemetry.workflowMonths||{});telemetry.counts.shiftsImported=months.reduce((sum,item)=>sum+(Number(item.imported)||0),0);telemetry.counts.shiftsEdited=months.reduce((sum,item)=>sum+Object.keys(item.editedIds||{}).length,0);telemetry.counts.shiftsAdded=months.reduce((sum,item)=>sum+(Number(item.added)||0),0);}
+function recordCalendarAttempt(success,source,error){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry));telemetry.counts.calendarImports=(Number(telemetry.counts.calendarImports)||0)+1;if(success){telemetry.counts.calendarImportSuccesses=(Number(telemetry.counts.calendarImportSuccesses)||0)+1;source==='Local file'?telemetry.counts.icsFileImports++:telemetry.counts.icsUrlImports++;const grouped={};for(const event of state.events||[]){const key=monthKey(event.start);grouped[key]=(grouped[key]||0)+1;}for(const [key,count] of Object.entries(grouped))workflowMonth(key).imported=count;refreshWorkflowTotals();advanceFunnel('calendar');}else{telemetry.counts.calendarImportFailures=(Number(telemetry.counts.calendarImportFailures)||0)+1;const message=String(error?.message||error||'').toLowerCase(),reason=/timeout|abort/.test(message)?'timeout':/http|network|fetch/.test(message)?'network':/no calendar events|not.*ics|readable ics/.test(message)?'invalid-calendar':source==='Local file'?'file-read':'unknown';telemetry.failureReasons[reason]=(Number(telemetry.failureReasons[reason])||0)+1;}saveState();queueTelemetrySync();}
+function markClaimCreated(key){if(!/^\d{4}-\d{2}$/.test(key||''))return;const telemetry=state.telemetry,ledger=telemetry.createdClaimMonths||(telemetry.createdClaimMonths={});ledger[key]=true;telemetry.counts.claimsCreated=Object.keys(ledger).length;advanceFunnel('claim');}
+
 const exportPdfForMonthBase=exportPdfForMonth;
-exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);state.telemetry.lastPdfCreatedAt=new Date().toISOString();recordClaimMetric(key);incrementTelemetry('pdfsCreated');return pages;};
+exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key),telemetry=state.telemetry,now=new Date().toISOString();telemetry.lastPdfCreatedAt=now;if(!telemetry.firstPdfCreatedAt)telemetry.firstPdfCreatedAt=now;const ledger=telemetry.pdfMonths||(telemetry.pdfMonths={});ledger[key]=true;telemetry.counts.pdfsCreated=Object.keys(ledger).length;markClaimCreated(key);advanceFunnel('pdf');recordClaimMetric(key);updateOutcomeSurvey();saveState();queueTelemetrySync();return pages;};
 $('backupBtn')?.addEventListener('click',()=>incrementTelemetry('backupsCreated'));
 $('enablePush')?.addEventListener('click',()=>setTimeout(()=>{if(state.reminders?.pushEnabled)incrementTelemetry('notificationSetups');},1200));
+
+const prepareSelectedClaimsBase=prepareSelectedClaims;
+prepareSelectedClaims=function(){prepareSelectedClaimsBase();for(const key of state.selectedMonths||[])if(state.claims[key]?.rows)markClaimCreated(key);};
+const generateClaimBase=generateClaim;
+generateClaim=function(force=false){const result=generateClaimBase(force);if(state.activeMonth&&state.claims[state.activeMonth]){markClaimCreated(state.activeMonth);recordClaimMetric(state.activeMonth,true);}return result;};
+const switchTabBase=switchTab;
+switchTab=function(name,month=''){const result=switchTabBase(name,month);if(name==='shifts')advanceFunnel('shifts');if(name==='claim')advanceFunnel('claim');if(name==='log')advanceFunnel('log');return result;};
+for(const [key,claim] of Object.entries(state.claims||{})){if(claim?.rows?.length)markClaimCreated(key);if(claim?.exportedAt){state.telemetry.pdfMonths[key]=true;state.telemetry.counts.pdfsCreated=Object.keys(state.telemetry.pdfMonths).length;}}
+
+document.addEventListener('change',event=>{const shift=event.target.closest?.('.shift-status'),row=event.target.closest?.('.row-input');if(shift){const host=shift.closest('.shift'),item=allEventItems().find(entry=>entry.id===host?.dataset.id),key=item?monthKey(item.start):'';if(key)workflowMonth(key).editedIds['shift:'+host.dataset.id]=true;}if(row?.dataset.month)workflowMonth(row.dataset.month).editedIds['row:'+row.dataset.row]=true;if(shift||row){refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
+$('manualShiftForm')?.addEventListener('submit',()=>{const key=$('manualDate')?.value?.slice(0,7);if(key){workflowMonth(key).added++;refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
+document.addEventListener('click',event=>{const add=event.target.closest?.('.row-add');if(add?.dataset.month){workflowMonth(add.dataset.month).added++;refreshWorkflowTotals();saveState();}});
+$('humberBridge')?.addEventListener('click',()=>incrementTelemetry('humberClicks'));
+$('emailPayroll')?.addEventListener('click',()=>incrementTelemetry('payrollEmailClicks'));
+
+function updateOutcomeSurvey(){const panel=$('outcomeSurvey'),telemetry=state.telemetry;if(!panel)return;panel.hidden=!Object.keys(telemetry.pdfMonths||{}).length;if(panel.hidden)return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));}
+function saveOutcomeSurvey(){const telemetry=state.telemetry,selected=qsa('input[name="surveyEase"]:checked')[0];telemetry.survey={timeWithoutPier:$('surveyTime')?.value||'',easeRating:Number(selected?.value)||0};$('surveyStatus').textContent='Optional feedback saved. Thank you.';saveState();queueTelemetrySync();}
+$('surveyTime')?.addEventListener('change',saveOutcomeSurvey);qsa('input[name="surveyEase"]').forEach(input=>input.addEventListener('change',saveOutcomeSurvey));updateOutcomeSurvey();
 
 function recordClaimMetric(key,existingOnly=false){
   const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),ledger=telemetry.claimMonths||(telemetry.claimMonths={});if(existingOnly&&!ledger[key])return false;
@@ -162,6 +187,8 @@ async function telemetryRequest(path,init={}){
   return data;
 }
 
+function telemetryDeviceType(){const ua=navigator.userAgent||'',coarse=window.matchMedia?.('(pointer: coarse)')?.matches;if(/iPad|Tablet/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua)))return 'tablet';if(/Mobile|iPhone|iPod|Android/i.test(ua)||coarse&&Math.min(screen.width,screen.height)<700)return 'mobile';return 'desktop';}
+
 async function syncTelemetry(){
   const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry));
   if(!telemetry.enabled)return;
@@ -177,6 +204,11 @@ async function syncTelemetry(){
     milesLastThreeMonthsTenths:milesClaimedSince(3),
     milesLastTwelveMonthsTenths:milesClaimedSince(12),
     lastPdfCreatedAt:telemetry.lastPdfCreatedAt||'',
+    deviceType:telemetryDeviceType(),
+    funnelStage:telemetry.funnelStage||'opened',
+    timeToFirstPdfMinutes:telemetry.firstPdfCreatedAt?Math.max(0,Math.round((Date.parse(telemetry.firstPdfCreatedAt)-Date.parse(telemetry.firstOpenedAt||telemetry.firstPdfCreatedAt))/60000)):null,
+    failureReasons:telemetry.failureReasons||{},
+    survey:telemetry.survey||{},
     counts:telemetry.counts
   })});
   telemetry.lastSyncedAt=new Date().toISOString();

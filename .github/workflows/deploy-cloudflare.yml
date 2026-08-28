@@ -58,6 +58,15 @@ jobs:
             pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --file cloudflare-worker/migrate-v25.sql
           fi
 
+      - name: Apply D1 v26 migration when needed
+        shell: bash
+        run: |
+          if pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --command "SELECT first_seen_at, device_type, claims_created FROM telemetry_installations LIMIT 0; SELECT channel FROM telemetry_suppressions LIMIT 0; SELECT preview_token FROM site_customization_drafts LIMIT 0; SELECT channel FROM site_customization_backups LIMIT 0;" >/dev/null 2>&1; then
+            echo "D1 v26 migration is already present."
+          else
+            pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --file cloudflare-worker/migrate-v26.sql
+          fi
+
       - name: Deploy live Worker
         run: pnpm exec wrangler deploy --config cloudflare-worker/wrangler.jsonc --keep-vars
 

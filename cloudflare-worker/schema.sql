@@ -72,6 +72,23 @@ CREATE TABLE IF NOT EXISTS telemetry_installations (
   pdfs_created INTEGER NOT NULL DEFAULT 0,
   backups_created INTEGER NOT NULL DEFAULT 0,
   notification_setups INTEGER NOT NULL DEFAULT 0,
+  first_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  device_type TEXT NOT NULL DEFAULT 'unknown',
+  calendar_import_successes INTEGER NOT NULL DEFAULT 0,
+  calendar_import_failures INTEGER NOT NULL DEFAULT 0,
+  calendar_failure_reasons_json TEXT NOT NULL DEFAULT '{}',
+  ics_file_imports INTEGER NOT NULL DEFAULT 0,
+  ics_url_imports INTEGER NOT NULL DEFAULT 0,
+  shifts_imported INTEGER NOT NULL DEFAULT 0,
+  shifts_edited INTEGER NOT NULL DEFAULT 0,
+  shifts_added INTEGER NOT NULL DEFAULT 0,
+  claims_created INTEGER NOT NULL DEFAULT 0,
+  time_to_first_pdf_minutes INTEGER,
+  funnel_stage TEXT NOT NULL DEFAULT 'opened',
+  humber_clicks INTEGER NOT NULL DEFAULT 0,
+  payroll_email_clicks INTEGER NOT NULL DEFAULT 0,
+  survey_time_without_pier TEXT,
+  survey_ease_rating INTEGER,
   excluded_from_aggregates INTEGER NOT NULL DEFAULT 0,
   last_pdf_created_at TEXT,
   last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -105,3 +122,34 @@ CREATE TABLE IF NOT EXISTS site_customization (
   banner_updated_at TEXT,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS telemetry_suppressions (
+  channel TEXT NOT NULL CHECK (channel IN ('live','beta')),
+  installation_id TEXT NOT NULL,
+  deleted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (channel, installation_id)
+);
+
+CREATE TABLE IF NOT EXISTS site_customization_drafts (
+  channel TEXT PRIMARY KEY CHECK (channel IN ('live','beta')),
+  config_json TEXT NOT NULL DEFAULT '{}',
+  banner_data BLOB,
+  banner_mime_type TEXT,
+  banner_updated_at TEXT,
+  preview_token TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS site_customization_backups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  channel TEXT NOT NULL CHECK (channel IN ('live','beta')),
+  config_json TEXT NOT NULL DEFAULT '{}',
+  banner_data BLOB,
+  banner_mime_type TEXT,
+  banner_updated_at TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_telemetry_channel_first_seen ON telemetry_installations(channel,first_seen_at);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_site_draft_preview_token ON site_customization_drafts(preview_token);
+CREATE INDEX IF NOT EXISTS idx_site_backups_channel_created ON site_customization_backups(channel,created_at DESC,id DESC);
