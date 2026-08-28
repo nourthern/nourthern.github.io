@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='26';
+const APP_VERSION='27';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -21,13 +21,14 @@ function sanitizeConfiguredHtml(html){
 
 function applySiteCustomization(data={}){
   const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--navy-blue','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--steel-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
+  const badge=$('channelBadge');if(badge)badge.hidden=(data.channel||APP_CHANNEL)!=='beta';
   for(const [key,variables] of Object.entries(colourMap)){const value=config.colours?.[key];if(/^#[0-9a-f]{6}$/i.test(value||''))variables.forEach(variable=>root.style.setProperty(variable,value));}
   for(const element of qsa('[data-config-text]')){const value=config.text?.[element.dataset.configText];if(typeof value==='string'&&value.trim())element.textContent=value.trim();}
   for(const element of qsa('[data-config-html]')){const value=config.text?.[element.dataset.configHtml];if(typeof value==='string'&&value.trim())element.innerHTML=sanitizeConfiguredHtml(value);}
-  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now()),preview=data.previewToken?'&preview='+encodeURIComponent(data.previewToken):'';root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?v=${version}${preview}")`);}
+  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now()),preview=data.previewToken?'&preview='+encodeURIComponent(data.previewToken):'',selectedChannel=encodeURIComponent(data.channel||APP_CHANNEL);root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?channel=${selectedChannel}&v=${version}${preview}")`);}
 }
 
-async function loadSiteCustomization(){try{const preview=new URLSearchParams(location.search).get('pier_preview'),url=BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config'+(preview?'?preview='+encodeURIComponent(preview):'');const response=await fetch(url,{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
+async function loadSiteCustomization(){const badge=$('channelBadge');if(badge)badge.hidden=APP_CHANNEL!=='beta';try{const preview=new URLSearchParams(location.search).get('pier_preview'),url=BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config'+(preview?'?preview='+encodeURIComponent(preview):'');const response=await fetch(url,{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
 
 function sanitizeDiagnostic(value){
   return String(value||'')

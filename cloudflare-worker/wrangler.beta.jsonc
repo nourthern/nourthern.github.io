@@ -8,7 +8,7 @@
   "workers_dev": true,
   "vars": {
     "APP_CHANNEL": "beta",
-    "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk,https://pier-beta.n-e-alwaa.workers.dev",
+    "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk,https://travel-claims-ics.n-e-alwaa.workers.dev,https://pier-beta.n-e-alwaa.workers.dev",
     "VAPID_SUBJECT": "https://pier.bynour.uk"
   },
   "d1_databases": [
