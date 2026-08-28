@@ -6,6 +6,18 @@ on:
     branches: [main]
     paths:
       - "cloudflare-worker/**"
+      - "app-parts/**"
+      - "icons/**"
+      - "template/**"
+      - "index.html"
+      - "styles.css"
+      - "app.js"
+      - "manifest.json"
+      - "sw.js"
+      - "scripts/build-site.mjs"
+      - "tests/regression-checks.cjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/deploy-cloudflare.yml"
 
 permissions:
