@@ -1,8 +1,34 @@
 'use strict';
 
-const APP_VERSION='25';
+const APP_VERSION='28';
 const runtimeErrors=[];
 let telemetryTimer=null;
+
+function sanitizeConfiguredHtml(html){
+  const template=document.createElement('template');template.innerHTML=String(html||'');
+  const allowed=new Set(['A','BR','EM','H4','LI','OL','P','STRONG','UL']);
+  template.content.querySelectorAll('*').forEach(node=>{
+    if(!allowed.has(node.tagName)){node.replaceWith(...node.childNodes);return;}
+    const href=node.tagName==='A'?String(node.getAttribute('href')||''):'';
+    for(const attr of [...node.attributes])node.removeAttribute(attr.name);
+    if(node.tagName==='A'){
+      if(!/^(?:https?:|mailto:)/i.test(href)){node.replaceWith(...node.childNodes);return;}
+      node.setAttribute('href',href);node.setAttribute('target','_blank');node.setAttribute('rel','noopener noreferrer');
+    }
+  });
+  return template.innerHTML;
+}
+
+function applySiteCustomization(data={}){
+  const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--navy-blue','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--steel-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
+  const channel=data.channel||APP_CHANNEL,badge=$('channelBadge'),dashboard=$('openDashboard');if(badge)badge.hidden=channel!=='beta';if(dashboard)dashboard.hidden=channel!=='beta';
+  for(const [key,variables] of Object.entries(colourMap)){const value=config.colours?.[key];if(/^#[0-9a-f]{6}$/i.test(value||''))variables.forEach(variable=>root.style.setProperty(variable,value));}
+  for(const element of qsa('[data-config-text]')){const value=config.text?.[element.dataset.configText];if(typeof value==='string'&&value.trim())element.textContent=value.trim();}
+  for(const element of qsa('[data-config-html]')){const value=config.text?.[element.dataset.configHtml];if(typeof value==='string'&&value.trim())element.innerHTML=sanitizeConfiguredHtml(value);}
+  if(data.hasBanner){const version=encodeURIComponent(data.bannerUpdatedAt||Date.now()),preview=data.previewToken?'&preview='+encodeURIComponent(data.previewToken):'',selectedChannel=encodeURIComponent(data.channel||APP_CHANNEL);root.style.setProperty('--pier-banner-image',`url("${BAKED_WORKER_URL.replace(/\/+$/,'')}/api/site-assets/banner?channel=${selectedChannel}&v=${version}${preview}")`);}
+}
+
+async function loadSiteCustomization(){const badge=$('channelBadge'),dashboard=$('openDashboard');if(badge)badge.hidden=APP_CHANNEL!=='beta';if(dashboard)dashboard.hidden=APP_CHANNEL!=='beta';try{const preview=new URLSearchParams(location.search).get('pier_preview'),url=BAKED_WORKER_URL.replace(/\/+$/,'')+'/api/site-config'+(preview?'?preview='+encodeURIComponent(preview):'');const response=await fetch(url,{cache:'no-store'});if(response.ok)applySiteCustomization(await response.json());}catch(error){rememberRuntimeError(error);}}
 
 function sanitizeDiagnostic(value){
   return String(value||'')
@@ -32,6 +58,7 @@ for(const [button,dialog] of [['openPrivacy','privacyDialog'],['footerOpenPrivac
 qsa('[data-close-dialog]').forEach(button=>button.addEventListener('click',()=>closeDialog(button.dataset.closeDialog)));
 qsa('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();}));
 $('helpOpenBugReport')?.addEventListener('click',()=>{closeDialog('helpDialog');prepareBugReport();openDialog('bugReportDialog');});
+qsa('[data-install-platform]').forEach(button=>button.addEventListener('click',()=>{const platform=button.dataset.installPlatform;qsa('[data-install-panel]').forEach(panel=>panel.hidden=panel.dataset.installPanel!==platform);qsa('[data-install-platform]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));}));
 
 function showReminderView(view='menu'){
   const menu=$('reminderMenu'),calendar=$('calendarReminderPanel'),push=$('pushReminderPanel');
@@ -39,7 +66,7 @@ function showReminderView(view='menu'){
 }
 function openNotificationSettings(view='menu'){showReminderView(view);openDialog('notificationSettingsDialog');}
 $('openNotifications')?.addEventListener('click',()=>openNotificationSettings('menu'));
-$('openDashboard')?.addEventListener('click',()=>showToast('The private telemetry dashboard is coming in the next beta update.'));
+$('openDashboard')?.addEventListener('click',()=>location.assign(BAKED_WORKER_URL.replace(/\/+$/,'')+'/dashboard'));
 qsa('[data-open-reminder]').forEach(button=>button.addEventListener('click',()=>openNotificationSettings(button.dataset.openReminder)));
 qsa('[data-reminder-view]').forEach(button=>button.addEventListener('click',()=>showReminderView(button.dataset.reminderView)));
 qsa('.reminder-back').forEach(button=>button.addEventListener('click',()=>showReminderView('menu')));
@@ -75,7 +102,7 @@ const applyCalendarTextBase=applyCalendarText;
 applyCalendarText=function(text,source){
   const result=applyCalendarTextBase(text,source);
   updateStudyReviewAlert();
-  incrementTelemetry('calendarImports');
+  recordCalendarAttempt(true,source);
   return result;
 };
 updateStudyReviewAlert();
@@ -114,20 +141,46 @@ function incrementTelemetry(key,amount=1){
   queueTelemetrySync();
 }
 
+const FUNNEL_ORDER=['opened','calendar','shifts','claim','pdf','log'];
+function advanceFunnel(stage){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),current=FUNNEL_ORDER.indexOf(telemetry.funnelStage||'opened'),next=FUNNEL_ORDER.indexOf(stage);if(next>current)telemetry.funnelStage=stage;}
+function workflowMonth(key){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),months=telemetry.workflowMonths||(telemetry.workflowMonths={});return months[key]||(months[key]={imported:0,editedIds:{},added:0});}
+function refreshWorkflowTotals(){const telemetry=state.telemetry,months=Object.values(telemetry.workflowMonths||{});telemetry.counts.shiftsImported=months.reduce((sum,item)=>sum+(Number(item.imported)||0),0);telemetry.counts.shiftsEdited=months.reduce((sum,item)=>sum+Object.keys(item.editedIds||{}).length,0);telemetry.counts.shiftsAdded=months.reduce((sum,item)=>sum+(Number(item.added)||0),0);}
+function recordCalendarAttempt(success,source,error){const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry));telemetry.counts.calendarImports=(Number(telemetry.counts.calendarImports)||0)+1;if(success){telemetry.counts.calendarImportSuccesses=(Number(telemetry.counts.calendarImportSuccesses)||0)+1;source==='Local file'?telemetry.counts.icsFileImports++:telemetry.counts.icsUrlImports++;const grouped={};for(const event of state.events||[]){const key=monthKey(event.start);grouped[key]=(grouped[key]||0)+1;}for(const [key,count] of Object.entries(grouped))workflowMonth(key).imported=count;refreshWorkflowTotals();advanceFunnel('calendar');}else{telemetry.counts.calendarImportFailures=(Number(telemetry.counts.calendarImportFailures)||0)+1;const message=String(error?.message||error||'').toLowerCase(),reason=/timeout|abort/.test(message)?'timeout':/http|network|fetch/.test(message)?'network':/no calendar events|not.*ics|readable ics/.test(message)?'invalid-calendar':source==='Local file'?'file-read':'unknown';telemetry.failureReasons[reason]=(Number(telemetry.failureReasons[reason])||0)+1;}saveState();queueTelemetrySync();}
+function markClaimCreated(key){if(!/^\d{4}-\d{2}$/.test(key||''))return;const telemetry=state.telemetry,ledger=telemetry.createdClaimMonths||(telemetry.createdClaimMonths={});ledger[key]=true;telemetry.counts.claimsCreated=Object.keys(ledger).length;advanceFunnel('claim');}
+
 const exportPdfForMonthBase=exportPdfForMonth;
-exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key);state.telemetry.lastPdfCreatedAt=new Date().toISOString();incrementTelemetry('pdfsCreated');return pages;};
+exportPdfForMonth=async function(key){const pages=await exportPdfForMonthBase(key),telemetry=state.telemetry,now=new Date().toISOString();telemetry.lastPdfCreatedAt=now;if(!telemetry.firstPdfCreatedAt)telemetry.firstPdfCreatedAt=now;const ledger=telemetry.pdfMonths||(telemetry.pdfMonths={});ledger[key]=true;telemetry.counts.pdfsCreated=Object.keys(ledger).length;markClaimCreated(key);advanceFunnel('pdf');recordClaimMetric(key);updateOutcomeSurvey();saveState();queueTelemetrySync();return pages;};
 $('backupBtn')?.addEventListener('click',()=>incrementTelemetry('backupsCreated'));
 $('enablePush')?.addEventListener('click',()=>setTimeout(()=>{if(state.reminders?.pushEnabled)incrementTelemetry('notificationSetups');},1200));
 
-function claimedLastThreeMonthsPence(){
-  const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-3);
-  const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);
-  return Math.max(0,Math.round(total*100));
+const prepareSelectedClaimsBase=prepareSelectedClaims;
+prepareSelectedClaims=function(){prepareSelectedClaimsBase();for(const key of state.selectedMonths||[])if(state.claims[key]?.rows)markClaimCreated(key);};
+const generateClaimBase=generateClaim;
+generateClaim=function(force=false){const result=generateClaimBase(force);if(state.activeMonth&&state.claims[state.activeMonth]){markClaimCreated(state.activeMonth);recordClaimMetric(state.activeMonth,true);}return result;};
+const switchTabBase=switchTab;
+switchTab=function(name,month=''){const result=switchTabBase(name,month);if(name==='shifts')advanceFunnel('shifts');if(name==='claim')advanceFunnel('claim');if(name==='log')advanceFunnel('log');return result;};
+for(const [key,claim] of Object.entries(state.claims||{})){if(claim?.rows?.length)markClaimCreated(key);if(claim?.exportedAt){state.telemetry.pdfMonths[key]=true;state.telemetry.counts.pdfsCreated=Object.keys(state.telemetry.pdfMonths).length;}}
+
+document.addEventListener('change',event=>{const shift=event.target.closest?.('.shift-status'),row=event.target.closest?.('.row-input');if(shift){const host=shift.closest('.shift'),item=allEventItems().find(entry=>entry.id===host?.dataset.id),key=item?monthKey(item.start):'';if(key)workflowMonth(key).editedIds['shift:'+host.dataset.id]=true;}if(row?.dataset.month)workflowMonth(row.dataset.month).editedIds['row:'+row.dataset.row]=true;if(shift||row){refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
+$('manualShiftForm')?.addEventListener('submit',()=>{const key=$('manualDate')?.value?.slice(0,7);if(key){workflowMonth(key).added++;refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
+document.addEventListener('click',event=>{const add=event.target.closest?.('.row-add');if(add?.dataset.month){workflowMonth(add.dataset.month).added++;refreshWorkflowTotals();saveState();}});
+$('humberBridge')?.addEventListener('click',()=>incrementTelemetry('humberClicks'));
+$('emailPayroll')?.addEventListener('click',()=>incrementTelemetry('payrollEmailClicks'));
+
+function updateOutcomeSurvey(){const panel=$('outcomeSurvey'),telemetry=state.telemetry;if(!panel)return;panel.hidden=!Object.keys(telemetry.pdfMonths||{}).length;if(panel.hidden)return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));}
+function saveOutcomeSurvey(){const telemetry=state.telemetry,selected=qsa('input[name="surveyEase"]:checked')[0];telemetry.survey={timeWithoutPier:$('surveyTime')?.value||'',easeRating:Number(selected?.value)||0};$('surveyStatus').textContent='Optional feedback saved. Thank you.';saveState();queueTelemetrySync();}
+$('surveyTime')?.addEventListener('change',saveOutcomeSurvey);qsa('input[name="surveyEase"]').forEach(input=>input.addEventListener('change',saveOutcomeSurvey));updateOutcomeSurvey();
+
+function recordClaimMetric(key,existingOnly=false){
+  const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),ledger=telemetry.claimMonths||(telemetry.claimMonths={});if(existingOnly&&!ledger[key])return false;
+  const rows=state.claims[key]?.rows||[],miles=rows.reduce((sum,row)=>sum+num(row.miles),0),misc=rows.reduce((sum,row)=>sum+num(row.miscAmount),0),claimed=miles*(Number(state.settings.mileageRate)||0.30)+misc;
+  ledger[key]={updatedAt:new Date().toISOString(),claimedPence:Math.max(0,Math.round(claimed*100)),milesTenths:Math.max(0,Math.round(miles*10))};saveState();return true;
 }
 
-function claimedLastTwelveMonthsPence(){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-12);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.total),0);return Math.max(0,Math.round(total*100));}
-
-function milesClaimedSince(months){const cutoff=new Date();cutoff.setMonth(cutoff.getMonth()-months);const total=state.expenseLog.filter(item=>new Date(item.submitted)>=cutoff).reduce((sum,item)=>sum+num(item.miles),0);return Math.max(0,Math.round(total*10));}
+function metricLedgerSince(months){const cutoff=new Date();cutoff.setDate(1);cutoff.setHours(0,0,0,0);cutoff.setMonth(cutoff.getMonth()-(months-1));return Object.entries(state.telemetry?.claimMonths||{}).filter(([key])=>/^\d{4}-\d{2}$/.test(key)&&new Date(Number(key.slice(0,4)),Number(key.slice(5,7))-1,1)>=cutoff).map(([,value])=>value||{});}
+function claimedLastThreeMonthsPence(){return metricLedgerSince(3).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.claimedPence)||0)),0);}
+function claimedLastTwelveMonthsPence(){return metricLedgerSince(12).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.claimedPence)||0)),0);}
+function milesClaimedSince(months){return metricLedgerSince(months).reduce((sum,item)=>sum+Math.max(0,Math.round(Number(item.milesTenths)||0)),0);}
 
 async function telemetryRequest(path,init={}){
   const response=await fetch(BAKED_WORKER_URL.replace(/\/+$/,'')+path,{cache:'no-store',...init,headers:{'Content-Type':'application/json',...(init.headers||{})}});
@@ -135,6 +188,8 @@ async function telemetryRequest(path,init={}){
   if(!response.ok)throw new Error(data.error||`Telemetry service returned HTTP ${response.status}.`);
   return data;
 }
+
+function telemetryDeviceType(){const ua=navigator.userAgent||'',coarse=window.matchMedia?.('(pointer: coarse)')?.matches;if(/iPad|Tablet/i.test(ua)||(/Android/i.test(ua)&&!/Mobile/i.test(ua)))return 'tablet';if(/Mobile|iPhone|iPod|Android/i.test(ua)||coarse&&Math.min(screen.width,screen.height)<700)return 'mobile';return 'desktop';}
 
 async function syncTelemetry(){
   const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry));
@@ -144,12 +199,18 @@ async function syncTelemetry(){
     installationId:identity.installationId,
     deviceToken:identity.deviceToken,
     appVersion:APP_VERSION,
+    channel:APP_CHANNEL,
     claimedLastThreeMonthsPence:claimedLastThreeMonthsPence(),
     claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence(),
     claimedCurrentYearPence:claimedLastTwelveMonthsPence(),
     milesLastThreeMonthsTenths:milesClaimedSince(3),
     milesLastTwelveMonthsTenths:milesClaimedSince(12),
     lastPdfCreatedAt:telemetry.lastPdfCreatedAt||'',
+    deviceType:telemetryDeviceType(),
+    funnelStage:telemetry.funnelStage||'opened',
+    timeToFirstPdfMinutes:telemetry.firstPdfCreatedAt?Math.max(0,Math.round((Date.parse(telemetry.firstPdfCreatedAt)-Date.parse(telemetry.firstOpenedAt||telemetry.firstPdfCreatedAt))/60000)):null,
+    failureReasons:telemetry.failureReasons||{},
+    survey:telemetry.survey||{},
     counts:telemetry.counts
   })});
   telemetry.lastSyncedAt=new Date().toISOString();
@@ -252,6 +313,7 @@ $('bugReportForm')?.addEventListener('submit',async event=>{
 });
 
 queueTelemetrySync(true);
+loadSiteCustomization();
 
 const colourBlindToggle=$('colourBlindMode');
 if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();saveState();});}
