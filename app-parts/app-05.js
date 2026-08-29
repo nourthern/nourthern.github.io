@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='24';
+const APP_VERSION='25';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -39,6 +39,7 @@ function showReminderView(view='menu'){
 }
 function openNotificationSettings(view='menu'){showReminderView(view);openDialog('notificationSettingsDialog');}
 $('openNotifications')?.addEventListener('click',()=>openNotificationSettings('menu'));
+$('openDashboard')?.addEventListener('click',()=>showToast('The private telemetry dashboard is coming in the next beta update.'));
 qsa('[data-open-reminder]').forEach(button=>button.addEventListener('click',()=>openNotificationSettings(button.dataset.openReminder)));
 qsa('[data-reminder-view]').forEach(button=>button.addEventListener('click',()=>showReminderView(button.dataset.reminderView)));
 qsa('.reminder-back').forEach(button=>button.addEventListener('click',()=>showReminderView('menu')));

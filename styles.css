@@ -73,6 +73,7 @@ h1,h2,h3,h4,.tab,.primary,.secondary{font-family:"Avenir Next Demi Bold","Segoe 
 .topbar-controls{position:absolute;right:22px;bottom:16px;left:22px;width:auto;flex:1;margin-top:0}.topbar .save-status{color:#fff;text-shadow:0 1px 3px rgba(16,37,54,.8)}
 .header-icon-btn{color:var(--cool-dusk);border-color:rgba(255,255,255,.72);background:rgba(255,253,249,.78);backdrop-filter:blur(5px)}
 .header-icon-btn:hover,.header-icon-btn:focus-visible{color:#fff;background:var(--cool-dusk);border-color:var(--cool-dusk)}
+.beta-dashboard-icon::after{content:'BETA';position:absolute;right:-5px;top:-7px;padding:2px 4px;border-radius:4px;background:#f59e0b;color:#111827;font-size:7px;font-weight:800;letter-spacing:.04em}
 .notification-bell,.notification-bell.needs-attention{color:#fff;border-color:var(--cool-dusk);background:var(--cool-dusk)}.notification-bell:hover,.notification-bell:focus-visible,.notification-bell.is-active,.notification-bell.is-active:hover,.notification-bell.is-active:focus-visible{color:#fff;border-color:var(--sunset-amber);background:var(--sunset-amber)}
 .tabs{background:#fffdf9;border-color:var(--shore-sand);box-shadow:0 3px 12px rgba(52,77,97,.08)}
 .tab{background:var(--sunlit-gold);color:var(--cool-dusk);font-weight:800}
