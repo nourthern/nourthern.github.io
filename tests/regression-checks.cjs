@@ -23,8 +23,9 @@ const betaWorkerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'w
 
 assert.match(workerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
 assert.match(betaWorkerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
-assert.match(betaWorkerConfig, /"pattern": "beta\.pier\.bynour\.uk\/\*"/);
-assert.match(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
+assert.match(betaWorkerConfig, /"pattern": "beta\.pier\.bynour\.uk"/);
+assert.match(betaWorkerConfig, /"custom_domain": true/);
+assert.doesNotMatch(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
 
 const phraseStart = app04.indexOf('function naturalJoin');
 const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);

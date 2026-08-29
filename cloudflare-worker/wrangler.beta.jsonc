@@ -8,8 +8,8 @@
   "workers_dev": true,
   "routes": [
     {
-      "pattern": "beta.pier.bynour.uk/*",
-      "zone_name": "bynour.uk"
+      "pattern": "beta.pier.bynour.uk",
+      "custom_domain": true
     }
   ],
   "vars": {
