@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='28';
+const APP_VERSION='29';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -164,11 +164,15 @@ document.addEventListener('change',event=>{const shift=event.target.closest?.('.
 $('manualShiftForm')?.addEventListener('submit',()=>{const key=$('manualDate')?.value?.slice(0,7);if(key){workflowMonth(key).added++;refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
 document.addEventListener('click',event=>{const add=event.target.closest?.('.row-add');if(add?.dataset.month){workflowMonth(add.dataset.month).added++;refreshWorkflowTotals();saveState();}});
 $('humberBridge')?.addEventListener('click',()=>incrementTelemetry('humberClicks'));
-$('emailPayroll')?.addEventListener('click',()=>{incrementTelemetry('payrollEmailClicks');const telemetry=state.telemetry;if(!telemetry.surveyPrompted&&Object.keys(telemetry.pdfMonths||{}).length){telemetry.surveyPrompted=true;updateOutcomeSurvey();saveState();setTimeout(()=>openDialog('outcomeSurveyDialog'),0);}});
+$('emailPayroll')?.addEventListener('click',()=>{incrementTelemetry('payrollEmailClicks');const telemetry=state.telemetry;if(!telemetry.surveySubmitted&&!telemetry.surveyPrompted&&Object.keys(telemetry.pdfMonths||{}).length){telemetry.surveyPrompted=true;updateOutcomeSurvey();saveState();setTimeout(()=>openDialog('outcomeSurveyDialog'),0);}});
 
-function updateOutcomeSurvey(){const telemetry=state.telemetry;if(!$('outcomeSurveyDialog'))return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));}
-function saveOutcomeSurvey(){const telemetry=state.telemetry,selected=qsa('input[name="surveyEase"]:checked')[0];telemetry.survey={timeWithoutPier:$('surveyTime')?.value||'',easeRating:Number(selected?.value)||0};$('surveyStatus').textContent='Optional feedback saved. Thank you.';saveState();queueTelemetrySync();}
-$('surveyTime')?.addEventListener('change',saveOutcomeSurvey);qsa('input[name="surveyEase"]').forEach(input=>input.addEventListener('change',saveOutcomeSurvey));updateOutcomeSurvey();
+function renderOutcomeSurveyPrompts(){qsa('.optional-feedback-prompt').forEach(prompt=>prompt.hidden=!!state.telemetry?.surveySubmitted);}
+function updateOutcomeSurvey(){const telemetry=state.telemetry;if(!$('outcomeSurveyDialog'))return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));$('surveyStatus').textContent='';renderOutcomeSurveyPrompts();}
+function openOutcomeSurvey(){updateOutcomeSurvey();openDialog('outcomeSurveyDialog');}
+function submitOutcomeSurvey(){const telemetry=state.telemetry,selected=qsa('input[name="surveyEase"]:checked')[0],timeWithoutPier=$('surveyTime')?.value||'',easeRating=Number(selected?.value)||0;if(!timeWithoutPier&&!easeRating){$('surveyStatus').textContent='Choose at least one answer before submitting.';return}telemetry.survey={timeWithoutPier,easeRating};telemetry.surveySubmitted=true;$('surveyStatus').textContent='Feedback submitted. Thank you.';saveState();queueTelemetrySync(true);renderOutcomeSurveyPrompts();setTimeout(()=>closeDialog('outcomeSurveyDialog'),450);}
+qsa('.open-outcome-survey').forEach(button=>button.addEventListener('click',openOutcomeSurvey));
+$('submitOutcomeSurvey')?.addEventListener('click',submitOutcomeSurvey);
+updateOutcomeSurvey();
 
 function recordClaimMetric(key,existingOnly=false){
   const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),ledger=telemetry.claimMonths||(telemetry.claimMonths={});if(existingOnly&&!ledger[key])return false;
@@ -317,9 +321,10 @@ loadSiteCustomization();
 const colourBlindToggle=$('colourBlindMode');
 if(colourBlindToggle){colourBlindToggle.checked=!!state.accessibility?.colourBlindMode;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();colourBlindToggle.addEventListener('change',()=>{state.accessibility.colourBlindMode=colourBlindToggle.checked;document.body.classList.toggle('colour-blind-mode',colourBlindToggle.checked);updateStudyReviewAlert();saveState();});}
 
-const betaTools=/^(?:beta\.pier\.bynour\.uk|pier-beta\.n-e-alwaa\.workers\.dev)$/i.test(location.hostname)||['localhost','127.0.0.1'].includes(location.hostname);
+const betaTools=IS_BETA_DEPLOYMENT||['localhost','127.0.0.1'].includes(location.hostname);
 if($('prefillExampleData'))$('prefillExampleData').hidden=!betaTools;
 document.querySelector('.dev-reminder')?.toggleAttribute('hidden',!betaTools);
+if($('betaDashboardLink'))$('betaDashboardLink').hidden=!IS_BETA_DEPLOYMENT;
 
 $('prefillExampleData')?.addEventListener('click',()=>{
   const hasExisting=!!String(state.settings.fullName||'').trim()||state.events.length>0;if(hasExisting&&!confirm('Replace the current Setup details and imported shifts with example testing data?'))return;
