@@ -23,6 +23,8 @@ const betaWorkerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'w
 
 assert.match(workerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
 assert.match(betaWorkerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
+assert.match(betaWorkerConfig, /"pattern": "beta\.pier\.bynour\.uk\/\*"/);
+assert.match(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
 
 const phraseStart = app04.indexOf('function naturalJoin');
 const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
@@ -43,7 +45,8 @@ assert.equal(
   'October, November and December 2026, and January 2027'
 );
 
-assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\\nopen PIER Travel Expense Manager:/);
+assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\.\\nOpen PIER Travel Expense Manager: \$\{appUrl\}/);
+assert.match(app02, /appUrl='https:\/\/pier\.bynour\.uk\/#shifts'/);
 assert.doesNotMatch(app02, /icons\/icon-192\.png/);
 assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
 assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
@@ -61,9 +64,10 @@ assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
 assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
 assert.match(html, /class="brand-logo" src="icons\/pier-logo-navy\.png"/);
 assert.match(html, /<p>Travel Expense Manager<\/p>/);
-assert.match(html, /styles\.css\?v=31/);
-assert.match(html, /app\.js\?v=27/);
-assert.match(app, /const APP_SHELL_VERSION='27'/);
+assert.match(html, /styles\.css\?v=32/);
+assert.match(html, /app\.js\?v=28/);
+assert.match(app, /const APP_SHELL_VERSION='28'/);
+assert.match(html, /location\.protocol==='http:'[^;]+location\.replace\('https:\/\/'/);
 assert.match(html, /id="channelBadge" class="channel-badge" hidden>Beta/);
 assert.match(html, /placeholder="e\.g\. Nour Alwaa"/);
 assert.doesNotMatch(html, /Nour Eddin Alwaa/);
@@ -109,7 +113,8 @@ assert.match(html, /tap the <strong>share button<\/strong>[^→]+→ <strong>Add
 assert.match(html, /tap the <strong>three-dot menu<\/strong>/);
 assert.match(html, /icons\/android-add-home\.png/);
 assert.match(html, /Reminder day of each month<select id="calendarReminderDay">/);
-assert.match(html, /id="outcomeSurvey"/);
+assert.match(html, /id="outcomeSurveyDialog"/);
+assert.match(html, /Shown once, after your first PDF and payroll email\./);
 assert.match(html, /may need to be installed on your home screen or desktop for notifications to work/);
 assert.match(html, /Use the <strong>Email payroll<\/strong> button to generate a pre-drafted email/);
 assert.match(html, /id="aboutDialog"/);
@@ -159,7 +164,7 @@ assert.match(styles, /#setup input\.has-value,#setup select\.has-value,#setup te
 assert.match(styles, /\.header-icon-btn\.plain-symbol svg\{width:26px;height:26px;stroke-width:2\.2\}/);
 assert.match(styles, /--cool-dusk:#344D61/);
 assert.match(styles, /--coastal-blue:#718C9F/);
-assert.match(styles, /\.tab\{background:var\(--sunlit-gold\);color:var\(--cool-dusk\);font-weight:800\}/);
+assert.match(styles, /\.tab\{background:var\(--sunlit-gold\);color:#fff;font-weight:800/);
 assert.match(styles, /\.tab\.active\{background:var\(--sunset-amber\);color:#fff\}/);
 assert.match(styles, /\.tab:hover,\.tab:focus-visible\{background:var\(--sunset-amber\);color:#fff\}/);
 assert.match(styles, /\.primary,\.secondary,\.success,\.file-btn\{background:var\(--navy-blue\);color:#fff\}/);
@@ -174,6 +179,7 @@ assert.match(styles, /\.brand-block p\{margin:0;transform:translateY\(-5px\);tex
 assert.match(styles, /\.brand-block p\{[^}]*font-weight:900/);
 assert.match(styles, /\.brand-logo\{[^}]*opacity:1;mix-blend-mode:normal;filter:none/);
 assert.match(styles, /\.brand-block p\{[^}]*opacity:1;text-shadow:2px 2px 4px/);
+assert.match(styles, /background-position:center 78%/);
 assert.match(styles, /@media\(min-width:901px\)\{\.topbar\{justify-content:flex-start/);
 assert.match(sw, /pier-travel-expense-manager-v40/);
 assert.match(sw, /icons\/pier-logo-navy\.png/);
@@ -184,6 +190,7 @@ assert.match(styles, /colour-blind-mode/);
 assert.match(styles, /Preserve the official claim document preview and print appearance/);
 assert.match(app05, /const APP_VERSION='28'/);
 assert.match(app05, /badge\.hidden=channel!=='beta'/);
+assert.match(app05, /!telemetry\.surveyPrompted&&Object\.keys\(telemetry\.pdfMonths/);
 assert.match(app02, /button\.classList\.toggle\('is-active',configured&&!r\.pushFailed\)/);
 assert.match(styles, /\.notification-bell,\.notification-bell\.needs-attention\{color:#fff;border-color:var\(--cool-dusk\);background:var\(--cool-dusk\)\}/);
 assert.match(styles, /\.notification-bell:hover,[^\n]+background:var\(--sunset-amber\)/);
@@ -225,6 +232,11 @@ assert.match(betaWorkerConfig, /travel-claims-ics\.n-e-alwaa\.workers\.dev/);
 assert.match(worker, /\/api\/site-config/);
 assert.match(dashboard, /data-channel="live"/);
 assert.match(dashboard, /data-channel="beta"/);
+assert.match(dashboard, /class="switcher"[^\n]+data-channel="beta"[^\n]+data-channel="live"/);
+assert.match(dashboard, /button\[data-channel="beta"\]\[aria-pressed="true"\]\{background:var\(--mist\)/);
+assert.match(dashboard, /returning users',percent\(data\.returningUsers,data\.uniqueUsers\)/);
+assert.match(dashboard, /shifts imported per claim/);
+assert.match(dashboard, /calendar imports failed/);
 assert.match(dashboard, /Remove from totals/);
 assert.match(dashboard, /Appearance and wording/);
 assert.match(dashboard, /id="telemetryStatus"/);
