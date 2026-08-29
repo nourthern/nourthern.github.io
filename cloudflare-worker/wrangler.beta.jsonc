@@ -6,6 +6,12 @@
   "compatibility_flags": ["nodejs_compat"],
   "preview_urls": false,
   "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "beta.pier.bynour.uk/*",
+      "zone_name": "bynour.uk"
+    }
+  ],
   "vars": {
     "APP_CHANNEL": "beta",
     "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk,https://travel-claims-ics.n-e-alwaa.workers.dev,https://pier-beta.n-e-alwaa.workers.dev",

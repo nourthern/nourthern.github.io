@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='27';
+const APP_VERSION='28';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -164,9 +164,9 @@ document.addEventListener('change',event=>{const shift=event.target.closest?.('.
 $('manualShiftForm')?.addEventListener('submit',()=>{const key=$('manualDate')?.value?.slice(0,7);if(key){workflowMonth(key).added++;refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
 document.addEventListener('click',event=>{const add=event.target.closest?.('.row-add');if(add?.dataset.month){workflowMonth(add.dataset.month).added++;refreshWorkflowTotals();saveState();}});
 $('humberBridge')?.addEventListener('click',()=>incrementTelemetry('humberClicks'));
-$('emailPayroll')?.addEventListener('click',()=>incrementTelemetry('payrollEmailClicks'));
+$('emailPayroll')?.addEventListener('click',()=>{incrementTelemetry('payrollEmailClicks');const telemetry=state.telemetry;if(!telemetry.surveyPrompted&&Object.keys(telemetry.pdfMonths||{}).length){telemetry.surveyPrompted=true;updateOutcomeSurvey();saveState();setTimeout(()=>openDialog('outcomeSurveyDialog'),0);}});
 
-function updateOutcomeSurvey(){const panel=$('outcomeSurvey'),telemetry=state.telemetry;if(!panel)return;panel.hidden=!Object.keys(telemetry.pdfMonths||{}).length;if(panel.hidden)return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));}
+function updateOutcomeSurvey(){const telemetry=state.telemetry;if(!$('outcomeSurveyDialog'))return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));}
 function saveOutcomeSurvey(){const telemetry=state.telemetry,selected=qsa('input[name="surveyEase"]:checked')[0];telemetry.survey={timeWithoutPier:$('surveyTime')?.value||'',easeRating:Number(selected?.value)||0};$('surveyStatus').textContent='Optional feedback saved. Thank you.';saveState();queueTelemetrySync();}
 $('surveyTime')?.addEventListener('change',saveOutcomeSurvey);qsa('input[name="surveyEase"]').forEach(input=>input.addEventListener('change',saveOutcomeSurvey));updateOutcomeSurvey();
 
