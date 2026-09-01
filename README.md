@@ -1,4 +1,12 @@
-# PIER · Travel Expense Manager v32 beta
+# PIER · Travel Expense Manager v33 beta
+
+## v33 beta highlights
+
+- Restores automatic Allocate calendar-link refreshes by routing `/ics` through the Worker before static assets.
+- Keeps a clearly labelled local ICS-file import option visible beneath calendar refresh feedback.
+- Uses the same colour-coded, editable shift card in Calendar pop-ups and List view.
+- Presents Claim and Do not claim as consistent, side-by-side checked choices instead of dark selection buttons.
+- Rewords failed automatic refreshes with a concise link-check and local-file fallback message.
 
 ## v32 beta highlights
 
