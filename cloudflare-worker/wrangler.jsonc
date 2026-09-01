@@ -5,6 +5,13 @@
   "compatibility_date": "2026-08-24",
   "compatibility_flags": ["nodejs_compat"],
   "preview_urls": false,
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "pier.bynour.uk",
+      "custom_domain": true
+    }
+  ],
   "vars": {
     "APP_CHANNEL": "live",
     "ALLOWED_ORIGIN": "https://nourthern.github.io,https://pier.bynour.uk,https://beta.pier.bynour.uk,https://travel-claims-ics.n-e-alwaa.workers.dev,https://pier-beta.n-e-alwaa.workers.dev",
@@ -19,6 +26,12 @@
   ],
   "triggers": {
     "crons": ["0 * * * *"]
+  },
+  "assets": {
+    "directory": "../site-dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/dashboard*", "/api/*"]
   },
   "observability": {
     "enabled": true,
