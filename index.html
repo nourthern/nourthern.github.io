@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
   <link rel="apple-touch-icon" href="icons/icon-192-v2.png" />
   <title>PIER · Travel Expense Manager</title>
-  <link rel="stylesheet" href="styles.css?v=34" />
+  <link rel="stylesheet" href="styles.css?v=35" />
 </head>
 <body>
   <header class="topbar">
@@ -129,7 +129,6 @@
     </section>
 
     <section id="shifts" class="panel" role="tabpanel" hidden>
-      <div class="accessibility-toolbar"><label class="toggle-line"><input id="colourBlindMode" type="checkbox"> Use colour-blind friendly shift colours and patterns</label></div>
       <div class="section-heading">
         <div>
           <h2>Check shifts</h2>
@@ -157,7 +156,7 @@
       </div>
 
       <div class="warning shifts-disclaimer"><strong>Important:</strong> This tool automates the form; it does not decide whether a journey is actually claimable. Review every generated row against Trust/payroll rules before signing and submitting.</div>
-      <div class="section-heading compact"><div><h3>Selected shifts</h3><p id="studyReviewProgress">Calendar view shows the selected months. Use list view to change exact times or claim status.</p></div><button id="addManualShift" class="secondary" type="button">+ Add unscheduled day</button></div>
+      <div class="section-heading compact"><div><h3>Selected shifts</h3><p id="studyReviewProgress">Calendar view shows the selected months. Use list view to change exact times or claim status.</p></div><div class="shift-heading-actions"><div class="accessibility-toolbar"><label class="toggle-line"><input id="colourBlindMode" type="checkbox"> Use colour-blind friendly shift colours and patterns</label></div><button id="addManualShift" class="secondary" type="button">+ Add unscheduled day</button></div></div>
       <div class="shift-view-toolbar" aria-label="Shift view">
         <div class="shift-view-toggle"><button id="calendarViewButton" class="secondary" type="button" aria-pressed="true">Calendar view</button><button id="listViewButton" class="secondary" type="button" aria-pressed="false">List view</button></div>
         <button id="clearShiftDateFilter" class="link-btn" type="button" hidden>Show all selected dates</button>
@@ -212,6 +211,6 @@
     <section id="calendarReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Calendar reminder</h4><p class="hint">Creates a recurring monthly ICS reminder locally. It repeats until deleted from the calendar. No calendar account is connected to this site.</p><div class="grid two compact-grid"><label>Reminder day of each month<select id="calendarReminderDay"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option></select></label><label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label></div><button id="saveCalendarReminder" class="primary" type="button">Save monthly reminder to calendar</button></section>
     <section id="pushReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Push notifications</h4><p class="hint">Available on supported browsers. On iPhone/iPad, install the site to the Home Screen first.</p><label class="toggle-line"><input id="pushMonthly" type="checkbox" checked> Monthly claim reminder</label><label class="toggle-line"><input id="pushDeadline" type="checkbox" checked> Deadline reminders</label><label class="toggle-line"><input id="pushRota" type="checkbox" checked> Rota change alerts</label><label class="toggle-line"><input id="pushUnfinished" type="checkbox" checked> Unfinished claim reminders</label><details class="advanced-reminders"><summary>Advanced notification settings</summary><div class="grid two compact-grid"><label>Notification time<input id="pushReminderTime" type="time" value="18:00"></label><label>Deadline warning (days before 5th)<input id="pushDeadlineDays" type="number" min="1" max="4" value="3"></label><label>Unfinished claim reminder day<input id="pushUnfinishedDay" type="number" min="1" max="28" value="3"></label></div></details><div class="reminder-buttons"><button id="enablePush" class="primary" type="button">Enable push notifications</button><button id="testPush" class="secondary" type="button" disabled>Send test notification</button><button id="disablePush" class="link-btn" type="button" hidden>Disable push</button></div><div id="pushFeedback" class="hint" aria-live="polite">Push reminders require the notification service to be configured.</div></section>
   </div><div class="dialog-actions"><button type="button" data-close-dialog="notificationSettingsDialog" class="secondary">Done</button></div></dialog>
-  <script src="app.js?v=31"></script>
+  <script src="app.js?v=32"></script>
 </body>
 </html>

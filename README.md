@@ -1,11 +1,12 @@
-# PIER · Travel Expense Manager v31 beta
+# PIER · Travel Expense Manager v32 beta
 
-## v31 beta highlights
+## v32 beta highlights
 
 - Calendar-first shift checking for one to four selected months, with a Monday-first responsive layout and accessible non-colour status markers.
 - Calendar days open a focused shift pop-up that closes from its close button, Escape, or a click outside.
 - Planned leave replaces times in calendar cells; exact start and end times remain amendable in list view.
 - Opening a study day marks it reviewed, and a claimed study day uses the tick marker. Review remains optional before continuing.
+- List view uses side-by-side checked status choices instead of a dropdown, and the colour-blind-friendly option sits with the shift actions.
 - Deterministic seven-category shift labels using the BMA three-hour night-overlap rule.
 - Production can be served through the Cloudflare Worker custom domain and edge certificate for broader managed-device TLS compatibility.
 
