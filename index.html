@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
   <link rel="apple-touch-icon" href="icons/icon-192-v2.png" />
   <title>PIER · Travel Expense Manager</title>
-  <link rel="stylesheet" href="styles.css?v=33" />
+  <link rel="stylesheet" href="styles.css?v=34" />
 </head>
 <body>
   <header class="topbar">
@@ -133,7 +133,7 @@
       <div class="section-heading">
         <div>
           <h2>Check shifts</h2>
-          <p>Choose up to four claim months. Ordinary claimable shifts are ready automatically; only study days need review.</p>
+          <p>Choose up to four claim months. You can open individual days to check them, but review is optional.</p>
         </div>
         <span id="icsState" class="save-status">No calendar loaded</span>
       </div>
@@ -141,7 +141,7 @@
       <div class="card">
         <div class="inline-form"><span id="calendarSourceLabel" class="hint">Your saved calendar is refreshed automatically whenever this tab is opened.</span></div>
         <div id="calendarFeedback" class="calendar-feedback" role="status" aria-live="polite">Ready. Your saved calendar will refresh automatically when this tab opens.</div>
-        <div id="studyReviewAlert" class="study-review-alert" role="alert" hidden><strong>Study-related calendar events found.</strong> Review the shifts highlighted in <span id="studyHighlightColour">orange</span> before creating your claim.</div>
+        <div id="studyReviewAlert" class="study-review-alert" role="status" hidden><strong>Study-related calendar events found.</strong> They are highlighted in <span id="studyHighlightColour">orange</span>. Review them if needed, or continue to the Claim Form.</div>
         <div id="localIcsPanel" class="local-ics">
           <label class="file-picker">Or import an ICS file directly<input id="icsFile" type="file" accept=".ics,text/calendar,text/plain" /></label>
           <span id="icsFileStatus" class="hint">This option is fully local. Imported files must be updated manually.</span>
@@ -193,6 +193,7 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <div id="installHelp" class="install-help" hidden></div>
+  <dialog id="shiftDayDialog" class="shift-day-dialog" aria-labelledby="shiftDayDialogTitle"><div class="shift-day-dialog-head"><h3 id="shiftDayDialogTitle">Shifts</h3><button id="closeShiftDayDialog" class="icon-btn" type="button" aria-label="Close shift details">×</button></div><div id="shiftDayDialogContent" class="shift-day-dialog-content"></div></dialog>
   <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button type="button" data-close-manual class="icon-btn">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" required></label><label>Reason<input id="manualReason" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" required></label><label>End time<input id="manualEnd" type="time" required></label></div><div class="dialog-actions"><button type="button" data-close-manual class="secondary">Cancel</button><button id="saveManualShift" type="submit" class="primary">Add day</button></div></form></dialog>
   <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn">×</button></div><canvas id="signaturePad" width="700" height="220"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary">Clear</button><button id="saveSig" class="primary">Save signature</button></div></dialog>
   <dialog id="outcomeSurveyDialog"><div class="dialog-head"><div><h3>Optional feedback</h3><p class="hint">Two quick optional questions about your experience with PIER.</p></div><button type="button" data-close-dialog="outcomeSurveyDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body outcome-survey"><label>How long would this have taken without PIER?<select id="surveyTime"><option value="">Choose an answer…</option><option value="under-15">Under 15 minutes</option><option value="15-30">15–30 minutes</option><option value="30-60">30–60 minutes</option><option value="1-2-hours">1–2 hours</option><option value="over-2-hours">More than 2 hours</option><option value="never">I would never have got it done</option></select></label><fieldset><legend>How easy was PIER to use?</legend><div class="ease-rating" role="radiogroup" aria-label="Ease of use rating"><label><input type="radio" name="surveyEase" value="1">1</label><label><input type="radio" name="surveyEase" value="2">2</label><label><input type="radio" name="surveyEase" value="3">3</label><label><input type="radio" name="surveyEase" value="4">4</label><label><input type="radio" name="surveyEase" value="5">5</label></div><p class="hint">1 = difficult, 5 = very easy. You may answer either question or both.</p></fieldset><p id="surveyStatus" class="hint" aria-live="polite"></p></div><div class="dialog-actions"><button type="button" data-close-dialog="outcomeSurveyDialog" class="secondary">Not now</button><button id="submitOutcomeSurvey" type="button" class="primary">Submit feedback</button></div></dialog>
@@ -211,6 +212,6 @@
     <section id="calendarReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Calendar reminder</h4><p class="hint">Creates a recurring monthly ICS reminder locally. It repeats until deleted from the calendar. No calendar account is connected to this site.</p><div class="grid two compact-grid"><label>Reminder day of each month<select id="calendarReminderDay"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option></select></label><label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label></div><button id="saveCalendarReminder" class="primary" type="button">Save monthly reminder to calendar</button></section>
     <section id="pushReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Push notifications</h4><p class="hint">Available on supported browsers. On iPhone/iPad, install the site to the Home Screen first.</p><label class="toggle-line"><input id="pushMonthly" type="checkbox" checked> Monthly claim reminder</label><label class="toggle-line"><input id="pushDeadline" type="checkbox" checked> Deadline reminders</label><label class="toggle-line"><input id="pushRota" type="checkbox" checked> Rota change alerts</label><label class="toggle-line"><input id="pushUnfinished" type="checkbox" checked> Unfinished claim reminders</label><details class="advanced-reminders"><summary>Advanced notification settings</summary><div class="grid two compact-grid"><label>Notification time<input id="pushReminderTime" type="time" value="18:00"></label><label>Deadline warning (days before 5th)<input id="pushDeadlineDays" type="number" min="1" max="4" value="3"></label><label>Unfinished claim reminder day<input id="pushUnfinishedDay" type="number" min="1" max="28" value="3"></label></div></details><div class="reminder-buttons"><button id="enablePush" class="primary" type="button">Enable push notifications</button><button id="testPush" class="secondary" type="button" disabled>Send test notification</button><button id="disablePush" class="link-btn" type="button" hidden>Disable push</button></div><div id="pushFeedback" class="hint" aria-live="polite">Push reminders require the notification service to be configured.</div></section>
   </div><div class="dialog-actions"><button type="button" data-close-dialog="notificationSettingsDialog" class="secondary">Done</button></div></dialog>
-  <script src="app.js?v=30"></script>
+  <script src="app.js?v=31"></script>
 </body>
 </html>
