@@ -158,7 +158,10 @@ assert.match(styles, /@media\(max-width:820px\)\{\.shift-calendar\{grid-template
 const selectedShiftsPosition = html.indexOf('<h3>Selected shifts</h3>');
 const colourModePosition = html.indexOf('id="colourBlindMode"');
 const addShiftPosition = html.indexOf('id="addManualShift"');
-assert.ok(selectedShiftsPosition < colourModePosition && colourModePosition < addShiftPosition, 'Colour-blind mode should appear above Add unscheduled day');
+const shiftViewToolbar = html.match(/<div class="shift-view-toolbar"[\s\S]*?<\/div>\s*<button id="clearShiftDateFilter"/)?.[0] || '';
+assert.ok(selectedShiftsPosition < addShiftPosition && addShiftPosition < colourModePosition, 'Colour-blind mode should appear below Add unscheduled day');
+assert.match(shiftViewToolbar, /id="calendarViewButton"/);
+assert.match(shiftViewToolbar, /id="colourBlindMode"/);
 assert.match(html, /id="privacyDialog"/);
 assert.doesNotMatch(html, />Local storage only</);
 const privacyDialog = html.match(/<dialog id="privacyDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
