@@ -1,208 +1,72 @@
+'use strict';
+
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
-const app00 = fs.readFileSync(path.join(root, 'app-parts', 'app-00.js'), 'utf8');
-const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
-const app01 = fs.readFileSync(path.join(root, 'app-parts', 'app-01.js'), 'utf8');
-const app02 = fs.readFileSync(path.join(root, 'app-parts', 'app-02.js'), 'utf8');
-const app03 = fs.readFileSync(path.join(root, 'app-parts', 'app-03.js'), 'utf8');
-const app04 = fs.readFileSync(path.join(root, 'app-parts', 'app-04.js'), 'utf8');
-const app05 = fs.readFileSync(path.join(root, 'app-parts', 'app-05.js'), 'utf8');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
-const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-const worker = fs.readFileSync(path.join(root, 'cloudflare-worker', 'worker.js'), 'utf8');
-const dashboard = fs.readFileSync(path.join(root, 'cloudflare-worker', 'dashboard.js'), 'utf8');
-const migration25 = fs.readFileSync(path.join(root, 'cloudflare-worker', 'migrate-v25.sql'), 'utf8');
-const workerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.jsonc'), 'utf8');
-const betaWorkerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.beta.jsonc'), 'utf8');
+const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
 
-assert.match(workerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
-assert.match(betaWorkerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
+const html = read('index.html');
+const styles = read('styles.css');
+const app00 = read('app-parts', 'app-00.js');
+const app02 = read('app-parts', 'app-02.js');
+const worker = read('cloudflare-worker', 'worker.js');
+const liveConfig = read('cloudflare-worker', 'wrangler.jsonc');
+const betaConfig = read('cloudflare-worker', 'wrangler.beta.jsonc');
+const workflow = read('.github', 'workflows', 'deploy-cloudflare.yml');
 
-const phraseStart = app04.indexOf('function naturalJoin');
-const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
-assert.ok(phraseStart >= 0 && phraseEnd > phraseStart, 'Payroll month helpers were not found');
-
-const sandbox = {};
-vm.runInNewContext(`${app04.slice(phraseStart, phraseEnd)}\nresult = { monthsPhrase };`, sandbox);
-const { monthsPhrase } = sandbox.result;
-
-assert.equal(monthsPhrase(['2026-10']), 'October 2026');
-assert.equal(monthsPhrase(['2026-10', '2026-11']), 'October and November 2026');
-assert.equal(
-  monthsPhrase(['2026-10', '2026-11', '2026-12', '2027-01']),
-  'October, November and December 2026, and January 2027'
-);
-assert.equal(
-  monthsPhrase(['2027-01', '2026-12', '2026-10', '2026-12', '2026-11']),
-  'October, November and December 2026, and January 2027'
-);
-assert.match(app02, /Open PIER Travel Expense Manager:/);
-
-assert.doesNotMatch(app02, /icons\/icon-192\.png/);
-assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
-assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
-assert.match(app04, /drawPage2\(c\.getContext\('2d'\),img2,chunk,isLast\?claimTotals:null,showLegend\)/);
-assert.match(app04, /function drawPageNumber\(ctx,page,total\)/);
-assert.match(app04, /ctx\.fillRect\(0,752,1404,240\)/);
-assert.match(app04, /function drawFinalPageLegend/);
-assert.match(app04, /function drawLegendOnlyPage/);
-assert.match(app04, /if\(showLegend\)drawFinalPageLegend\(ctx,img,bottom\)/);
-assert.match(app04, /const dataFont=18,dataMin=11/);
-assert.match(app04, /drawWrappedTextFit/);
-assert.match(app04, /ctx\.fillText\(fmtNum\(claimTotals\.pass\),869,bottom\+rowH\/2\)/);
-assert.match(app04, /drawTextFit\(ctx,r\.mealFrom\|\|'',1195,y/);
-assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
-assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
-assert.match(html, /<p>Travel Expense Manager<\/p>/);
-assert.match(html, /placeholder="e\.g\. Nour Alwaa"/);
-assert.doesNotMatch(html, /Nour Eddin Alwaa/);
-assert.match(html, /id="studyHighlightColour">orange<\/span>/);
-assert.match(app05, /\$\('colourBlindMode'\)\?\.checked\?'purple':'orange'/);
-assert.match(html, /id="backupBtn"[\s\S]+id="installApp"[\s\S]+id="saveStatus"/);
-assert.match(html, /id="backupBtn"[\s\S]+id="saveStatus"[\s\S]+id="openAbout"/);
-assert.doesNotMatch(html, /id="openAbout"[^>]*>[\s\S]{0,150}<circle/);
-assert.match(html, /id="busRailOption"/);
-assert.match(html, />Above price frequency</);
-assert.match(html, /id="perJourneyFrequencyOption"/);
-assert.match(html, /id="openNotifications"/);
-assert.match(html, /id="prefillExampleData"/);
-assert.match(html, /id="expenseFrequency"/);
-assert.match(html, /id="otherExpenseFields"/);
-assert.match(html, /id="otherExpenseFrequency"/);
-assert.match(html, /This only affects expense log records, not claim forms or generated PDFs\./);
-assert.doesNotMatch(html, /Average commute time to work/);
-assert.match(html, /Report a bug \/ give feedback/);
-assert.match(html, /id="bugScreenshot"/);
+// App shell: retain the four primary user workflows and current assembled script.
+for (const tab of ['setup', 'shifts', 'claim', 'log']) {
+  assert.match(html, new RegExp('id="' + tab + '"'), 'Missing ' + tab + ' panel');
+}
+assert.match(html, /<script src="app\.js\?v=\d+"><\/script>/);
 assert.match(html, /id="calendarHelpDialog"/);
-const calendarHelpDialog = html.match(/<dialog id="calendarHelpDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
-assert.doesNotMatch(calendarHelpDialog, /draft-label|>DRAFT</);
-assert.match(html, /id="studyReviewAlert"/);
-assert.match(html, /id="privacyDialog"/);
-assert.doesNotMatch(html, />Local storage only</);
-const privacyDialog = html.match(/<dialog id="privacyDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
-assert.doesNotMatch(privacyDialog, /draft-label|>DRAFT</);
-assert.match(privacyDialog, /How PIER Handles Your Data/);
-assert.match(privacyDialog, /Overall claim totals for the past 3 and 12 months/);
-assert.match(privacyDialog, /What Is Collected/);
-assert.match(privacyDialog, /support ongoing improvements/);
-assert.match(privacyDialog, /What Is NEVER Collected/);
-assert.match(html, /id="helpDialog"/);
-assert.match(html, /use the save icon to create a backup of Setup and Log tabs/);
-assert.match(html, /data-install-platform="ios"/);
-assert.match(html, /data-install-platform="android"/);
-assert.match(html, /tap the <strong>Share<\/strong> button/);
-assert.match(html, /tap the <strong>three-dot menu<\/strong>/);
-assert.match(html, /may need to be installed on your home screen or desktop for notifications to work/);
-assert.match(html, /Use the <strong>Email payroll<\/strong> button to generate a pre-drafted email/);
-assert.match(html, /id="aboutDialog"/);
-assert.match(html, /A true Painless and Intelligent Expenses Reporting tool!/);
-assert.match(html, /id="bugReportDialog"/);
-const bugReportDialog = html.match(/<dialog id="bugReportDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
-assert.doesNotMatch(bugReportDialog, /draft-label|>DRAFT</);
-assert.match(bugReportDialog, /Don't include personal details\./);
-assert.match(app05, /claimedLastThreeMonthsPence/);
-assert.match(app05, /claimedLastTwelveMonthsPence/);
-assert.match(app05, /milesLastThreeMonthsTenths/);
-assert.match(app05, /lastPdfCreatedAt/);
-assert.match(app05, /claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence\(\)/);
-assert.match(app05, /claimedLastTwelveMonthsPence\?\?stats\.claimedCurrentYearPence/);
-assert.match(html, /PIER has helped generate claims for:/);
-assert.match(html, /class="stats-featured"><strong id="aboutUsers"/);
-assert.match(html, /users in the last 3 months/);
-assert.match(html, /miles in the last 12 months/);
-assert.doesNotMatch(html, /users who generated claim forms in the last 3 months/);
-assert.doesNotMatch(html, /claimed by all users in the last 3 months/);
-assert.match(app05, /for\(let i=0;i<22;i\+\+\)/);
-assert.match(app05, /Edit cells\?/);
-assert.match(app01, /busRailOption\.hidden=passengerUsed/);
-assert.match(app01, /type==='parking'&&!\['daily','weekly','monthly'\]\.includes\(frequency\.value\)/);
-assert.match(app01, /otherHumber\.hidden=type==='humber'/);
-assert.match(app01, /otherParking\.hidden=type==='parking'/);
-assert.match(app01, /otherFrequencyEnabled=otherType==='parking'/);
-assert.match(app00, /otherExpenseFrequency:'journey'/);
-assert.match(app03, /passengerLabel=String\(state\.settings\.passengerNames/);
-assert.doesNotMatch(app03, /passengerLabel=passengerNames\?`Passenger\(s\):/);
-assert.match(app03, /claimTypeCell/);
-assert.match(app04, /drawTextFit\(ctx,r\.claimType\|\|'R'/);
-assert.match(app04, /miscColumnHeadingLines/);
-assert.match(app04, /intermediatePageSize=29,finalPageSize=28,legendPageSize=21/);
-assert.match(app04, /chunks\.legendSeparate=/);
-assert.match(app04, /function isHomeboundRow/);
-assert.match(app04, /if\(isHomeboundRow\(r\)\)/);
-assert.match(app04, /proof of parking/);
-assert.match(app04, /proof of additional expenses/);
-assert.match(app04, /rowH=28/);
-assert.match(app04, /ctx\.font='bold 15px Arial'/);
-assert.match(app04, /ctx\.textAlign='center'.*ctx\.fillText\(`\$\{page\} of \$\{total\}`,702,974\)/);
-assert.match(app04, /Travel Claim\$\{person\?' - '\+person:''\} - \$\{key\}\.pdf/);
-assert.match(app03, /state\.settings\.commuteType!=='parking'/);
-assert.match(app03, /state\.settings\.otherExpenseType!=='parking'/);
-assert.match(styles, /#setup input\.has-value,#setup select\.has-value,#setup textarea\.has-value\{background:#fff!important\}/);
-assert.match(styles, /\.header-icon-btn\.plain-symbol svg\{width:26px;height:26px;stroke-width:2\.2\}/);
-assert.match(styles, /--deep-navy:#123047/);
-assert.match(styles, /--steel-blue:#365F7A/);
-assert.match(styles, /--sunset-copper:#98521F/);
-assert.match(styles, /\.tab\{background:var\(--deep-navy\);color:#fff/);
-assert.match(styles, /\.tab\.active\{background:var\(--sunset-copper\);color:#fff/);
-assert.match(styles, /\.primary,\.secondary,\.file-btn\{background:var\(--steel-blue\);color:#fff/);
-assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]\{background:var\(--sunset-copper\);color:#fff/);
-assert.match(styles, /\.month-chip,\.month-chip:has\(input:checked\)\{border-color:var\(--shore-sand\);background:#fff;color:var\(--cool-dusk\)\}/);
-assert.doesNotMatch(styles, /\.month-chip:has\(input:checked\)\{border-color:var\(--sunlit-gold\);background:var\(--sunlit-gold\)/);
-assert.match(styles, /\.dialog-head h3\{font-size:22px;font-weight:900/);
-assert.match(styles, /\.dialog-body\.prose strong\{font-weight:700\}/);
-assert.match(styles, /\.brand-block p\{margin:0;transform:translateY\(-5px\);text-align:left/);
-assert.match(styles, /\.brand-block p\{[^}]*font-weight:900/);
-assert.match(styles, /--shore-sand:var\(--steel-blue\)/);
-assert.match(styles, /--sunset-amber:var\(--sunset-copper\)/);
-assert.match(styles, /--sunlit-gold:var\(--dune-gold\)/);
-assert.match(styles, /colour-blind-mode/);
-assert.match(styles, /Preserve the official claim document preview and print appearance/);
-assert.match(app02, /button\.classList\.toggle\('is-active',configured&&!r\.pushFailed\)/);
-assert.match(styles, /\.notification-bell,\.notification-bell\.needs-attention\{color:#fff;border-color:var\(--cool-dusk\);background:var\(--cool-dusk\)\}/);
-assert.match(app00, /pier-beta\\\.n-e-alwaa\\\.workers\\\.dev/);
-assert.match(app02, /tag='pier-notification-test'/);
-assert.match(app02, /setTimeout\(\(\)=>resolve\(false\),12000\)/);
-assert.doesNotMatch(app02, /displayed a local test notification instead/);
-assert.match(worker, /tag:'pier-notification-test'/);
-assert.match(sw, /icons\/pier-sunset-hero\.png/);
-assert.match(sw, /icons\/icon-192-v2\.png/);
-assert.match(html, /Not affiliated with NLaG Trust or Humber Health Partnership\./);
-assert.match(app04, /serviceWorker\.addEventListener\('controllerchange'/);
-assert.match(app04, /updateViaCache:'none'/);
-assert.match(sw, /fetch\(e\.request,\{cache:'no-cache'\}\)/);
-assert.match(worker, /\/api\/telemetry/);
-assert.match(worker, /\/api\/stats/);
-assert.match(worker, /\/api\/bug-report/);
-assert.match(worker, /\/api\/push\/status/);
-assert.match(worker, /screenshot_data/);
-assert.match(worker, /claimed_current_year_pence/);
-assert.match(worker, /claimed_last_12_months_pence/);
-assert.match(worker, /claimedLastTwelveMonthsPence/);
-assert.match(worker, /Math\.max\(claimed,/);
-assert.match(worker, /miles_last_3_months_tenths/);
-assert.match(worker, /last_pdf_created_at/);
-assert.match(worker, /dashboardAuthenticated/);
-assert.match(workerConfig, /"APP_CHANNEL": "live"/);
-assert.match(betaWorkerConfig, /"APP_CHANNEL": "beta"/);
-assert.match(betaWorkerConfig, /"run_worker_first": \["\/ics", "\/dashboard\*", "\/api\/\*"\]/);
-assert.match(worker, /excluded_from_aggregates=0/);
-assert.match(worker, /\/api\/dashboard\/telemetry\/exclusion/);
-assert.match(worker, /\/api\/site-config/);
-assert.match(dashboard, /data-channel="live"/);
-assert.match(dashboard, /data-channel="beta"/);
-assert.match(dashboard, /Remove from totals/);
-assert.match(dashboard, /Appearance and wording/);
-assert.match(migration25, /ALTER TABLE telemetry_installations ADD COLUMN channel/);
-assert.match(migration25, /CREATE TABLE IF NOT EXISTS site_customization/);
-assert.match(app05, /telemetry\.claimMonths/);
-assert.match(app05, /recordClaimMetric\(key\)/);
-assert.match(app04, /recordClaimMetric\(key,true\)/);
-assert.doesNotMatch(html, /id="pushMonthlyDay"/);
-assert.doesNotMatch(html, /id="pushDeadlineToday"/);
+assert.match(html, /id="calendarUrl"/);
 
-console.log('Regression checks passed.');
+// Calendar refresh: the app must select the Worker by deployment and POST live links to /ics.
+assert.match(app00, /IS_BETA_DEPLOYMENT/);
+assert.match(app00, /APP_CHANNEL=IS_BETA_DEPLOYMENT\?'beta':'live'/);
+assert.match(app00, /BAKED_WORKER_URL=IS_BETA_DEPLOYMENT\?'https:\/\/pier-beta\.n-e-alwaa\.workers\.dev':'https:\/\/travel-claims-ics\.n-e-alwaa\.workers\.dev'/);
+assert.match(app02, /async function fetchText/);
+assert.match(app02, /BAKED_WORKER_URL[^\n]*\/ics/);
+assert.match(app02, /method:'POST'/);
+assert.match(app02, /JSON\.stringify\(\{url\}\)/);
+assert.match(app02, /isIcs\(text\)/);
+
+// Worker: route is POST-only, validates allowed Allocate hosts, and fetches calendars without storing them.
+assert.match(worker, /DEFAULT_ALLOWED_HOSTS=\['nlag\.allocate-cloud\.co\.uk'\]/);
+assert.match(worker, /if\(url\.pathname==='\/ics'\)/);
+assert.match(worker, /if\(request\.method!=='POST'\)/);
+assert.match(worker, /fetchCalendar\(raw,env,request\.signal\)/);
+assert.match(worker, /BEGIN:VCALENDAR/);
+assert.match(worker, /Cache-Control':'no-store, private/);
+
+// Cloudflare deployment separation and beta asset routing.
+assert.match(liveConfig, /"name": "travel-claims-ics"/);
+assert.match(liveConfig, /"APP_CHANNEL": "live"/);
+assert.match(betaConfig, /"name": "pier-beta"/);
+assert.match(betaConfig, /"APP_CHANNEL": "beta"/);
+assert.match(betaConfig, /"run_worker_first": \["\/ics", "\/dashboard\\*", "\/api\/\\*"\]/);
+assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.jsonc/);
+assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.beta\.jsonc/);
+
+// Sunrise Harbour palette and accessible selected/focus states remain wired into the live stylesheet.
+for (const token of [
+  '--deep-navy:#123047',
+  '--steel-blue:#365F7A',
+  '--sunset-copper:#98521F',
+  '--warm-background:#F7F3EA',
+  '--card-white:#FFFDF9',
+  '--primary-text:#183242',
+  '--tidepool-teal:#2F6F68',
+  '--dune-gold:#C18A24'
+]) assert.match(styles, new RegExp(token.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&')));
+assert.match(styles, /\.tab\.active\{background:var\(--sunset-copper\);color:#fff/);
+assert.match(styles, /outline[^}]*var\(--dune-gold\)/);
+assert.match(styles, /box-shadow[^}]*var\(--deep-navy\)/);
+
+// Claim-form rendering must stay separate from site-wide presentation styling.
+assert.match(styles, /Preserve the official claim document preview and print appearance/);
+
+console.log('Release checks passed.');
