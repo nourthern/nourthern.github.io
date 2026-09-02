@@ -16,7 +16,6 @@ function generatedShiftLabel(e){
   const startMinutes=start.getHours()*60+start.getMinutes(),endMinutes=end.getHours()*60+end.getMinutes();
   if(durationH>=10&&startMinutes>=13*60&&endMinutes>=23*60&&sameDay) return 'Long evening Shift';
   if(durationH>=10&&sameDay&&endMinutes<24*60) return 'Long day';
-  if(durationH>10) return 'Long shift';
   if(endMinutes<13*60&&sameDay) return 'Morning shift';
   if(endMinutes>22*60&&sameDay) return 'Evening shift';
   if(durationH<10&&startMinutes>=12*60&&sameDay) return 'Afternoon shift';
