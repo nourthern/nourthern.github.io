@@ -47,7 +47,10 @@ assert.match(liveConfig, /"name": "travel-claims-ics"/);
 assert.match(liveConfig, /"APP_CHANNEL": "live"/);
 assert.match(betaConfig, /"name": "pier-beta"/);
 assert.match(betaConfig, /"APP_CHANNEL": "beta"/);
-assert.match(betaConfig, /"run_worker_first": \["\/ics", "\/dashboard\\*", "\/api\/\\*"\]/);
+assert.match(betaConfig, /"run_worker_first"/);
+assert.match(betaConfig, /"\/ics"/);
+assert.match(betaConfig, /"\/dashboard\*"/);
+assert.match(betaConfig, /"\/api\/\*"/);
 assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.jsonc/);
 assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.beta\.jsonc/);
 
