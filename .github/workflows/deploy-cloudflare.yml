@@ -3,7 +3,7 @@ name: Deploy PIER to Cloudflare
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, beta-sunrise-harbour]
     paths:
       - "cloudflare-worker/**"
       - "app-parts/**"
@@ -62,6 +62,7 @@ jobs:
         run: pnpm run build:site
 
       - name: Apply D1 v25 migration when needed
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           if pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --command "SELECT channel FROM installations LIMIT 0; SELECT channel, excluded_from_aggregates FROM telemetry_installations LIMIT 0; SELECT channel FROM bug_reports LIMIT 0; SELECT channel FROM site_customization LIMIT 0;" >/dev/null 2>&1; then
@@ -71,6 +72,7 @@ jobs:
           fi
 
       - name: Apply D1 v26 migration when needed
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           if pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --command "SELECT first_seen_at, device_type, claims_created FROM telemetry_installations LIMIT 0; SELECT channel FROM telemetry_suppressions LIMIT 0; SELECT preview_token FROM site_customization_drafts LIMIT 0; SELECT channel FROM site_customization_backups LIMIT 0;" >/dev/null 2>&1; then
@@ -80,6 +82,7 @@ jobs:
           fi
 
       - name: Deploy live Worker
+        if: github.ref == 'refs/heads/main'
         run: pnpm exec wrangler deploy --config cloudflare-worker/wrangler.jsonc --keep-vars
 
       - name: Deploy beta Worker and assets
