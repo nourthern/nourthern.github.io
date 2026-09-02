@@ -146,7 +146,7 @@ html,body{background:var(--warm-background);color:var(--primary-text)}
 .button-link.primary[id$="Continue"]:hover{background:var(--dune-gold);color:var(--deep-navy)}
 .install-platform-buttons button[aria-pressed="true"],.reminder-menu-card{background:var(--deep-navy);color:#fff}
 .install-platform-buttons button[aria-pressed="true"]:hover,.reminder-menu-card:hover{background:var(--steel-blue);color:#fff}
-.link-btn,.text-link,a:not(.button-link),.about-signoff a{color:var(--sunset-copper);text-decoration:underline;text-underline-offset:2px}
+.link-btn,.text-link,a:not(.button-link):not(.tab),.about-signoff a{color:var(--sunset-copper);text-decoration:underline;text-underline-offset:2px}
 .card,.claim-month-card,.log-table,.month-chip,.shift,.reminder-option,.shift-month-card,dialog{background:var(--card-white);border-color:var(--steel-blue)}
 .card{box-shadow:0 5px 18px rgba(18,48,71,.09)}
 label,.section-heading h2,.section-heading h3,.shift-month-heading h4{color:var(--primary-text)}

@@ -182,7 +182,7 @@ assert.match(styles, /\.brand-logo\{[^}]*opacity:1;mix-blend-mode:normal;filter:
 assert.match(styles, /\.brand-block p\{[^}]*opacity:1;text-shadow:2px 2px 4px/);
 assert.match(styles, /background-position:center 78%/);
 assert.match(styles, /@media\(min-width:901px\)\{\.topbar\{justify-content:flex-start/);
-assert.match(sw, /pier-travel-expense-manager-v49/);
+assert.match(sw, /pier-travel-expense-manager-v50/);
 assert.match(sw, /icons\/pier-logo-navy\.png/);
 assert.equal((styles.match(/:root\{/g) || []).length, 1, 'palette must be controlled by one root variable set');
 assert.match(styles, /--deep-navy:#123047/);
@@ -223,7 +223,7 @@ assert.match(app02, /tag='pier-notification-test'/);
 assert.match(app02, /setTimeout\(\(\)=>resolve\(false\),12000\)/);
 assert.doesNotMatch(app02, /displayed a local test notification instead/);
 assert.match(worker, /tag:'pier-notification-test'/);
-assert.match(sw, /pier-travel-expense-manager-v49/);
+assert.match(sw, /pier-travel-expense-manager-v50/);
 assert.match(sw, /icons\/pier-sunset-hero\.jpg/);
 assert.match(sw, /icons\/icon-192-v2\.png/);
 assert.match(html, /Not affiliated with NLaG Trust or Humber Health Partnership\./);
