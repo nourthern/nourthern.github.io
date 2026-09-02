@@ -24,6 +24,8 @@ PIER offers the current London calendar month and previous three London calendar
 
 Working events default to Claim. Study/SDT and planned leave default to Do not claim. Opening a study event marks it reviewed but does not force a claim. Both Study and SDT display as **Study**.
 
+In calendar view, an unopened Study event shows **?**. Opening it and leaving **Do not claim** selected changes the marker to **/**; selecting **Claim** changes it to **✓**.
+
 Manual/unscheduled work can be added only within the same four-month window. Its claim reason is the entered text, or `Unscheduled work` if no reason exists in stored data.
 
 ### Tab 3 — Claim Form
@@ -79,6 +81,8 @@ Mileage uses configured journey miles and rate. Passenger mileage requires passe
 ## Reminders
 
 PIER can create a recurring monthly ICS reminder locally in Europe/London. Supported browsers may enable generic, opt-in push reminders for monthly claims, deadlines, rota changes, and unfinished claims. Push may require the installed PWA on iOS and can be tested or disabled. Failures must be visible.
+
+Help explains that the bell opens monthly push-notification and recurring calendar-reminder options, and that push notifications may require PIER to be installed.
 
 ## Backup and restore
 

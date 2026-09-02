@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='51';
+const APP_VERSION='52';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -20,7 +20,7 @@ function sanitizeConfiguredHtml(html){
 }
 
 function applySiteCustomization(data={}){
-  const config=data.config||{},root=document.documentElement,colourMap={coolDusk:['--cool-dusk','--navy-blue','--ink','--primary','--teal','--success'],coastalBlue:['--coastal-blue','--steel-blue','--seafoam'],shoreSand:['--shore-sand','--line'],sunsetAmber:['--sunset-amber','--accent','--coral'],sunlitGold:['--sunlit-gold','--warn-line','--sunshine'],paper:['--bg','--sand']};
+  const config=data.config||{},root=document.documentElement,colourMap={deepNavy:['--deep-navy','--cool-dusk','--navy-blue','--primary'],steelBlue:['--steel-blue','--coastal-blue','--shore-sand','--line'],sunsetCopper:['--sunset-copper','--sunset-amber','--accent','--coral'],duneGold:['--dune-gold','--sunlit-gold','--warn-line','--sunshine'],warmBackground:['--warm-background','--bg','--sand'],cardWhite:['--card-white','--card']};
   const badge=$('channelBadge');if(badge)badge.hidden=(data.channel||APP_CHANNEL)!=='beta';
   for(const [key,variables] of Object.entries(colourMap)){const value=config.colours?.[key];if(/^#[0-9a-f]{6}$/i.test(value||''))variables.forEach(variable=>root.style.setProperty(variable,value));}
   for(const element of qsa('[data-config-text]')){const value=config.text?.[element.dataset.configText];if(typeof value==='string'&&value.trim())element.textContent=value.trim();}

@@ -184,3 +184,14 @@ button:disabled,[aria-disabled="true"]{border-color:var(--storm-slate);backgroun
 :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:0;box-shadow:0 0 0 3px var(--dune-gold),0 0 0 6px var(--deep-navy)!important}
 .field-error:focus-visible{box-shadow:0 0 0 3px var(--dune-gold),0 0 0 6px var(--deep-navy)!important}
 .shift-view-toggle button:focus-visible,.calendar-day.populated:focus-visible,.shift-status-option input:focus-visible+span,.shift-day-dialog:focus-visible{outline:0;box-shadow:0 0 0 3px var(--dune-gold),0 0 0 6px var(--deep-navy)!important}
+
+/* Interaction and responsive refinements. */
+html{--sunset-copper-interaction:#B15C20}
+.tab.active{padding:14px 19px;box-shadow:none}
+.tab.active:hover,.tab.active:active{background:var(--sunset-copper-interaction);color:#fff;box-shadow:none}
+.button-link.primary[id$="Continue"]:hover,.button-link.primary[id$="Continue"]:active,.button-link.primary[id$="Continue"]:focus-visible{background:var(--sunset-copper-interaction);color:#fff}
+.reminder-menu-card{background:var(--steel-blue);color:#fff}
+.reminder-menu-card strong,.reminder-menu-card span{color:#fff}
+.reminder-menu-card:hover,.reminder-menu-card:active,.reminder-menu-card:focus-visible{background:var(--storm-slate);color:#fff}
+.calendar-day.study .calendar-marker{width:auto;height:auto;border:0;border-radius:0;color:var(--sunset-copper);font-size:18px;transform:none}
+@media(max-width:900px){.topbar{align-items:flex-start}.brand-block{align-self:flex-start;text-align:left}}

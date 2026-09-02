@@ -6,6 +6,10 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Kept PIER branding left-aligned on narrow screens, enlarged the active tab without inset corner accents, and added the requested copper interaction colour.
+- Restored Steel Blue/white notification-choice cards with Storm Slate interaction states and expanded the notification Help wording.
+- Replaced Study calendar diamonds with the `?` → `/` or `✓` review-state sequence.
+- Corrected dashboard colour configuration to the current Sunrise Harbour semantic tokens and defaults.
 - Renamed the expansion to **Painless and Intelligent Expenses Reporting**.
 - Recovered the beta shift-calendar/day-dialog implementation onto current production history, including editable event times and the planned-leave/claimable-shift fix.
 - Replaced shift labels with the authoritative ordered hierarchy: manual reason, Self-Development Time, Night Shift, Long Evening Shift, Long Day, Morning Shift, Evening Shift, Afternoon Shift, then Day Shift.

@@ -41,6 +41,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Calendar and list show all events when multiple events share one London date; each can be edited/claimed/deleted independently.
 - [ ] Planned leave followed by a claimable working shift shows both states and generates rows using the working shift's actual time—not the leave event's time. This is a mandatory fixed-bug regression.
 - [ ] Claim/Do not claim toggles persist across rerender and calendar refresh.
+- [ ] Study calendar markers transition from `?` (unopened) to `/` (opened and Do not claim) or `✓` (Claim).
 - [ ] Editing start/end across midnight preserves the intended London day and recalculates the label.
 - [ ] Add a manual day at the first allowed date and current date; reject dates before the previous-three-month boundary or after current month.
 - [ ] Select multiple months and verify independent previews, totals, and selection controls.
@@ -84,6 +85,8 @@ Use boundary values as well as ordinary examples:
 - [ ] Status remains understandable without color; test color-blind mode.
 - [ ] Check normal-text contrast at 4.5:1 where applicable, including every dashboard override.
 - [ ] Test narrow phone, tablet, 900px breakpoint, and wide desktop. No clipped action, inaccessible table, or unusable dialog.
+- [ ] PIER/subtitle remain left-aligned on narrow screens; the active tab is larger without inset corner accents; notification cards and copper interaction states retain white text.
+- [ ] Dashboard colour fields use current Sunrise Harbour semantic names/defaults and do not remap navy or steel to unrelated success/surface roles.
 
 ## Beta → production promotion
 

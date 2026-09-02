@@ -9,6 +9,7 @@ These are the current authoritative default tokens in `styles.css`.
 | Deep Navy | `#123047` | Header/banner, inactive tabs, strong controls, focus pairing |
 | Steel Blue | `#365F7A` | Standard buttons, borders, links/structural blue |
 | Sunset Copper | `#98521F` | Active tab, progression emphasis, accent |
+| Copper interaction | `#B15C20` | Hover/press/focus state for Sunset Copper controls |
 | Warm Background | `#F7F3EA` | Page and manifest background |
 | Card White | `#FFFDF9` | Cards/panels |
 | Primary Text | `#183242` | Main body text |
@@ -42,9 +43,10 @@ Status is also communicated by text, radio selection, symbols, borders, and acce
 ## Navigation and controls
 
 - The top banner uses Deep Navy with the sunset harbour hero image and white PIER branding.
-- Inactive tabs use Deep Navy with white text. The active tab uses Sunset Copper with white text and an inset indicator.
+- Inactive tabs use Deep Navy with white text. The active tab uses Sunset Copper with white text, is larger than inactive tabs, and has no inset corner accents.
 - Standard primary, secondary, and file-style buttons use Steel Blue with white text; hover uses Storm Slate.
-- Forward workflow links whose IDs end in `Continue` use Sunset Copper; hover uses Dune Gold with Deep Navy text.
+- Forward workflow links whose IDs end in `Continue` use Sunset Copper; hover, press, and keyboard-focus interaction uses `#B15C20` with white text.
+- Notification-choice cards use Steel Blue with white heading and supporting text; hover, press, and keyboard-focus interaction uses Storm Slate with white text.
 - Success/claim actions use Tidepool Teal where specifically assigned.
 - Warning/review surfaces use Warning Background/Dune Gold or the Study treatment.
 - Destructive/error states use Semantic Red and must include explicit text or labels.
@@ -62,6 +64,8 @@ The banner image is `icons/pier-sunset-hero.jpg`, positioned to preserve the har
 ## Responsive behavior
 
 Desktop uses broad cards, multi-column Setup grids, sticky horizontal tabs, and document previews. At 900px and below, headings/grids/shift rows stack and claim previews become horizontally scrollable. At 700px and below, local tools, reminder choices, feedback previews, and claim actions become single-column/touch-friendly. Functionality and state labels must remain equivalent at all widths.
+
+PIER and the “Travel Expense Manager” subtitle remain left-aligned at every width.
 
 ## Accessibility
 
