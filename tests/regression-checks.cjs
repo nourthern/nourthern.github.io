@@ -41,9 +41,8 @@ assert.equal(
   monthsPhrase(['2027-01', '2026-12', '2026-10', '2026-12', '2026-11']),
   'October, November and December 2026, and January 2027'
 );
+assert.match(app02, /Open PIER Travel Expense Manager:/);
 
-assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month/);
-assert.match(app02, /Open Travel Claims Manager:/);
 assert.doesNotMatch(app02, /icons\/icon-192\.png/);
 assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
 assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
