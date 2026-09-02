@@ -22,7 +22,7 @@ for (const tab of ['setup', 'shifts', 'claim', 'log']) {
 }
 assert.match(html, /<script src="app\.js\?v=\d+"><\/script>/);
 assert.match(html, /id="calendarHelpDialog"/);
-assert.match(html, /id="calendarUrl"/);
+assert.match(html, /id="icsUrl"/);
 
 // Calendar refresh: the app must select the Worker by deployment and POST live links to /ics.
 assert.match(app00, /IS_BETA_DEPLOYMENT/);
