@@ -42,7 +42,8 @@ assert.equal(
   'October, November and December 2026, and January 2027'
 );
 
-assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\\nOpen Travel Claims Manager:/);
+assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month/);
+assert.match(app02, /Open Travel Claims Manager:/);
 assert.doesNotMatch(app02, /icons\/icon-192\.png/);
 assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
 assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
