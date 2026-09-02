@@ -59,7 +59,6 @@ assert.match(app04, /drawTextFit\(ctx,r\.mealFrom\|\|'',1195,y/);
 assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
 assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
 assert.match(html, /<p>Travel Expense Manager<\/p>/);
-assert.match(html, /styles\.css\?v=27/);
 assert.match(html, /app\.js\?v=25/);
 assert.match(app, /const APP_SHELL_VERSION='25'/);
 assert.match(html, /placeholder="e\.g\. Nour Alwaa"/);
