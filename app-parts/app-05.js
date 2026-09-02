@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='29';
+const APP_VERSION='34';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -94,7 +94,7 @@ function updateStudyReviewAlert(){
   const count=state.events.filter(event=>event.category==='study').length;
   alertBox.hidden=count===0;
   const colour=$('colourBlindMode')?.checked?'purple':'orange';
-  if(count)alertBox.innerHTML=`<strong>${count} study-related calendar event${count===1?' was':'s were'} found.</strong> Review the shifts highlighted in <span id="studyHighlightColour">${colour}</span> before creating your claim.`;
+  if(count)alertBox.innerHTML=`<strong>${count} study-related calendar event${count===1?' was':'s were'} found.</strong> ${count===1?'It is':'They are'} highlighted in <span id="studyHighlightColour">${colour}</span>. Open ${count===1?'it':'them'} if needed, or continue to the Claim Form.`;
 }
 
 const applyCalendarTextBase=applyCalendarText;
