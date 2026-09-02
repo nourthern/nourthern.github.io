@@ -31,7 +31,7 @@ assert.match(app00, /BAKED_WORKER_URL=IS_BETA_DEPLOYMENT\?'https:\/\/pier-beta\.
 assert.match(app02, /async function fetchText/);
 assert.match(app02, /BAKED_WORKER_URL[^\n]*\/ics/);
 assert.match(app02, /method:'POST'/);
-assert.match(app02, /JSON\.stringify\(\{url\}\)/);
+assert.match(app02, /JSON\.stringify\(\{url:u\}\)/);
 assert.match(app02, /isIcs\(text\)/);
 
 // Worker: route is POST-only, validates allowed Allocate hosts, and fetches calendars without storing them.
