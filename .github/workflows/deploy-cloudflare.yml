@@ -3,7 +3,7 @@ name: Deploy PIER to Cloudflare
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, beta]
     paths:
       - "cloudflare-worker/**"
       - "app-parts/**"
@@ -24,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pier-cloudflare-production
+  group: pier-cloudflare-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -58,10 +58,11 @@ jobs:
       - name: Run regression checks
         run: pnpm test
 
-      - name: Build beta site assets
+      - name: Build site assets
         run: pnpm run build:site
 
       - name: Apply D1 v25 migration when needed
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           if pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --command "SELECT channel FROM installations LIMIT 0; SELECT channel, excluded_from_aggregates FROM telemetry_installations LIMIT 0; SELECT channel FROM bug_reports LIMIT 0; SELECT channel FROM site_customization LIMIT 0;" >/dev/null 2>&1; then
@@ -71,6 +72,7 @@ jobs:
           fi
 
       - name: Apply D1 v26 migration when needed
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           if pnpm exec wrangler d1 execute travel-claims-reminders --remote --config cloudflare-worker/wrangler.jsonc --command "SELECT first_seen_at, device_type, claims_created FROM telemetry_installations LIMIT 0; SELECT channel FROM telemetry_suppressions LIMIT 0; SELECT preview_token FROM site_customization_drafts LIMIT 0; SELECT channel FROM site_customization_backups LIMIT 0;" >/dev/null 2>&1; then
@@ -80,13 +82,21 @@ jobs:
           fi
 
       - name: Deploy live Worker
+        if: github.ref == 'refs/heads/main'
         run: pnpm exec wrangler deploy --config cloudflare-worker/wrangler.jsonc --keep-vars
 
       - name: Deploy beta Worker and assets
+        if: github.ref == 'refs/heads/beta'
         run: pnpm exec wrangler deploy --config cloudflare-worker/wrangler.beta.jsonc --keep-vars
 
-      - name: Verify public endpoints
+      - name: Verify live public endpoint
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           curl --fail --silent --show-error --retry 8 --retry-delay 5 --retry-all-errors --max-time 30 https://travel-claims-ics.n-e-alwaa.workers.dev/api/site-config | grep -q '"channel":"live"'
+
+      - name: Verify beta public endpoint
+        if: github.ref == 'refs/heads/beta'
+        shell: bash
+        run: |
           curl --fail --silent --show-error --retry 8 --retry-delay 5 --retry-all-errors --max-time 30 https://pier-beta.n-e-alwaa.workers.dev/api/site-config | grep -q '"channel":"beta"'

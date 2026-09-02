@@ -1,75 +1,333 @@
-'use strict';
-
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
-const read = (...parts) => fs.readFileSync(path.join(root, ...parts), 'utf8');
+const app00 = fs.readFileSync(path.join(root, 'app-parts', 'app-00.js'), 'utf8');
+const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+const app01 = fs.readFileSync(path.join(root, 'app-parts', 'app-01.js'), 'utf8');
+const app02 = fs.readFileSync(path.join(root, 'app-parts', 'app-02.js'), 'utf8');
+const app03 = fs.readFileSync(path.join(root, 'app-parts', 'app-03.js'), 'utf8');
+const app04 = fs.readFileSync(path.join(root, 'app-parts', 'app-04.js'), 'utf8');
+const app05 = fs.readFileSync(path.join(root, 'app-parts', 'app-05.js'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const manifest = fs.readFileSync(path.join(root, 'manifest.json'), 'utf8');
+const deployWorkflow = fs.readFileSync(path.join(root, '.github', 'workflows', 'deploy-cloudflare.yml'), 'utf8');
+const worker = fs.readFileSync(path.join(root, 'cloudflare-worker', 'worker.js'), 'utf8');
+const dashboard = fs.readFileSync(path.join(root, 'cloudflare-worker', 'dashboard.js'), 'utf8');
+const migration25 = fs.readFileSync(path.join(root, 'cloudflare-worker', 'migrate-v25.sql'), 'utf8');
+const migration26 = fs.readFileSync(path.join(root, 'cloudflare-worker', 'migrate-v26.sql'), 'utf8');
+const workerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.jsonc'), 'utf8');
+const betaWorkerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.beta.jsonc'), 'utf8');
 
-const html = read('index.html');
-const styles = read('styles.css');
-const app00 = read('app-parts', 'app-00.js');
-const app02 = read('app-parts', 'app-02.js');
-const worker = read('cloudflare-worker', 'worker.js');
-const liveConfig = read('cloudflare-worker', 'wrangler.jsonc');
-const betaConfig = read('cloudflare-worker', 'wrangler.beta.jsonc');
-const workflow = read('.github', 'workflows', 'deploy-cloudflare.yml');
+assert.match(workerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
+assert.match(betaWorkerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
+assert.match(betaWorkerConfig, /"pattern": "beta\.pier\.bynour\.uk"/);
+assert.match(betaWorkerConfig, /"custom_domain": true/);
+assert.doesNotMatch(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
 
-// App shell: retain the four primary user workflows and current assembled script.
-for (const tab of ['setup', 'shifts', 'claim', 'log']) {
-  assert.match(html, new RegExp('id="' + tab + '"'), 'Missing ' + tab + ' panel');
-}
-assert.match(html, /<script src="app\.js\?v=\d+"><\/script>/);
+const phraseStart = app04.indexOf('function naturalJoin');
+const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
+assert.ok(phraseStart >= 0 && phraseEnd > phraseStart, 'Payroll month helpers were not found');
+
+const sandbox = {};
+vm.runInNewContext(`${app04.slice(phraseStart, phraseEnd)}\nresult = { monthsPhrase };`, sandbox);
+const { monthsPhrase } = sandbox.result;
+
+assert.equal(monthsPhrase(['2026-10']), 'October 2026');
+assert.equal(monthsPhrase(['2026-10', '2026-11']), 'October and November 2026');
+assert.equal(
+  monthsPhrase(['2026-10', '2026-11', '2026-12', '2027-01']),
+  'October, November and December 2026, and January 2027'
+);
+assert.equal(
+  monthsPhrase(['2027-01', '2026-12', '2026-10', '2026-12', '2026-11']),
+  'October, November and December 2026, and January 2027'
+);
+
+assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\.\\nOpen PIER Travel Expense Manager: \$\{appUrl\}/);
+assert.match(app02, /appUrl='https:\/\/pier\.bynour\.uk\/#shifts'/);
+assert.doesNotMatch(app02, /icons\/icon-192\.png/);
+assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
+assert.match(app02, /RRULE:FREQ=MONTHLY;INTERVAL=1/);
+assert.match(app04, /drawPage2\(c\.getContext\('2d'\),img2,chunk,isLast\?claimTotals:null,showLegend\)/);
+assert.match(app04, /function drawPageNumber\(ctx,page,total\)/);
+assert.match(app04, /ctx\.fillRect\(0,752,1404,240\)/);
+assert.match(app04, /function drawFinalPageLegend/);
+assert.match(app04, /function drawLegendOnlyPage/);
+assert.match(app04, /if\(showLegend\)drawFinalPageLegend\(ctx,img,bottom\)/);
+assert.match(app04, /const dataFont=18,dataMin=11/);
+assert.match(app04, /drawWrappedTextFit/);
+assert.match(app04, /ctx\.fillText\(fmtNum\(claimTotals\.pass\),869,bottom\+rowH\/2\)/);
+assert.match(app04, /drawTextFit\(ctx,r\.mealFrom\|\|'',1195,y/);
+assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
+assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
+assert.match(html, /class="brand-logo" src="icons\/pier-logo-navy\.png"/);
+assert.match(html, /<p>Travel Expense Manager<\/p>/);
+assert.match(html, /styles\.css\?v=51/);
+assert.match(html, /app\.js\?v=51/);
+assert.match(app, /const APP_SHELL_VERSION='51'/);
+assert.match(html, /location\.protocol==='http:'[^;]+location\.replace\('https:\/\/'/);
+assert.match(html, /id="channelBadge" class="channel-badge" hidden>Beta/);
+assert.match(html, /placeholder="e\.g\. Nour Alwaa"/);
+assert.doesNotMatch(html, /Nour Eddin Alwaa/);
+assert.match(html, /id="studyHighlightColour">orange<\/span>/);
+assert.match(app05, /\$\('colourBlindMode'\)\?\.checked\?'purple':'orange'/);
+assert.match(html, /id="backupBtn"[\s\S]+id="installApp"[\s\S]+id="saveStatus"/);
+assert.match(html, /id="backupBtn"[\s\S]+id="saveStatus"[\s\S]+id="openAbout"/);
+assert.doesNotMatch(html, /id="openAbout"[^>]*>[\s\S]{0,150}<circle/);
+assert.match(html, /id="busRailOption"/);
+assert.match(html, />Above price frequency</);
+assert.match(html, /id="perJourneyFrequencyOption"/);
+assert.match(html, /id="openNotifications"/);
+assert.match(html, /id="prefillExampleData"/);
+assert.match(html, /id="expenseFrequency"/);
+assert.match(html, /id="otherExpenseFields"/);
+assert.match(html, /id="otherExpenseFrequency"/);
+assert.match(html, /This only affects expense log records, not claim forms or generated PDFs\./);
+assert.doesNotMatch(html, /Average commute time to work/);
+assert.match(html, /Report a bug \/ give feedback/);
+assert.match(html, /id="bugScreenshot"/);
 assert.match(html, /id="calendarHelpDialog"/);
-assert.match(html, /id="icsUrl"/);
-
-// Calendar refresh: the app must select the Worker by deployment and POST live links to /ics.
-assert.match(app00, /IS_BETA_DEPLOYMENT/);
-assert.match(app00, /APP_CHANNEL=IS_BETA_DEPLOYMENT\?'beta':'live'/);
-assert.match(app00, /BAKED_WORKER_URL=IS_BETA_DEPLOYMENT\?'https:\/\/pier-beta\.n-e-alwaa\.workers\.dev':'https:\/\/travel-claims-ics\.n-e-alwaa\.workers\.dev'/);
-assert.match(app02, /async function fetchText/);
-assert.match(app02, /BAKED_WORKER_URL[^\n]*\/ics/);
-assert.match(app02, /method:'POST'/);
-assert.match(app02, /JSON\.stringify\(\{url:u\}\)/);
-assert.match(app02, /isIcs\(text\)/);
-
-// Worker: route is POST-only, validates allowed Allocate hosts, and fetches calendars without storing them.
-assert.match(worker, /DEFAULT_ALLOWED_HOSTS=\['nlag\.allocate-cloud\.co\.uk'\]/);
-assert.match(worker, /if\(url\.pathname==='\/ics'\)/);
-assert.match(worker, /if\(request\.method!=='POST'\)/);
-assert.match(worker, /fetchCalendar\(raw,env,request\.signal\)/);
-assert.match(worker, /BEGIN:VCALENDAR/);
-assert.match(worker, /Cache-Control':'no-store, private/);
-
-// Cloudflare deployment separation and beta asset routing.
-assert.match(liveConfig, /"name": "travel-claims-ics"/);
-assert.match(liveConfig, /"APP_CHANNEL": "live"/);
-assert.match(betaConfig, /"name": "pier-beta"/);
-assert.match(betaConfig, /"APP_CHANNEL": "beta"/);
-assert.match(betaConfig, /"run_worker_first"/);
-assert.match(betaConfig, /"\/ics"/);
-assert.match(betaConfig, /"\/dashboard\*"/);
-assert.match(betaConfig, /"\/api\/\*"/);
-assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.jsonc/);
-assert.match(workflow, /wrangler deploy --config cloudflare-worker\/wrangler\.beta\.jsonc/);
-
-// Sunrise Harbour palette and accessible selected/focus states remain wired into the live stylesheet.
-for (const token of [
-  '--deep-navy:#123047',
-  '--steel-blue:#365F7A',
-  '--sunset-copper:#98521F',
-  '--warm-background:#F7F3EA',
-  '--card-white:#FFFDF9',
-  '--primary-text:#183242',
-  '--tidepool-teal:#2F6F68',
-  '--dune-gold:#C18A24'
-]) assert.match(styles, new RegExp(token.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&')));
-assert.match(styles, /\.tab\.active\{background:var\(--sunset-copper\);color:#fff/);
-assert.match(styles, /outline[^}]*var\(--dune-gold\)/);
-assert.match(styles, /box-shadow[^}]*var\(--deep-navy\)/);
-
-// Claim-form rendering must stay separate from site-wide presentation styling.
+const calendarHelpDialog = html.match(/<dialog id="calendarHelpDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
+assert.doesNotMatch(calendarHelpDialog, /draft-label|>DRAFT</);
+assert.match(html, /id="studyReviewAlert"/);
+assert.match(html, /id="calendarViewButton"/);
+assert.match(html, /id="listViewButton"/);
+assert.match(html, /id="shiftCalendar"/);
+assert.match(html, /id="shiftDayDialog"/);
+assert.match(app03, /rangeItems=hasLeave\?claimable:dayItems/);
+assert.match(app03, /ranges=\(hasLeave\?'<span>Planned leave<\/span>':''\)\+rangeItems\.slice/);
+assert.match(app03, /if\(hasLeave\)parts\.push\('Planned leave'\);for\(const item of \(hasLeave\?claimable:dayItems\)/);
+assert.match(html, /id="privacyDialog"/);
+assert.doesNotMatch(html, />Local storage only</);
+const privacyDialog = html.match(/<dialog id="privacyDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
+assert.doesNotMatch(privacyDialog, /draft-label|>DRAFT</);
+assert.match(privacyDialog, /How PIER Handles Your Data/);
+assert.match(privacyDialog, /Overall claim totals for the past 3 and 12 months/);
+assert.match(privacyDialog, /What Is Collected/);
+assert.match(privacyDialog, /support ongoing improvements/);
+assert.match(privacyDialog, /What Is NEVER Collected/);
+assert.match(html, /id="helpDialog"/);
+assert.match(html, /Use save icon to create a backup of your PIER data so you can restore it later or move it to another device/);
+assert.match(html, /Restore PIER from a previously saved backup\. This will replace the data currently stored in PIER on this device\./);
+assert.match(html, /data-install-platform="ios"/);
+assert.match(html, /data-install-platform="android"/);
+assert.match(html, /tap the <strong>share button<\/strong>[^→]+→ <strong>Add to Home Screen<\/strong>/);
+assert.match(html, /tap the <strong>three-dot menu<\/strong>/);
+assert.match(html, /icons\/android-add-home\.png/);
+assert.match(html, /Reminder day of each month<select id="calendarReminderDay">/);
+assert.match(html, /id="outcomeSurveyDialog"/);
+assert.equal((html.match(/class="secondary open-outcome-survey"/g)||[]).length, 2);
+assert.match(html, /id="submitOutcomeSurvey"[^>]*>Submit feedback</);
+assert.match(html, /id="betaDashboardLink"[^>]*href="\/dashboard"/);
+assert.match(html, /may need to be installed on your home screen or desktop for notifications to work/);
+assert.match(html, /Use the <strong>Email payroll<\/strong> button to generate a pre-drafted email/);
+assert.match(html, /id="aboutDialog"/);
+assert.match(html, /A true Painless and Intelligent Expenses Reporting tool!/);
+assert.match(html, /id="bugReportDialog"/);
+const bugReportDialog = html.match(/<dialog id="bugReportDialog">[\s\S]*?<\/dialog>/)?.[0] || '';
+assert.doesNotMatch(bugReportDialog, /draft-label|>DRAFT</);
+assert.match(bugReportDialog, /Calendar links or files may be useful when a problem involves a dead link/);
+assert.match(app05, /claimedLastThreeMonthsPence/);
+assert.match(app05, /claimedLastTwelveMonthsPence/);
+assert.match(app05, /milesLastThreeMonthsTenths/);
+assert.match(app05, /lastPdfCreatedAt/);
+assert.match(app05, /claimedLastTwelveMonthsPence:claimedLastTwelveMonthsPence\(\)/);
+assert.match(app05, /claimedLastTwelveMonthsPence\?\?stats\.claimedCurrentYearPence/);
+assert.match(html, /PIER has helped generate claims for:/);
+assert.match(html, /class="stats-featured"><strong id="aboutUsers"/);
+assert.match(html, /users in the last 3 months/);
+assert.match(html, /miles in the last 12 months/);
+assert.doesNotMatch(html, /users who generated claim forms in the last 3 months/);
+assert.doesNotMatch(html, /claimed by all users in the last 3 months/);
+assert.match(app05, /for\(let i=0;i<22;i\+\+\)/);
+assert.match(app05, /Edit cells\?/);
+assert.match(app01, /busRailOption\.hidden=passengerUsed/);
+assert.match(app01, /type==='parking'&&!\['daily','weekly','monthly'\]\.includes\(frequency\.value\)/);
+assert.match(app01, /otherHumber\.hidden=type==='humber'/);
+assert.match(app01, /otherParking\.hidden=type==='parking'/);
+assert.match(app01, /otherFrequencyEnabled=otherType==='parking'/);
+assert.match(app00, /otherExpenseFrequency:'journey'/);
+assert.match(app03, /passengerLabel=String\(state\.settings\.passengerNames/);
+assert.doesNotMatch(app03, /passengerLabel=passengerNames\?`Passenger\(s\):/);
+assert.match(app03, /claimTypeCell/);
+assert.match(app04, /drawTextFit\(ctx,r\.claimType\|\|'R'/);
+assert.match(app04, /miscColumnHeadingLines/);
+assert.match(app04, /intermediatePageSize=29,finalPageSize=28,legendPageSize=21/);
+assert.match(app04, /chunks\.legendSeparate=/);
+assert.match(app04, /function isHomeboundRow/);
+assert.match(app04, /if\(isHomeboundRow\(r\)\)/);
+assert.match(app04, /proof of parking/);
+assert.match(app04, /proof of additional expenses/);
+assert.match(app04, /rowH=28/);
+assert.match(app04, /ctx\.font='bold 15px Arial'/);
+assert.match(app04, /ctx\.textAlign='center'.*ctx\.fillText\(`\$\{page\} of \$\{total\}`,702,974\)/);
+assert.match(app04, /Travel Claim\$\{person\?' - '\+person:''\} - \$\{key\}\.pdf/);
+assert.match(app03, /state\.settings\.commuteType!=='parking'/);
+assert.match(app03, /state\.settings\.otherExpenseType!=='parking'/);
+assert.match(styles, /#setup input\.has-value,#setup select\.has-value,#setup textarea\.has-value\{background:#fff!important\}/);
+assert.match(styles, /\.header-icon-btn\.plain-symbol svg\{width:26px;height:26px;stroke-width:2\.2\}/);
+assert.match(html, /theme-color" content="#123047"/);
+assert.match(styles, /\.tab\{background:var\(--deep-navy\);color:#fff;text-shadow:none\}/);
+assert.match(styles, /\.primary,\.secondary,\.file-btn\{background:var\(--steel-blue\);color:#fff\}/);
+assert.match(styles, /\.primary:hover,\.secondary:hover,\.file-btn:hover\{background:var\(--storm-slate\);color:#fff\}/);
+assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]\{background:var\(--sunset-copper\);color:#fff\}/);
+assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]:hover\{background:var\(--dune-gold\);color:var\(--deep-navy\)\}/);
+assert.match(styles, /\.dialog-head h3\{font-size:22px;font-weight:900/);
+assert.match(styles, /\.dialog-body\.prose strong\{font-weight:700\}/);
+assert.match(styles, /\.brand-block p\{margin:0;transform:translateY\(-5px\);text-align:left/);
+assert.match(styles, /\.brand-block p\{[^}]*font-weight:900/);
+assert.match(styles, /\.brand-logo\{[^}]*opacity:1;mix-blend-mode:normal;filter:none/);
+assert.match(styles, /\.brand-block p\{[^}]*opacity:1;text-shadow:2px 2px 4px/);
+assert.match(styles, /background-position:center 78%/);
+assert.match(styles, /@media\(min-width:901px\)\{\.topbar\{justify-content:flex-start/);
+assert.match(sw, /pier-travel-expense-manager-v51/);
+assert.match(sw, /icons\/pier-logo-navy\.png/);
+assert.equal((styles.match(/:root\{/g) || []).length, 1, 'palette must be controlled by one root variable set');
+assert.match(styles, /--deep-navy:#123047/);
+assert.match(styles, /--steel-blue:#365F7A/);
+assert.match(styles, /--sunset-copper:#98521F/);
+assert.match(styles, /--warm-background:#F7F3EA/);
+assert.match(styles, /--card-white:#FFFDF9/);
+assert.match(styles, /--primary-text:#183242/);
+assert.match(styles, /--secondary-text:#586E7A/);
+assert.match(styles, /--sea-mist:#DCE8ED/);
+assert.match(styles, /--tidepool-teal:#2F6F68/);
+assert.match(styles, /--storm-slate:#556D79/);
+assert.match(styles, /--dune-gold:#C18A24/);
+assert.match(styles, /--pale-sunset-peach:#FBE9DD/);
+assert.match(styles, /--claim-background:#E8F3F0/);
+assert.match(styles, /--inactive-background:#EEF2F3/);
+assert.match(styles, /--warning-background:#FFF3D6/);
+assert.match(styles, /--semantic-red:#A33F32/);
+assert.match(styles, /\.tab\.active\{background:var\(--sunset-copper\);color:#fff;box-shadow:inset/);
+assert.match(styles, /\.shift\.status-claim\{border-color:var\(--tidepool-teal\);background:var\(--claim-background\)/);
+assert.match(styles, /\.shift\.status-no-claim\{border-color:var\(--storm-slate\);background:var\(--inactive-background\)/);
+assert.match(styles, /\.calendar-day\.study \.calendar-marker\{[^}]*transform:rotate\(45deg\)/);
+assert.match(styles, /0 0 0 3px var\(--dune-gold\),0 0 0 6px var\(--deep-navy\)/);
+assert.match(styles, /colour-blind-mode/);
 assert.match(styles, /Preserve the official claim document preview and print appearance/);
+assert.match(app05, /const APP_VERSION='51'/);
+assert.match(app05, /for\(const \[key,variables\] of Object\.entries\(colourMap\)\)/);
+assert.doesNotMatch(app05, /APP_CHANNEL!=='beta'\)for\(const \[key,variables\]/);
+assert.match(app05, /!telemetry\.surveySubmitted&&!telemetry\.surveyPrompted&&Object\.keys\(telemetry\.pdfMonths/);
+assert.match(app05, /prompt\.hidden=!!state\.telemetry\?\.surveySubmitted/);
+assert.match(app05, /telemetry\.surveySubmitted=true/);
+assert.match(app05, /betaDashboardLink'\)\.hidden=!IS_BETA_DEPLOYMENT/);
+assert.match(app05, /badge\.hidden=\(data\.channel\|\|APP_CHANNEL\)!=='beta'/);
+assert.match(app02, /button\.classList\.toggle\('is-active',configured&&!r\.pushFailed\)/);
+assert.match(styles, /\.header-icon-btn,\.notification-bell,\.notification-bell\.needs-attention\{border-color:var\(--deep-navy\);background:var\(--deep-navy\);color:#fff\}/);
+assert.match(styles, /\.header-icon-btn:hover,\.notification-bell:hover,[^\n]+background:var\(--steel-blue\);color:#fff\}/);
+assert.match(app00, /pier-beta\\\.n-e-alwaa\\\.workers\\\.dev/);
+assert.match(app02, /tag='pier-notification-test'/);
+assert.match(app02, /setTimeout\(\(\)=>resolve\(false\),12000\)/);
+assert.doesNotMatch(app02, /displayed a local test notification instead/);
+assert.match(worker, /tag:'pier-notification-test'/);
+assert.match(sw, /pier-travel-expense-manager-v51/);
+assert.match(sw, /icons\/pier-sunset-hero\.jpg/);
+assert.match(sw, /icons\/icon-192-v2\.png/);
+assert.match(html, /Not affiliated with NLaG Trust or Humber Health Partnership\./);
+assert.match(app04, /serviceWorker\.addEventListener\('controllerchange'/);
+assert.match(app04, /updateViaCache:'none'/);
+assert.match(sw, /fetch\(e\.request,\{cache:'no-cache'\}\)/);
+assert.match(worker, /\/api\/telemetry/);
+assert.match(worker, /\/api\/stats/);
+assert.match(worker, /\/api\/bug-report/);
+assert.match(worker, /\/api\/push\/status/);
+assert.match(worker, /screenshot_data/);
+assert.match(worker, /claimed_current_year_pence/);
+assert.match(worker, /claimed_last_12_months_pence/);
+assert.match(worker, /claimedLastTwelveMonthsPence/);
+assert.match(worker, /Math\.max\(claimed,/);
+assert.match(worker, /miles_last_3_months_tenths/);
+assert.match(worker, /last_pdf_created_at/);
+assert.match(worker, /dashboardAuthenticated/);
+assert.match(worker, /telemetry_suppressions/);
+assert.match(worker, /site_customization_backups/);
+assert.match(migration26, /site_customization_drafts/);
+assert.match(workerConfig, /"APP_CHANNEL": "live"/);
+assert.match(betaWorkerConfig, /"APP_CHANNEL": "beta"/);
+assert.match(betaWorkerConfig, /"run_worker_first": \["\/dashboard\*", "\/api\/\*"\]/);
+assert.match(worker, /excluded_from_aggregates=0/);
+assert.match(worker, /\/api\/dashboard\/telemetry\/exclusion/);
+assert.match(worker, /origin===requestOrigin\(request\)/);
+assert.match(workerConfig, /travel-claims-ics\.n-e-alwaa\.workers\.dev/);
+assert.match(betaWorkerConfig, /travel-claims-ics\.n-e-alwaa\.workers\.dev/);
+assert.match(worker, /\/api\/site-config/);
+assert.match(dashboard, /data-channel="live"/);
+assert.match(dashboard, /data-channel="beta"/);
+assert.match(dashboard, /class="switcher"[^\n]+data-channel="beta"[^\n]+data-channel="live"/);
+assert.match(dashboard, /button\[data-channel="beta"\]\[aria-pressed="true"\]\{background:var\(--mist\)/);
+assert.match(dashboard, /returning users',percent\(data\.returningUsers,data\.uniqueUsers\)/);
+assert.match(dashboard, /shifts imported per claim/);
+assert.match(dashboard, /calendar imports failed/);
+assert.match(dashboard, /Remove from totals/);
+assert.match(dashboard, /Appearance and wording/);
+assert.match(dashboard, /id="telemetryStatus"/);
+assert.match(dashboard, /Your browser blocked the preview window/);
+assert.match(migration25, /ALTER TABLE telemetry_installations ADD COLUMN channel/);
+assert.match(migration25, /CREATE TABLE IF NOT EXISTS site_customization/);
+assert.match(app05, /telemetry\.claimMonths/);
+assert.match(app05, /recordClaimMetric\(key\)/);
+assert.match(app04, /recordClaimMetric\(key,true\)/);
+assert.doesNotMatch(html, /id="pushMonthlyDay"/);
+assert.doesNotMatch(html, /id="pushDeadlineToday"/);
 
-console.log('Release checks passed.');
+assert.match(html, /Exported claims are logged locally/);
+assert.match(html, /Date form exported/);
+assert.match(html, /Miscellaneous owed \(£\)/);
+assert.match(html, /Total owed \(£\)/);
+assert.match(app04, /No exported claims yet/);
+assert.match(manifest, /"background_color":"#F7F3EA"/);
+assert.match(manifest, /"theme_color":"#123047"/);
+assert.match(deployWorkflow, /branches: \[main, beta\]/);
+assert.match(deployWorkflow, /group: pier-cloudflare-\$\{\{ github\.ref_name \}\}/);
+assert.match(deployWorkflow, /Deploy beta Worker and assets\n\s+if: github\.ref == 'refs\/heads\/beta'/);
+assert.doesNotMatch(deployWorkflow, /beta-sunrise-harbour/);
+
+function functionSource(source, name) {
+  const start = source.indexOf(`function ${name}(`);
+  assert.ok(start >= 0, `${name} was not found`);
+  const brace = source.indexOf('{', start);
+  let depth = 0;
+  for (let i = brace; i < source.length; i++) {
+    if (source[i] === '{') depth++;
+    if (source[i] === '}' && --depth === 0) return source.slice(start, i + 1);
+  }
+  throw new Error(`${name} was not complete`);
+}
+
+const helpersStart = app01.indexOf("const APP_TIME_ZONE='Europe/London'");
+const helpersEnd = app01.indexOf('function num', helpersStart);
+const timeRulesSandbox = { Intl, Date };
+vm.runInNewContext(`${app01.slice(helpersStart, helpersEnd)}
+${functionSource(app02, 'icsDate')}
+${functionSource(app03, 'shiftDateKey')}
+${functionSource(app03, 'nightOverlapHours')}
+${functionSource(app03, 'includesNightHours')}
+${functionSource(app03, 'generatedShiftLabel')}
+result={icsDate,londonDateTime,londonDateKey,generatedShiftLabel};`, timeRulesSandbox);
+const timeRules = timeRulesSandbox.result;
+assert.equal(timeRules.icsDate('20260115T090000').toISOString(), '2026-01-15T09:00:00.000Z');
+assert.equal(timeRules.icsDate('20260715T090000').toISOString(), '2026-07-15T08:00:00.000Z');
+assert.equal(timeRules.londonDateKey(timeRules.icsDate('20260715T230000Z')), '2026-07-16');
+const shift = (summary, start, end, source='ics') => ({summary, description:'', source, start:timeRules.londonDateTime(...start).toISOString(), end:timeRules.londonDateTime(...end).toISOString()});
+assert.equal(timeRules.generatedShiftLabel(shift('', ['2026-07-01','09:00'], ['2026-07-01','17:00'], 'manual')), 'Unscheduled work');
+assert.equal(timeRules.generatedShiftLabel(shift('Study', ['2026-07-01','09:00'], ['2026-07-01','17:00'])), 'Self-Development Time');
+assert.equal(timeRules.generatedShiftLabel(shift('SDT', ['2026-07-01','09:00'], ['2026-07-01','17:00'])), 'Self-Development Time');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','20:00'], ['2026-07-02','02:00'])), 'Night Shift');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','14:00'], ['2026-07-02','00:30'])), 'Long Evening Shift');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','08:00'], ['2026-07-01','18:00'])), 'Long Day');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','06:00'], ['2026-07-01','13:00'])), 'Morning Shift');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','14:00'], ['2026-07-01','22:00'])), 'Evening Shift');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','13:00'], ['2026-07-01','20:00'])), 'Afternoon Shift');
+assert.equal(timeRules.generatedShiftLabel(shift('Work', ['2026-07-01','09:00'], ['2026-07-01','17:00'])), 'Day Shift');
+assert.match(app02, /summary:c\.category==='study'\?'Study':e\.summary/);
+assert.match(app03, /summary=item\.category==='study'\?'Study':item\.summary/);
+assert.match(app03, /claimWindowMonths\(\)\.includes\(date\.slice\(0,7\)\)/);
+
+console.log('Regression checks passed.');

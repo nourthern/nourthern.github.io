@@ -16,11 +16,20 @@ function markSetupErrors(missing){clearSetupErrors();for(const item of missing){
 function validateSetup(){const missing=requiredSetupMissing();if(missing.length){markSetupErrors(missing);showToast('Complete the required Setup fields first.');alert('Please complete the following required Setup items before continuing:\n\n• '+missing.map(item=>item.label).join('\n• '));return false}const digits=String($('personalNumber').value||'').replace(/\D/g,'');if(digits.length<8){$('personalNumber').classList.add('field-error');alert('Payroll assignment no. must contain at least 8 digits.');return false}clearSetupErrors();return true;}
 $('shiftsContinue').addEventListener('click',e=>{e.preventDefault();if(!state.selectedMonths.length){showToast('Select at least one claim month first.');$('shiftsContinueHint').textContent='Select at least one claim month first.';return}state.activeMonth=state.selectedMonths.slice().sort()[0];prepareSelectedClaims();renderClaimsStack();saveState();navigate('claim');});
 $('claimContinue').addEventListener('click',e=>{e.preventDefault();if(!state.activeMonth||!state.claims[state.activeMonth]){showToast('Generate a claim first.');return}navigate('log');});
-function monthKey(date){const d=new Date(date);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
-function monthLabel(key){const [y,m]=key.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'});}
-function fmtDateTime(dt){const d=new Date(dt);return d.toLocaleDateString(undefined,{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}
-function displayDate(d){const x=new Date(d);return String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0');}
-function parseTimeFromDate(d){return new Date(d).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false});}
+const APP_TIME_ZONE='Europe/London';
+const LONDON_PARTS_FORMATTER=new Intl.DateTimeFormat('en-GB',{timeZone:APP_TIME_ZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+function londonParts(value){const parts={};for(const part of LONDON_PARTS_FORMATTER.formatToParts(new Date(value)))if(part.type!=='literal')parts[part.type]=Number(part.value);return {year:parts.year,month:parts.month,day:parts.day,hour:parts.hour,minute:parts.minute,second:parts.second};}
+function londonDateFromParts(year,month,day,hour=0,minute=0,second=0){const wanted=Date.UTC(year,month-1,day,hour,minute,second);let instant=wanted;for(let i=0;i<3;i++){const p=londonParts(instant),shown=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second),difference=wanted-shown;if(!difference)break;instant+=difference;}return new Date(instant);}
+function londonDateKey(value){const p=londonParts(value);return `${p.year}-${String(p.month).padStart(2,'0')}-${String(p.day).padStart(2,'0')}`;}
+function londonTimeMinutes(value){const p=londonParts(value);return p.hour*60+p.minute;}
+function londonDateTime(dateValue,timeValue='00:00'){const [year,month,day]=String(dateValue).split('-').map(Number),[hour,minute]=String(timeValue).split(':').map(Number);return londonDateFromParts(year,month,day,hour||0,minute||0);}
+function addLondonCalendar(value,{days=0,months=0}={}){const p=londonParts(value),wall=new Date(Date.UTC(p.year,p.month-1+months,p.day+days,p.hour,p.minute,p.second));return londonDateFromParts(wall.getUTCFullYear(),wall.getUTCMonth()+1,wall.getUTCDate(),wall.getUTCHours(),wall.getUTCMinutes(),wall.getUTCSeconds());}
+function offsetLondonDateKey(dateValue,days){return londonDateKey(addLondonCalendar(londonDateTime(dateValue,'12:00'),{days}));}
+function monthKey(date){return londonDateKey(date).slice(0,7);}
+function monthLabel(key){const [y,m]=key.split('-').map(Number);return new Date(Date.UTC(y,m-1,1)).toLocaleDateString(undefined,{timeZone:'UTC',month:'long',year:'numeric'});}
+function fmtDateTime(dt){const d=new Date(dt);return d.toLocaleDateString(undefined,{timeZone:APP_TIME_ZONE,day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString([], {timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit'});}
+function displayDate(d){const p=londonParts(d);return String(p.day).padStart(2,'0')+'/'+String(p.month).padStart(2,'0');}
+function parseTimeFromDate(d){return new Date(d).toLocaleTimeString([], {timeZone:APP_TIME_ZONE,hour:'2-digit',minute:'2-digit',hour12:false});}
 function addMinutes(d,n){return new Date(new Date(d).getTime()+n*60000);}
 function num(v){return Number(v)||0;}function fmtNum(v){const n=Number(v);return n?String(Number(n.toFixed(1))):'';}function money(v){const n=Number(v)||0;return n?'£'+n.toFixed(2):'';}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
