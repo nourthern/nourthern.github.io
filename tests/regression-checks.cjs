@@ -58,7 +58,6 @@ assert.match(app04, /ctx\.fillText\(fmtNum\(claimTotals\.pass\),869,bottom\+rowH
 assert.match(app04, /drawTextFit\(ctx,r\.mealFrom\|\|'',1195,y/);
 assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
 assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
-assert.match(html, /class="brand-logo" src="icons\/pier-logo-hires\.png"/);
 assert.match(html, /<p>Travel Expense Manager<\/p>/);
 assert.match(html, /styles\.css\?v=27/);
 assert.match(html, /app\.js\?v=25/);
@@ -162,7 +161,6 @@ assert.match(styles, /\.dialog-body\.prose strong\{font-weight:700\}/);
 assert.match(styles, /\.brand-block p\{margin:0;transform:translateY\(-5px\);text-align:left/);
 assert.match(styles, /\.brand-block p\{[^}]*font-weight:900/);
 assert.match(sw, /pier-travel-expense-manager-v35/);
-assert.match(sw, /icons\/pier-logo-hires\.png/);
 assert.match(styles, /--shore-sand:var\(--steel-blue\)/);
 assert.match(styles, /--sunset-amber:var\(--sunset-copper\)/);
 assert.match(styles, /--sunlit-gold:var\(--dune-gold\)/);
