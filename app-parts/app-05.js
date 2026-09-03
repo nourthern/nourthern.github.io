@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='52';
+const APP_VERSION='53';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -128,7 +128,7 @@ document.addEventListener('click',event=>{
     editingMonths.has(month)?editingMonths.delete(month):editingMonths.add(month);
     removeEditBubble();
     renderClaimsStack();
-    if(editingMonths.has(month))setTimeout(()=>document.querySelector(`.claim-month-card[data-month="${CSS.escape(month)}"] .stack-claim-table`)?.scrollIntoView({behavior:'smooth',block:'center'}),30);
+    if(editingMonths.has(month))setTimeout(()=>document.querySelector(`.claim-month-card[data-month="${CSS.escape(month)}"] .stack-claim-table`)?.scrollIntoView({block:'center'}),30);
   });
 },{passive:true});
 document.addEventListener('scroll',removeEditBubble,{passive:true});
@@ -164,7 +164,7 @@ document.addEventListener('change',event=>{const shift=event.target.closest?.('.
 $('manualShiftForm')?.addEventListener('submit',()=>{const key=$('manualDate')?.value?.slice(0,7);if(key){workflowMonth(key).added++;refreshWorkflowTotals();advanceFunnel('shifts');saveState();}});
 document.addEventListener('click',event=>{const add=event.target.closest?.('.row-add');if(add?.dataset.month){workflowMonth(add.dataset.month).added++;refreshWorkflowTotals();saveState();}});
 $('humberBridge')?.addEventListener('click',()=>incrementTelemetry('humberClicks'));
-$('emailPayroll')?.addEventListener('click',()=>{incrementTelemetry('payrollEmailClicks');const telemetry=state.telemetry;if(!telemetry.surveySubmitted&&!telemetry.surveyPrompted&&Object.keys(telemetry.pdfMonths||{}).length){telemetry.surveyPrompted=true;updateOutcomeSurvey();saveState();setTimeout(()=>openDialog('outcomeSurveyDialog'),0);}});
+$('emailPayroll')?.addEventListener('click',()=>{incrementTelemetry('payrollEmailClicks');});
 
 function renderOutcomeSurveyPrompts(){qsa('.optional-feedback-prompt').forEach(prompt=>prompt.hidden=!!state.telemetry?.surveySubmitted);}
 function updateOutcomeSurvey(){const telemetry=state.telemetry;if(!$('outcomeSurveyDialog'))return;$('surveyTime').value=telemetry.survey?.timeWithoutPier||'';qsa('input[name="surveyEase"]').forEach(input=>input.checked=Number(input.value)===Number(telemetry.survey?.easeRating||0));$('surveyStatus').textContent='';renderOutcomeSurveyPrompts();}

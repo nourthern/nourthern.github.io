@@ -4,7 +4,7 @@
 
 PIER means **Painless and Intelligent Expenses Reporting**. It is a local-first travel-expense tool that turns rota events into reviewable payroll claim forms while leaving eligibility and accuracy decisions with the user.
 
-PIER should minimise repeated entry, make every journey reviewable, protect sensitive claim data, work over HTTPS, support PWA installation, target WCAG 2.1 AA, and test meaningful changes in beta before production.
+PIER should minimise repeated entry, make every journey reviewable, protect sensitive claim data, work over HTTPS, support PWA installation, target WCAG 2.2 AA, and test meaningful changes in beta before production. Conformance must not be claimed until complete workflow, PDF and assistive-technology evidence passes.
 
 ## Four-tab workflow
 

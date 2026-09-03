@@ -2,7 +2,7 @@
 
 ## Runtime overview
 
-PIER is a dependency-light browser application. `index.html` and `styles.css` provide the UI; `app.js` loads ordered modules from `app-parts/`. Claim/PDF rendering uses browser canvas and jsPDF. The same static bundle is built into `site-dist/` for Cloudflare Worker static assets.
+PIER is a dependency-light browser application. `index.html` and `styles.css` provide the UI; `app.js` loads ordered modules from `app-parts/`, including the beta accessibility enhancement layer in `app-06.js`. Claim/PDF rendering uses browser canvas and jsPDF. The same static bundle is built into `site-dist/` for Cloudflare Worker static assets.
 
 | Channel | Source branch | Public frontend/API | Worker config |
 |---|---|---|---|

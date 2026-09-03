@@ -46,6 +46,14 @@ Use boundary values as well as ordinary examples:
 - [ ] Add a manual day at the first allowed date and current date; reject dates before the previous-three-month boundary or after current month.
 - [ ] Select multiple months and verify independent previews, totals, and selection controls.
 
+## Accessibility and assistive technology
+
+- [ ] Complete Setup → Shifts → Review and save → Expense log using keyboard only; verify tab arrows, Home/End, focus visibility, dialog trapping/Escape and focus return.
+- [ ] Test 320 CSS px, 400% zoom, 200% text, WCAG text-spacing overrides, portrait/landscape, touch and Windows forced-colour mode.
+- [ ] Test with NVDA/Windows and, where in scope, VoiceOver/Safari and TalkBack/Chrome; record headings, landmarks, labels, errors, dialogs, tables and status announcements.
+- [ ] Retest generated PDFs for selectable text, tags, reading order, high zoom and screen-reader output. Record the current canvas PDF as a failure until corrected or paired with an accepted accessible equivalent.
+- [ ] Record browser/device/AT versions and evidence in `ACCESSIBILITY_AUDIT_BETA.md`; never infer conformance from automated checks alone.
+
 ## Claims, expenses, and PDF
 
 - [ ] Outbound/homebound rows use first/last linked events, configured commute time, home/base postcodes, and correct shift labels.
@@ -56,7 +64,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Generate one and multiple PDFs; inspect page count, filenames, form fields, wrapped text, totals, legend placement, and signatures.
 - [ ] Regenerate a previously exported month: no duplicate Expense Log row; current aggregate replaces prior month contribution.
 - [ ] Delete claim rows and local Expense Log rows; confirm documented local/telemetry consequences.
-- [ ] Expense Log says **Exported claims**, **Date form exported**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
+- [ ] Expense Log says **Created claims**, **Date form created**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
 - [ ] Export Expense Log data and verify values without exposing unrelated local state.
 - [ ] Email payroll produces the correct recipient, natural multi-month wording, and reminder to attach PDFs/receipts.
 

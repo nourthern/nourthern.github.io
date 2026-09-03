@@ -6,6 +6,9 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Corrected beta `/ics` routing so calendar-link POST requests reach the Worker instead of the static asset binding.
+- Added the beta accessibility revision: skip navigation, per-view headings, keyboard tabs, persistent Setup errors, dialog focus handling, readable journey cards, isolated payroll previews, shift-review totals/filters/weekly groups, contextual names, deletion Undo, display preferences, reduced motion, forced-colour support, and narrow-screen reflow.
+- Published a beta accessibility statement, criterion record and prioritised issue register without claiming conformance while PDF tagging and physical assistive-technology testing remain open.
 - Kept PIER branding left-aligned on narrow screens, enlarged the active tab without inset corner accents, and added the requested copper interaction colour.
 - Restored Steel Blue/white notification-choice cards with Storm Slate interaction states and expanded the notification Help wording.
 - Replaced Study calendar diamonds with the `?` → `/` or `✓` review-state sequence.
