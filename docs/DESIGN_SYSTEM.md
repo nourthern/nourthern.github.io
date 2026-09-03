@@ -71,6 +71,8 @@ Desktop uses broad cards, multi-column Setup grids, sticky horizontal tabs, and 
 
 PIER and the “Travel Expense Manager” subtitle remain left-aligned at every width.
 
+The banner subtitle uses a Card White backing so its Deep Navy text retains reliable AA contrast over every part of the responsive banner image. This backing must remain if the banner crop or image changes unless an equivalent contrast-tested treatment replaces it.
+
 ## Accessibility
 
 Target WCAG 2.2 AA. Normal text should meet 4.5:1 contrast where applicable; large text and non-text controls must meet their applicable thresholds. Preserve visible keyboard focus, 44px-class touch targets where practical, semantic labels, dialog focus behavior, and reduced reliance on color. Test all dashboard color overrides for contrast before publishing them.

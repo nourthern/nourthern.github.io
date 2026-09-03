@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
   <link rel="apple-touch-icon" href="icons/icon-192-v2.png" />
   <title>PIER · Travel Expense Manager</title>
-  <link rel="stylesheet" href="styles.css?v=55" />
+  <link rel="stylesheet" href="styles.css?v=56" />
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -25,8 +25,8 @@
       <div class="top-actions">
         <a id="betaDashboardLink" class="secondary button-link beta-dashboard-link" href="/dashboard" hidden>Dashboard</a>
         <button id="backupBtn" class="header-icon-btn" type="button" aria-label="Back up site data" title="Back up site data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v6h8V3M8 21v-7h8v7"></path></svg></button>
-        <button id="installApp" class="secondary" hidden>Install app</button>
-        <span id="saveStatus" class="save-status">Saved locally</span>
+        <button id="installApp" class="secondary" type="button" hidden>Install app</button>
+        <span id="saveStatus" class="save-status" role="status" aria-live="polite">Saved locally</span>
       </div>
       <div class="header-tools" aria-label="PIER tools">
         <button id="openAbout" class="header-icon-btn plain-symbol" type="button" aria-label="About this tool" title="About this tool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v7M12 7h.01"></path></svg></button>
@@ -36,25 +36,27 @@
     </div>
   </header>
 
-  <nav class="tabs" role="tablist" aria-label="Travel claim sections">
+  <nav class="tabs" aria-label="Travel claim sections">
+    <div class="tab-list" role="tablist" aria-label="Travel claim sections">
     <a id="tab-setup" class="tab active" href="#setup" data-tab="setup" data-config-text="tabSetup" role="tab" aria-controls="setup" aria-selected="true" tabindex="0">1. Setup</a>
     <a id="tab-shifts" class="tab" href="#shifts" data-tab="shifts" data-config-text="tabShifts" role="tab" aria-controls="shifts" aria-selected="false" tabindex="-1">2. Shifts</a>
     <a id="tab-claim" class="tab" href="#claim" data-tab="claim" data-config-text="tabClaim" role="tab" aria-controls="claim" aria-selected="false" tabindex="-1">3. Claim form</a>
     <a id="tab-log" class="tab" href="#log" data-tab="log" data-config-text="tabLog" role="tab" aria-controls="log" aria-selected="false" tabindex="-1">4. Expense log</a>
+    </div>
   </nav>
 
   <main id="mainContent" tabindex="-1">
     <section id="setup" class="panel active" role="tabpanel" aria-labelledby="tab-setup">
       <div class="section-heading">
         <div>
-          <h2>Setup</h2>
+          <h1>Setup</h1>
           <p>These details are stored locally on this device and reused on future claims.</p>
         </div>
         <div class="setup-privacy-summary"><p class="privacy-notice">Some privacy-preserving usage data is collected to help improve PIER. <button id="openPrivacy" class="text-link" type="button">Privacy &amp; cookies</button></p></div>
       </div>
 
       <div class="setup-local-tools">
-        <label class="file-btn secondary">Restore<input id="restoreInput" type="file" accept="application/json" hidden></label>
+        <label class="file-btn secondary">Restore<input id="restoreInput" class="visually-hidden-file" type="file" accept="application/json"></label>
         <span class="hint">Restore PIER from a previously saved backup. This will replace the data currently stored in PIER on this device.</span>
         <button id="prefillExampleData" class="secondary dev-only-action" type="button" hidden>Fill with example data and shifts</button>
         <span class="dev-reminder" hidden>Beta testing only — synthetic details never leave this device.</span>
@@ -68,13 +70,13 @@
       <div class="grid two">
         <h2 class="setup-group-title">Your details</h2>
         <label>Full name *<input id="fullName" autocomplete="name" placeholder="e.g. Nour Alwaa" required /></label>
-        <label>Job title *<input id="designation" placeholder="e.g. IMT2" required /></label>
-        <label>Payroll assignment no. *<input id="personalNumber" inputmode="numeric" placeholder="8+ digits, hyphens allowed" required /></label>
+        <label>Job title *<input id="designation" autocomplete="organization-title" placeholder="e.g. IMT2" required /></label>
+        <label>Payroll assignment no. *<input id="personalNumber" inputmode="numeric" autocomplete="off" placeholder="8+ digits, hyphens allowed" required /></label>
         <label class="toggle-line"><input id="additionalPassengers" type="checkbox"> Additional passengers?</label>
       </div>
 
       <h2 class="setup-group-title">Usual journey</h2>
-      <label>Home address *<textarea id="homeAddress" rows="4" placeholder="Include postcode" required></textarea></label>
+      <label>Home address *<textarea id="homeAddress" rows="4" autocomplete="street-address" placeholder="Include postcode" required></textarea></label>
       <label>Base site *<select id="baseSite" required><option value="">Choose one…</option><option value="DPOW">DPOW</option><option value="SGH">SGH</option><option value="Goole">Goole</option></select></label>
 
       <div class="grid three">
@@ -133,10 +135,10 @@
     <section id="shifts" class="panel" role="tabpanel" aria-labelledby="tab-shifts" hidden>
       <div class="section-heading">
         <div>
-          <h2>Check shifts</h2>
+          <h1>Check shifts</h1>
           <p>Choose up to four claim months. You can open individual days to check them, but review is optional.</p>
         </div>
-        <span id="icsState" class="save-status">No calendar loaded</span>
+        <span id="icsState" class="save-status" role="status" aria-live="polite">No calendar loaded</span>
       </div>
 
       <div class="card">
@@ -145,33 +147,33 @@
         <div id="studyReviewAlert" class="study-review-alert" role="status" hidden><strong>Study-related calendar events found.</strong> They are highlighted in <span id="studyHighlightColour">orange</span>. Review them if needed, or continue to the Claim Form.</div>
         <div id="localIcsPanel" class="local-ics">
           <p class="hint">Or import an ICS file directly:</p>
-          <label class="file-btn secondary">Choose ICS file<input id="icsFile" type="file" accept=".ics,text/calendar,text/plain" hidden /></label>
+          <label class="file-btn secondary">Choose ICS file<input id="icsFile" class="visually-hidden-file" type="file" accept=".ics,text/calendar,text/plain" /></label>
           <span id="icsFileStatus" class="hint">This option is fully local. Imported files must be updated manually.</span>
         </div>
       </div>
 
       <div class="card">
         <div class="section-heading compact">
-          <div><h3>Claim months</h3><p>Select from the current month or the three previous months. You can generate each selected month separately.</p></div>
-          <div class="month-actions"><button id="selectAllMonths" class="link-btn">Select all</button><button id="clearMonths" class="link-btn">Clear</button></div>
+          <div><h2>Claim months</h2><p>Select from the current month or the three previous months. You can generate each selected month separately.</p></div>
+          <div class="month-actions"><button id="selectAllMonths" class="link-btn" type="button">Select all</button><button id="clearMonths" class="link-btn" type="button">Clear</button></div>
         </div>
         <div id="monthPicker" class="month-picker empty">Fetch a calendar first.</div>
       </div>
 
       <div class="warning shifts-disclaimer"><strong>Important:</strong> This tool automates the form; it does not decide whether a journey is actually claimable. Review every generated row against Trust/payroll rules before signing and submitting.</div>
-      <div class="section-heading compact"><div><h3>Selected shifts</h3><p id="studyReviewProgress">No study days found. You can continue to the Claim Form.</p></div><button id="addManualShift" class="secondary" type="button">+ Add unscheduled day</button></div>
+      <div class="section-heading compact"><div><h2 id="selectedShiftsHeading">Selected shifts</h2><p id="studyReviewProgress" aria-live="polite">No study days found. You can continue to the Claim Form.</p></div><button id="addManualShift" class="secondary" type="button">+ Add unscheduled day</button></div>
       <div class="shift-view-toolbar" aria-label="Shift view">
         <div class="shift-view-toggle"><button id="calendarViewButton" class="secondary" type="button" aria-pressed="true">Calendar view</button><button id="listViewButton" class="secondary" type="button" aria-pressed="false">List view</button></div>
         <div class="accessibility-toolbar"><label class="toggle-line"><input id="colourBlindMode" type="checkbox"> Use colour-blind friendly shift colours and patterns</label></div>
         <button id="clearShiftDateFilter" class="link-btn" type="button" hidden>Show all selected dates</button>
       </div>
-      <div id="shiftCalendar" class="shift-calendar empty" aria-live="polite">Select a claim month above to display its calendar.</div>
-      <div id="shiftList" class="shift-list empty" hidden>No shifts loaded.</div>
+      <div id="shiftCalendar" class="shift-calendar empty" aria-labelledby="selectedShiftsHeading" aria-live="polite">Select a claim month above to display its calendar.</div>
+      <div id="shiftList" class="shift-list empty" aria-labelledby="selectedShiftsHeading" hidden>No shifts loaded.</div>
       <div class="actions workflow-actions"><a id="shiftsContinue" class="primary button-link" href="#claim">Continue to Claim Form</a><span id="shiftsContinueHint" class="hint">Select at least one claim month first.</span></div>
     </section>
 
     <section id="claim" class="panel" role="tabpanel" aria-labelledby="tab-claim" hidden>
-      <div class="section-heading"><div><h2>Review and save</h2><p>Review each month selected in Shifts below. The earliest selected month is shown first.</p></div></div>
+      <div class="section-heading"><div><h1>Review and save</h1><p>Review each month selected in Shifts below. The earliest selected month is shown first.</p></div></div>
       <p class="hint subsistence-note">Select anywhere in the tables to edit, add or remove entries. Click on the preview button to see the payroll document in A4 format. To edit details on Page 1 in the preview, return to Setup.</p>
       <div class="preview-toolbar"><button id="regenerateClaims" class="secondary" type="button">Regenerate claim contents</button><span class="hint">Use this after making changes in Setup or Shifts. This will regenerate the claim forms and replace any edits made directly in the tables.</span></div>
       <div id="claimsStack" class="claims-stack"></div>
@@ -183,8 +185,8 @@
     </section>
 
     <section id="log" class="panel" role="tabpanel" aria-labelledby="tab-log" hidden>
-      <div class="section-heading"><div><h2>Expense log</h2><p>Exported claims are logged locally. You can delete individual entries or export the data for your records.</p></div></div>
-      <div class="table-wrap"><table class="log-table"><thead><tr><th>Date form exported</th><th>Range of dates</th><th>Miles owed</th><th>Miscellaneous owed (£)</th><th>Total owed (£)</th><th></th></tr></thead><tbody id="logBody"></tbody><tfoot><tr><th colspan="4">Cumulative total</th><th id="logTotal">£0.00</th><th></th></tr></tfoot></table></div>
+      <div class="section-heading"><div><h1>Expense log</h1><p>Exported claims are logged locally. You can delete individual entries or export the data for your records.</p></div></div>
+      <div class="table-wrap"><table class="log-table"><caption>Your locally saved claim records</caption><thead><tr><th scope="col">Date form exported</th><th scope="col">Range of dates</th><th scope="col">Miles owed</th><th scope="col">Miscellaneous owed (£)</th><th scope="col">Total owed (£)</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody id="logBody"></tbody><tfoot><tr><th colspan="4" scope="row">Cumulative total</th><th id="logTotal">£0.00</th><th></th></tr></tfoot></table></div>
       <div class="optional-feedback-prompt" hidden><button class="secondary open-outcome-survey" type="button">Optional feedback</button></div>
     </section>
   </main>
@@ -198,9 +200,9 @@
   <div id="toast" class="toast" aria-live="polite"></div>
   <div id="installHelp" class="install-help" hidden></div>
   <dialog id="accessibilityDialog"><div class="dialog-head"><h3>Accessibility status</h3><button type="button" data-close-dialog="accessibilityDialog" class="icon-btn" aria-label="Close accessibility statement">×</button></div><div class="dialog-body prose"><p>PIER is actively being improved to meet WCAG 2.2 Level AA standards. Full conformance is not yet claimed because the generated payroll PDF is not tagged or fully selectable, and testing across the full range of assistive technologies has not been carried out.</p><h4>What Has Been Improved</h4><ul><li>Keyboard-operable tabs, visible focus indicators, a skip link, and labelled dialogs.</li><li>Readable journey editing separate from your payroll-document preview.</li><li>Persistent form errors, deletion Undo actions, and explicit shift-review states.</li><li>Responsive layouts, larger controls, reduced-motion support, and display preferences.</li></ul><h4>Known Limitations</h4><ul><li>The official payroll PDF output is canvas-based and does not yet have document tags or a verified screen-reader reading order.</li><li>A typed signature alternative requires payroll approval and is not currently available.</li><li>Full testing with NVDA, VoiceOver, and TalkBack remains to be completed on supported physical devices.</li></ul></div><div class="dialog-actions"><button type="button" data-close-dialog="accessibilityDialog" class="primary">Close</button></div></dialog>
-  <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button type="button" data-close-manual class="icon-btn">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" required></label><label>Reason<input id="manualReason" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" required></label><label>End time<input id="manualEnd" type="time" required></label></div><div class="dialog-actions"><button type="button" data-close-manual class="secondary">Cancel</button><button id="saveManualShift" type="submit" class="primary">Add day</button></div></form></dialog>
+  <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button type="button" data-close-manual class="icon-btn" aria-label="Close add unscheduled day dialog">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" autocomplete="off" required></label><label>Reason<input id="manualReason" autocomplete="off" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" autocomplete="off" required></label><label>End time<input id="manualEnd" type="time" autocomplete="off" required></label></div><div class="dialog-actions"><button type="button" data-close-manual class="secondary">Cancel</button><button id="saveManualShift" type="submit" class="primary">Add day</button></div></form></dialog>
   <dialog id="shiftDayDialog" class="shift-day-dialog" aria-labelledby="shiftDayDialogTitle"><div class="shift-day-dialog-head"><h3 id="shiftDayDialogTitle">Shifts</h3><button id="closeShiftDayDialog" class="icon-btn" type="button" aria-label="Close shift details">×</button></div><div id="shiftDayDialogContent" class="shift-day-dialog-content"></div></dialog>
-  <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn">×</button></div><canvas id="signaturePad" width="700" height="220"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary">Clear</button><button id="saveSig" class="primary">Save signature</button></div></dialog>
+  <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn" type="button" aria-label="Close signature dialog">×</button></div><canvas id="signaturePad" width="700" height="220" role="img" aria-label="Draw your sample signature here"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary" type="button">Clear</button><button id="saveSig" class="primary" type="button">Save signature</button></div></dialog>
   <dialog id="outcomeSurveyDialog"><div class="dialog-head"><div><h3>Optional feedback</h3><p class="hint">Two quick optional questions about your experience with PIER.</p></div><button type="button" data-close-dialog="outcomeSurveyDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body outcome-survey"><label>How long would this have taken without PIER?<select id="surveyTime"><option value="">Choose an answer…</option><option value="under-15">Under 15 minutes</option><option value="15-30">15–30 minutes</option><option value="30-60">30–60 minutes</option><option value="1-2-hours">1–2 hours</option><option value="over-2-hours">More than 2 hours</option><option value="never">I would never have got it done</option></select></label><fieldset><legend>How easy was PIER to use?</legend><div class="ease-rating" role="radiogroup" aria-label="Ease of use rating"><label><input type="radio" name="surveyEase" value="1">1</label><label><input type="radio" name="surveyEase" value="2">2</label><label><input type="radio" name="surveyEase" value="3">3</label><label><input type="radio" name="surveyEase" value="4">4</label><label><input type="radio" name="surveyEase" value="5">5</label></div><p class="hint">1 = difficult, 5 = very easy. You may answer either question or both.</p></fieldset><p id="surveyStatus" class="hint" aria-live="polite"></p></div><div class="dialog-actions"><button type="button" data-close-dialog="outcomeSurveyDialog" class="secondary">Not now</button><button id="submitOutcomeSurvey" type="button" class="primary">Submit feedback</button></div></dialog>
   <dialog id="calendarHelpDialog"><div class="dialog-head"><div><h3>Find your iCalendar link</h3></div><button type="button" data-close-dialog="calendarHelpDialog" class="icon-btn" aria-label="Close">×</button></div><div class="dialog-body calendar-help-steps"><ol><li><p>Log in to the eRostering system.</p><a class="secondary button-link" href="https://web.loop.allocate-cloud.co.uk/loop/login" target="_blank" rel="noopener noreferrer">Loop sign-in page</a></li><li><p>Return here, then open the iCalendar page.</p><a class="secondary button-link" href="https://web.loop.allocate-cloud.co.uk/EmployeeOnlineHealth/NLAGLIVE/ICalendar" target="_blank" rel="noopener noreferrer">iCalendar page</a></li><li><p>Copy the ICS link (URL), as shown below.</p><img class="calendar-help-image" src="icalendar-page-guide.jpg" alt="The Allocate iCalendar Links page showing where an ICS link appears. The example link is deliberately cut short."></li><li><p>Return here and import the copied link.</p><button id="importCopiedLink" class="primary" type="button">Import copied link</button><p id="clipboardFeedback" class="hint" aria-live="polite"></p></li></ol><div class="calendar-file-alternative"><h4>Or use an ICS file</h4><p>You can import an ICS file instead. It stays on this device, but it will not refresh automatically, so you must download and import an updated file regularly.</p><label class="file-btn secondary">Choose ICS file<input id="calendarHelpFile" type="file" accept=".ics,text/calendar,text/plain" hidden></label></div></div><div class="dialog-actions"><button type="button" data-close-dialog="calendarHelpDialog" class="secondary">Close</button></div></dialog>
 
@@ -217,6 +219,6 @@
     <section id="calendarReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Calendar reminder</h4><p class="hint">Creates a recurring monthly ICS reminder locally. It repeats until deleted from the calendar. No calendar account is connected to this site.</p><div class="grid two compact-grid"><label>Reminder day of each month<select id="calendarReminderDay"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option></select></label><label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label></div><button id="saveCalendarReminder" class="primary" type="button">Save monthly reminder to calendar</button></section>
     <section id="pushReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Push notifications</h4><p class="hint">Available on supported browsers. On iPhone/iPad, install the site to the Home Screen first.</p><label class="toggle-line"><input id="pushMonthly" type="checkbox" checked> Monthly claim reminder</label><label class="toggle-line"><input id="pushDeadline" type="checkbox" checked> Deadline reminders</label><label class="toggle-line"><input id="pushRota" type="checkbox" checked> Rota change alerts</label><label class="toggle-line"><input id="pushUnfinished" type="checkbox" checked> Unfinished claim reminders</label><details class="advanced-reminders"><summary>Advanced notification settings</summary><div class="grid two compact-grid"><label>Notification time<input id="pushReminderTime" type="time" value="18:00"></label><label>Deadline warning (days before 5th)<input id="pushDeadlineDays" type="number" min="1" max="4" value="3"></label><label>Unfinished claim reminder day<input id="pushUnfinishedDay" type="number" min="1" max="28" value="3"></label></div></details><div class="reminder-buttons"><button id="enablePush" class="primary" type="button">Enable push notifications</button><button id="testPush" class="secondary" type="button" disabled>Send test notification</button><button id="disablePush" class="link-btn" type="button" hidden>Disable push</button></div><div id="pushFeedback" class="hint" aria-live="polite">Push reminders require the notification service to be configured.</div></section>
   </div><div class="dialog-actions"><button type="button" data-close-dialog="notificationSettingsDialog" class="secondary">Done</button></div></dialog>
-  <script src="app.js?v=55"></script>
+  <script src="app.js?v=56"></script>
 </body>
 </html>

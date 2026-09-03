@@ -95,7 +95,10 @@ Use boundary values as well as ordinary examples:
 - [ ] Screen reader: landmarks, tab state, dialog names, calendar-day descriptions, shift status, error/status live regions, and icon labels are meaningful.
 - [ ] Status remains understandable without color; test color-blind mode.
 - [ ] Open Display & accessibility from within the navigation; verify Larger text and Extra spacing each expand the Tab 2 calendar, Reduce colour preserves status cues, High contrast strengthens controls, and Underline links affects link-style controls.
-- [ ] Confirm ordinary claimable calendar days read Claim while Study days retain the `?` → `/` or `✓` sequence.
+- [ ] Confirm ordinary claimable calendar days read Claim while Study days retain `?` until reviewed, then show `×` for Do not claim or `✓` for Claim.
+- [ ] Confirm weekdays appear above list-view dates; reviewed Do not claim calendar days show `×`; and an empty date can open Add unscheduled day using mouse, touch, Enter and Space.
+- [ ] Confirm the empty-date action closes with Escape, outside interaction, scrolling and resizing without trapping focus.
+- [ ] Confirm the banner subtitle remains readable against its solid Card White backing at phone, tablet and desktop widths.
 - [ ] In each monthly journey table, confirm Delete is on the left, totals align beneath mileage/passenger mileage/additional expense, and new rows alternate Work bound then Home bound.
 - [ ] Check normal-text contrast at 4.5:1 where applicable, including every dashboard override.
 - [ ] Test narrow phone, tablet, 900px breakpoint, and wide desktop. No clipped action, inaccessible table, or unusable dialog.
