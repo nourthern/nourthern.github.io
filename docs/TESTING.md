@@ -58,7 +58,7 @@ Use boundary values as well as ordinary examples:
 
 - [ ] For every selected month, verify one editable table is shown with the ten specified journey fields; outbound rows are white and home-bound rows use the Pale Sunset Peach/Sea Mist treatment.
 - [ ] Edit each field, then open **Preview payroll document** and verify the A4 preview reflects the latest values. Confirm the preview action sits at the bottom right of its month table.
-- [ ] Verify Larger text also changes the calendar to a single large month per row; Increased spacing and Calmer colours retain their existing effects.
+- [ ] Verify Larger text and Extra spacing each change the calendar to a single large month per row; Reduce colour retains accessible status cues.
 - [ ] Outbound/homebound rows use first/last linked events, configured commute time, home/base postcodes, and correct shift labels.
 - [ ] Mileage, rate, passenger miles/names, and mileage owed are correct.
 - [ ] Parking, Humber toll, bus/rail, and second additional expense obey journey/daily/weekly/monthly frequency rules without double counting.
@@ -94,6 +94,9 @@ Use boundary values as well as ordinary examples:
 - [ ] Keyboard-only: tabs, calendar days, dialogs, radio choices, editing, signature controls, export, and restore are reachable with visible focus.
 - [ ] Screen reader: landmarks, tab state, dialog names, calendar-day descriptions, shift status, error/status live regions, and icon labels are meaningful.
 - [ ] Status remains understandable without color; test color-blind mode.
+- [ ] Open Display & accessibility from within the navigation; verify Larger text and Extra spacing each expand the Tab 2 calendar, Reduce colour preserves status cues, High contrast strengthens controls, and Underline links affects link-style controls.
+- [ ] Confirm ordinary claimable calendar days read Claim while Study days retain the `?` → `/` or `✓` sequence.
+- [ ] In each monthly journey table, confirm Delete is on the left, totals align beneath mileage/passenger mileage/additional expense, and new rows alternate Work bound then Home bound.
 - [ ] Check normal-text contrast at 4.5:1 where applicable, including every dashboard override.
 - [ ] Test narrow phone, tablet, 900px breakpoint, and wide desktop. No clipped action, inaccessible table, or unusable dialog.
 - [ ] PIER/subtitle remain left-aligned on narrow screens; the active tab is larger without inset corner accents; notification cards and copper interaction states retain white text.

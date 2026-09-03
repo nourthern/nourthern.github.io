@@ -212,3 +212,18 @@ html{--sunset-copper-interaction:#B15C20}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(forced-colors:active){.tab,.primary,.secondary,.calendar-day,.shift,.error-summary{border:2px solid ButtonText}.tab.active,.shift.status-claim{outline:3px solid Highlight}.calendar-marker{forced-color-adjust:auto}}
 @media(max-width:700px){.display-preferences{margin-right:12px}.display-preferences-options{width:min(260px,calc(100vw - 24px))}.undo-region{right:10px;bottom:10px;max-width:calc(100% - 20px)}}
+
+/* Beta display and journey-table refinements. */
+.tabs .display-preferences{position:relative;width:max-content;max-width:100%;margin:0 0 0 auto;flex:0 0 auto}
+.tabs .display-preferences summary{padding:12px 14px;font:inherit;font-weight:700;white-space:nowrap}
+.pref-more-spacing .shift-calendar{grid-template-columns:1fr}
+.pref-more-spacing .shift-month-card:only-child{width:100%}
+.pref-reduce-colour{--warm-background:#F4F6F7;--sea-mist:#F3F5F6;--pale-sunset-peach:#F7F7F7;--warning-background:#F6F6F6;--claim-background:#F1F4F5;--inactive-background:#F5F5F5}
+.pref-high-contrast{--warm-background:#fff;--card-white:#fff;--primary-text:#000;--deep-navy:#000;--cool-dusk:#111;--steel-blue:#174B70;--storm-slate:#33454E;--shore-sand:#5C6368}
+.pref-high-contrast :where(input,select,textarea,button,.card,.calendar-day,.shift){border-width:2px}
+.pref-underline-links a,.pref-underline-links .text-link,.pref-underline-links .link-btn{text-decoration:underline!important;text-underline-offset:.16em}
+.journey-edit-table .return-journey-row{background:var(--sea-mist);box-shadow:inset 5px 0 0 var(--steel-blue)}
+.journey-edit-table td:nth-child(2) .row-input,.journey-edit-table td:nth-child(9) .row-input{min-width:108px}
+.journey-edit-table td:nth-child(3) .row-input,.journey-edit-table td:nth-child(10) .row-input{min-width:180px}
+.journey-edit-table tfoot th,.journey-edit-table tfoot td{padding:10px 7px;border-top:2px solid var(--cool-dusk);background:var(--card-white);font-weight:800}
+@media(max-width:700px){.tabs .display-preferences{margin-right:0}.tabs .display-preferences-options{position:fixed;top:64px;right:12px;width:min(260px,calc(100vw - 24px))}}

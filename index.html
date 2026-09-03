@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
   <link rel="apple-touch-icon" href="icons/icon-192-v2.png" />
   <title>PIER · Travel Expense Manager</title>
-  <link rel="stylesheet" href="styles.css?v=54" />
+  <link rel="stylesheet" href="styles.css?v=55" />
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -68,7 +68,6 @@
       <div class="grid two">
         <h2 class="setup-group-title">Your details</h2>
         <label>Full name *<input id="fullName" autocomplete="name" placeholder="e.g. Nour Alwaa" required /></label>
-        <label>Base site *<select id="baseSite" required><option value="">Choose one…</option><option value="DPOW">DPOW</option><option value="SGH">SGH</option><option value="Goole">Goole</option></select></label>
         <label>Job title *<input id="designation" placeholder="e.g. IMT2" required /></label>
         <label>Payroll assignment no. *<input id="personalNumber" inputmode="numeric" placeholder="8+ digits, hyphens allowed" required /></label>
         <label class="toggle-line"><input id="additionalPassengers" type="checkbox"> Additional passengers?</label>
@@ -76,6 +75,7 @@
 
       <h2 class="setup-group-title">Usual journey</h2>
       <label>Home address *<textarea id="homeAddress" rows="4" placeholder="Include postcode" required></textarea></label>
+      <label>Base site *<select id="baseSite" required><option value="">Choose one…</option><option value="DPOW">DPOW</option><option value="SGH">SGH</option><option value="Goole">Goole</option></select></label>
 
       <div class="grid three">
         <label>Vehicle registration *<input id="vehicleReg" class="uppercase-input" placeholder="P4Y M3" autocapitalize="characters" spellcheck="false" required /></label>
@@ -107,12 +107,12 @@
       <div class="card signature-setup">
         <h3>Sample signature *</h3>
         <p class="hint">Saved locally on this device and reused on your monthly forms. The signing date is added when you save each PDF.</p>
+        <div class="saved-signature-wrap">
+          <img id="setupSignaturePreview" class="saved-signature-preview" alt="Saved sample signature" hidden>
+          <span id="setupSignatureStatus" class="hint">No signature saved</span>
+        </div>
         <div class="signature-setup-row">
           <button id="setupSignature" class="secondary" type="button">Add / change sample signature</button>
-          <div class="saved-signature-wrap">
-            <img id="setupSignaturePreview" class="saved-signature-preview" alt="Saved sample signature" hidden>
-            <span id="setupSignatureStatus" class="hint">No signature saved</span>
-          </div>
         </div>
       </div>
 
@@ -125,11 +125,7 @@
           <span id="pushStatus" class="save-status dark-status">No reminder configured</span>
         </div>
         <div class="reminder-choice-buttons"><button class="secondary" type="button" data-open-reminder="calendar">Calendar reminder</button><button class="secondary" type="button" data-open-reminder="push">Push notifications</button></div>
-        <p class="hint reminder-install-note">PIER may need to be installed on your home screen or desktop for notifications to work.</p>
-      </div>
-
-      <div class="warning">
-        <strong>Important:</strong> This tool automates the form; it does not decide whether a journey is actually claimable. Review every generated row against Trust/payroll rules before signing and submitting.
+        <p class="hint reminder-install-note">PIER may need to be installed on your home screen or desktop for push notifications to work.</p>
       </div>
       <div class="actions"><a id="setupContinue" class="primary button-link" href="#shifts">Continue to Shifts</a></div>
     </section>
@@ -221,6 +217,6 @@
     <section id="calendarReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Calendar reminder</h4><p class="hint">Creates a recurring monthly ICS reminder locally. It repeats until deleted from the calendar. No calendar account is connected to this site.</p><div class="grid two compact-grid"><label>Reminder day of each month<select id="calendarReminderDay"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option></select></label><label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label></div><button id="saveCalendarReminder" class="primary" type="button">Save monthly reminder to calendar</button></section>
     <section id="pushReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Push notifications</h4><p class="hint">Available on supported browsers. On iPhone/iPad, install the site to the Home Screen first.</p><label class="toggle-line"><input id="pushMonthly" type="checkbox" checked> Monthly claim reminder</label><label class="toggle-line"><input id="pushDeadline" type="checkbox" checked> Deadline reminders</label><label class="toggle-line"><input id="pushRota" type="checkbox" checked> Rota change alerts</label><label class="toggle-line"><input id="pushUnfinished" type="checkbox" checked> Unfinished claim reminders</label><details class="advanced-reminders"><summary>Advanced notification settings</summary><div class="grid two compact-grid"><label>Notification time<input id="pushReminderTime" type="time" value="18:00"></label><label>Deadline warning (days before 5th)<input id="pushDeadlineDays" type="number" min="1" max="4" value="3"></label><label>Unfinished claim reminder day<input id="pushUnfinishedDay" type="number" min="1" max="28" value="3"></label></div></details><div class="reminder-buttons"><button id="enablePush" class="primary" type="button">Enable push notifications</button><button id="testPush" class="secondary" type="button" disabled>Send test notification</button><button id="disablePush" class="link-btn" type="button" hidden>Disable push</button></div><div id="pushFeedback" class="hint" aria-live="polite">Push reminders require the notification service to be configured.</div></section>
   </div><div class="dialog-actions"><button type="button" data-close-dialog="notificationSettingsDialog" class="secondary">Done</button></div></dialog>
-  <script src="app.js?v=54"></script>
+  <script src="app.js?v=55"></script>
 </body>
 </html>

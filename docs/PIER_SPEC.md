@@ -104,6 +104,10 @@ Bug reports are deliberate submissions. Users can remove technical details and s
 
 Normal text should meet 4.5:1 contrast where applicable. Workflow actions must be keyboard operable, focus-visible, assistive-technology labelled, and usable without colour alone. Mobile and desktop retain equivalent functionality. Colour-blind mode preserves state distinctions.
 
+Beta provides a right-aligned **Display & accessibility** control inside the tab navigation with Larger text, Extra spacing, Reduce colour, High contrast and Underline links options. Larger text and Extra spacing both expand the shift calendar. Ordinary claimable shifts display **Claim**; Study shifts retain their explicit `?`, `/` and tick review sequence.
+
+Each beta claim-month editor shows Delete on the left and totals beneath mileage, passenger mileage and additional expense. New rows alternate their default journey descriptions between **Work bound** and **Home bound**.
+
 ## Beta and production
 
 `beta` deploys only the beta Worker/site. `main` deploys only live. Both use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides. Meaningful changes pass beta verification before `main` advances to the tested commit.

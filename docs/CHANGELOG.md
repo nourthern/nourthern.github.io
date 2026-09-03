@@ -6,9 +6,13 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Refined beta version 55 with a navigation-bar **Display & accessibility** menu offering Larger text, Extra spacing, Reduce colour, High contrast and Underline links; Larger text and Extra spacing each expand the shift calendar.
+- Reordered Base site and the saved-signature preview in Setup, corrected the push-install wording and removed the Setup disclaimer.
+- Labelled ordinary claimable calendar shifts as **Claim** without changing Study review behaviour.
+- Added mileage, passenger-mileage and additional-expense totals to the readable journey tables; moved Delete to the left, changed home-bound rows to Sea Mist with a Steel Blue edge, and alternated new-row descriptions between Work bound and Home bound.
 - Refined beta version 54 by restoring the established typography, sizing and general visual treatment while retaining the requested Setup subheadings, conditional passenger fields, weekly shift grouping, display preferences and accessibility behaviours.
 - Replaced Tab 3 journey tickets with one editable journey table per selected month, using white outbound rows and Pale Sunset Peach/Sea Mist return rows; payroll previews are rebuilt from current table data.
-- Moved Display preferences below the tab bar as a right-aligned white control; Larger text also expands the calendar to one month per row.
+- Initially moved Display preferences below the tab bar as a right-aligned white control; version 55 supersedes this placement and wording.
 - Moved the accessibility statement into an in-app dialog beside the Privacy and feedback footer controls.
 - Corrected beta `/ics` routing so calendar-link POST requests reach the Worker instead of the static asset binding.
 - Added the beta accessibility foundation: skip navigation, keyboard tabs, persistent Setup errors, dialog focus handling, an isolated payroll preview, weekly shift groups, contextual names, deletion Undo, display preferences, reduced motion and forced-colour support.

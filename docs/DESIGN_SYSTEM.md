@@ -57,7 +57,9 @@ Buttons remain rounded rectangles at the current radius; icon buttons and compac
 
 The page is Warm Background. Content cards are Card White with Steel Blue-derived borders and established shadows/radii. Official claim previews remain visually separate white documents and are not recolored by site theme changes.
 
-In beta, Tab 3 uses one horizontally scrollable editable table per selected month. Outbound journey rows are white; home-bound rows use Pale Sunset Peach with a Sea Mist edge. The established interface font is inherited. The payroll document remains a separate preview opened from the table’s bottom-right action.
+In beta, Tab 3 uses one horizontally scrollable editable table per selected month. Outbound journey rows are white; home-bound rows use Sea Mist with a Steel Blue edge. The established interface font is inherited. The payroll document remains a separate preview opened from the table’s bottom-right action.
+
+The beta navigation contains a right-aligned **Display & accessibility** menu. Larger text and Extra spacing expand Tab 2 calendars to one month per row. Reduce colour tones down decorative surfaces while preserving meaningful status indicators; High contrast strengthens foregrounds and control borders; Underline links adds a non-colour link cue.
 
 The interface font stack is `Arial, Helvetica, sans-serif`. Existing hierarchy, weights, sizes, and official-form typography are intentional constraints. The PIER wordmark uses `icons/pier-logo-navy.png`; the header also includes the “Travel Expense Manager” descriptor. Do not redraw, recolor, crop, or replace the wordmark as an incidental styling change.
 

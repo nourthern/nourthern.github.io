@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='54';
+const APP_VERSION='55';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
