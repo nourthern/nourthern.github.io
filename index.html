@@ -70,7 +70,7 @@
       <div class="grid two">
         <h2 class="setup-group-title">Your details</h2>
         <label>Full name *<input id="fullName" autocomplete="name" placeholder="e.g. Nour Alwaa" required /></label>
-        <label>Job title *<input id="designation" autocomplete="organization-title" placeholder="e.g. IMT3 Registrar" required /></label>
+        <label>Job title *<input id="designation" autocomplete="organization-title" placeholder="e.g. IMT2" required /></label>
         <label>Payroll assignment no. *<input id="personalNumber" inputmode="numeric" autocomplete="off" placeholder="8+ digits, hyphens allowed" required /></label>
         <label class="toggle-line"><input id="additionalPassengers" type="checkbox"> Additional passengers?</label>
       </div>
@@ -84,7 +84,7 @@
         <label>Engine cc *<input id="engineCc" type="number" min="1" step="1" placeholder="1598" required /></label>
         <label>Claimable miles per one-way journey *<input id="claimableMiles" type="number" min="0" step="0.1" placeholder="e.g. 18.4" required /></label>
         <label id="passengerNamesField" hidden>Passenger names <span id="passengerNamesRequiredMark" hidden>*</span><input id="passengerNames" placeholder="Required if passenger miles are entered" /></label>
-        <label id="passengerMilesField" hidden>Passenger miles per journey <span id="passengerMilesRequiredMark" hidden>*</span><input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Required if passenger names entered" /></label>
+        <label id="passengerMilesField" hidden>Passenger miles per journey <span id="passengerMilesRequiredMark" hidden>*</span><input id="passengerMiles" type="number" min="0" step="0.1" placeholder="Leave blank if none" /></label>
         <label>Average commute time (minutes) *<input id="commuteMinutes" type="number" min="1" step="1" value="30" required /></label>
         <label>Approved mileage rate (£/mile)<input id="mileageRate" type="number" min="0" step="0.01" value="0.30" /><span class="hint field-note">Do not change unless advised by payroll. Value used by PIER to estimate claim totals.</span></label>
       </div>

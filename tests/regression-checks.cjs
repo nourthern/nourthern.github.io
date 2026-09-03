@@ -104,7 +104,7 @@ assert.match(html, /id="prefillExampleData"/);
 assert.match(html, /id="expenseFrequency"/);
 assert.match(html, /id="otherExpenseFields"/);
 assert.match(html, /id="otherExpenseFrequency"/);
-assert.match(html, /This only affects expense log records, not claim forms or generated PDFs\./);
+assert.match(html, /Do not change unless advised by payroll\. Value used by PIER to estimate claim totals\./);
 assert.doesNotMatch(html, /Average commute time to work/);
 assert.match(html, /id="homeAddress"[\s\S]+id="baseSite"[\s\S]+id="vehicleReg"/);
 assert.match(html, /signing date is added when you save each PDF\.[\s\S]+id="setupSignaturePreview"[\s\S]+id="setupSignature"/);
