@@ -6,8 +6,10 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Refined beta version 57 by restoring the transparent Deep Navy banner subtitle treatment, adding local signature-image upload, defaulting legacy non-Study review states to Do not claim, and improving responsive shift-list control placement.
+- Made beta calendar-link imports use the deployed same-origin `/ics` Worker route first, retaining the established Worker and direct-calendar fallbacks, and added a deployment smoke check for that route.
 - Refined beta version 56 with weekday labels above dates in the shift list, explicit × markers for reviewed Do not claim days, and keyboard-operable empty calendar dates that offer Add unscheduled day.
-- Hardened beta semantics and accessibility while retaining Sunrise Harbour: one h1 per view, corrected tablist ownership, table captions/scopes, persistent status semantics, keyboard-accessible file inputs, contextual autocomplete, stronger focus handling and a solid high-contrast backing for banner text.
+- Hardened beta semantics and accessibility while retaining Sunrise Harbour: one h1 per view, corrected tablist ownership, table captions/scopes, persistent status semantics, keyboard-accessible file inputs, contextual autocomplete and stronger focus handling.
 - Refined beta version 55 with a navigation-bar **Display & accessibility** menu offering Larger text, Extra spacing, Reduce colour, High contrast and Underline links; Larger text and Extra spacing each expand the shift calendar.
 - Reordered Base site and the saved-signature preview in Setup, corrected the push-install wording and removed the Setup disclaimer.
 - Labelled ordinary claimable calendar shifts as **Claim** without changing Study review behaviour.

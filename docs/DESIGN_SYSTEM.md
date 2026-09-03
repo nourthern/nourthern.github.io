@@ -71,7 +71,7 @@ Desktop uses broad cards, multi-column Setup grids, sticky horizontal tabs, and 
 
 PIER and the “Travel Expense Manager” subtitle remain left-aligned at every width.
 
-The banner subtitle uses a Card White backing so its Deep Navy text retains reliable AA contrast over every part of the responsive banner image. This backing must remain if the banner crop or image changes unless an equivalent contrast-tested treatment replaces it.
+The banner subtitle uses Deep Navy (`#123047`) at weight 600 with a subtle light halo and no opaque backing. Recheck its contrast across every responsive banner crop whenever the image or positioning changes.
 
 ## Accessibility
 

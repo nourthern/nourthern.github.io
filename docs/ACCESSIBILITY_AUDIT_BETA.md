@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-Audit baseline: PIER beta version 56, source branch `beta`. The release commit is recorded in the deployment result. This review covers the beta browser application, installed-PWA shell, offline shell, generated PDFs, email draft and calendar-reminder hand-offs. Production, the administrative dashboard, push delivery by external platforms, and real assistive-technology sessions are not represented as tested unless explicitly listed below.
+Audit baseline: PIER beta version 57, source branch `beta`. The release commit is recorded in the deployment result. This review covers the beta browser application, installed-PWA shell, offline shell, generated PDFs, email draft and calendar-reminder hand-offs. Production, the administrative dashboard, push delivery by external platforms, and real assistive-technology sessions are not represented as tested unless explicitly listed below.
 
 This is an implementation review and automated regression record, not a conformance claim. Manual checks with disabled users and supported assistive technologies remain required.
 

@@ -63,7 +63,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Mileage, rate, passenger miles/names, and mileage owed are correct.
 - [ ] Parking, Humber toll, bus/rail, and second additional expense obey journey/daily/weekly/monthly frequency rules without double counting.
 - [ ] Edit every claim-row field; add and delete rows; confirm totals update and persist.
-- [ ] Capture, clear, replace, and reuse a signature with mouse, touch, and keyboard-accessible controls where applicable.
+- [ ] Capture, upload, clear, replace, and reuse a signature with mouse, touch, and keyboard-accessible controls where applicable; reject unsupported formats and images over 5 MB.
 - [ ] Generate one and multiple PDFs; inspect page count, filenames, form fields, wrapped text, totals, legend placement, and signatures.
 - [ ] Regenerate a previously exported month: no duplicate Expense Log row; current aggregate replaces prior month contribution.
 - [ ] Delete claim rows and local Expense Log rows; confirm documented local/telemetry consequences.
@@ -98,7 +98,10 @@ Use boundary values as well as ordinary examples:
 - [ ] Confirm ordinary claimable calendar days read Claim while Study days retain `?` until reviewed, then show `×` for Do not claim or `✓` for Claim.
 - [ ] Confirm weekdays appear above list-view dates; reviewed Do not claim calendar days show `×`; and an empty date can open Add unscheduled day using mouse, touch, Enter and Space.
 - [ ] Confirm the empty-date action closes with Escape, outside interaction, scrolling and resizing without trapping focus.
-- [ ] Confirm the banner subtitle remains readable against its solid Card White backing at phone, tablet and desktop widths.
+- [ ] Confirm the Deep Navy banner subtitle and subtle light halo remain readable over the banner image at phone, tablet and desktop widths.
+- [ ] Confirm a beta calendar-link import tries the same-origin `/ics` route first and that the deployed route returns a Worker validation response rather than a static-site response.
+- [ ] Confirm legacy non-Study Needs review shifts migrate to Do not claim with an `×`, while Study review states retain their established `?`, `/` and `✓` sequence.
+- [ ] Confirm desktop shift-list controls sit centrally with Delete beside the date, and narrow layouts stack Claim and Do not claim vertically to the right of the shift details.
 - [ ] In each monthly journey table, confirm Delete is on the left, totals align beneath mileage/passenger mileage/additional expense, and new rows alternate Work bound then Home bound.
 - [ ] Check normal-text contrast at 4.5:1 where applicable, including every dashboard override.
 - [ ] Test narrow phone, tablet, 900px breakpoint, and wide desktop. No clipped action, inaccessible table, or unusable dialog.
