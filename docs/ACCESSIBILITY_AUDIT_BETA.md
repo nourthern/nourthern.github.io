@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-Audit baseline: PIER beta version 53, source branch `beta`. The release commit is recorded in the deployment result. This review covers the beta browser application, installed-PWA shell, offline shell, generated PDFs, email draft and calendar-reminder hand-offs. Production, the administrative dashboard, push delivery by external platforms, and real assistive-technology sessions are not represented as tested unless explicitly listed below.
+Audit baseline: PIER beta version 54, source branch `beta`. The release commit is recorded in the deployment result. This review covers the beta browser application, installed-PWA shell, offline shell, generated PDFs, email draft and calendar-reminder hand-offs. Production, the administrative dashboard, push delivery by external platforms, and real assistive-technology sessions are not represented as tested unless explicitly listed below.
 
 This is an implementation review and automated regression record, not a conformance claim. Manual checks with disabled users and supported assistive technologies remain required.
 
@@ -12,7 +12,7 @@ This is an implementation review and automated regression record, not a conforma
 |---|---|---|
 | 1.1.1 Non-text Content | Pass in reviewed UI | Meaningful app images/icons have text alternatives or accessible names; decorative symbols are hidden. Recheck generated document imagery. |
 | 1.3.1 Info and Relationships | Fail | Browser headings, labels, captions, tabs and dialogs were strengthened. Generated payroll PDFs remain untagged. |
-| 1.3.2 Meaningful Sequence | Pass in reviewed UI | Single-column Setup and ordered completion sequence follow DOM order. PDF reading order is unverified. |
+| 1.3.2 Meaningful Sequence | Pass in reviewed UI | Setup groups and the journey table follow DOM order. PDF reading order is unverified. |
 | 1.3.4 Orientation | Pass by implementation | No orientation lock. Portrait/landscape physical-device retest remains. |
 | 1.3.5 Identify Input Purpose | Needs manual retest | Native input types and labels are present; autocomplete coverage remains to be catalogued. |
 | 1.4.1 Use of Colour | Pass in reviewed UI | Shift states use words/symbols and controls as well as colour. |
@@ -26,14 +26,14 @@ This is an implementation review and automated regression record, not a conforma
 | 2.1.2 No Keyboard Trap | Pass by implementation | Modal focus is deliberately contained and Escape remains native; manual retest remains. |
 | 2.4.1 Bypass Blocks | Pass | Visible-on-focus “Skip to main content” link. |
 | 2.4.3 Focus Order | Pass by implementation | DOM order is logical and dialogs return focus. Screen-reader/browser matrix remains. |
-| 2.4.6 Headings and Labels | Pass in reviewed UI | Each app view has an `h1`; repeated claim and delete controls include context. |
+| 2.4.6 Headings and Labels | Needs correction | Visible tab headings and repeated controls are descriptive, but the main-view heading hierarchy still requires formal manual review. |
 | 2.4.7 Focus Visible | Pass by implementation | Consistent high-contrast focus indicator. |
 | 2.4.11 Focus Not Obscured (Minimum) | Pass by implementation | Scroll margin accounts for sticky navigation. |
 | 2.5.3 Label in Name | Pass in reviewed UI | Accessible names retain visible action wording. |
-| 2.5.8 Target Size (Minimum) | Pass by implementation | Controls are at least 24 CSS px; frequent controls target about 44 px. |
+| 2.5.8 Target Size (Minimum) | Needs manual retest | Established control sizing was restored; every compact control and spacing exception must be measured in the formal audit. |
 | 3.2.1 On Focus / 3.2.2 On Input | Pass in reviewed UI | Focus alone does not change context; explicit tab and form actions do. |
 | 3.3.1 Error Identification | Pass for Setup | Persistent field-level messages and linked summary replace alert-only Setup validation. Other complex flows require inventory. |
-| 3.3.2 Labels or Instructions | Pass in reviewed UI | Labels/instructions are adjacent and at least 16 px. |
+| 3.3.2 Labels or Instructions | Pass in reviewed UI | Labels and relevant instructions are adjacent; font sizing remains part of the manual text-resize review. |
 | 3.3.3 Error Suggestion | Pass for Setup | Errors state what is missing and how to proceed. |
 | 3.3.7 Redundant Entry | Pass in reviewed workflow | Valid values are retained and returning state is local. |
 | 3.3.8 Accessible Authentication | Not applicable to app | PIER’s user workflow has no authentication. Dashboard is outside scope. |

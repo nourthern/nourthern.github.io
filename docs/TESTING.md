@@ -56,6 +56,9 @@ Use boundary values as well as ordinary examples:
 
 ## Claims, expenses, and PDF
 
+- [ ] For every selected month, verify one editable table is shown with the ten specified journey fields; outbound rows are white and home-bound rows use the Pale Sunset Peach/Sea Mist treatment.
+- [ ] Edit each field, then open **Preview payroll document** and verify the A4 preview reflects the latest values. Confirm the preview action sits at the bottom right of its month table.
+- [ ] Verify Larger text also changes the calendar to a single large month per row; Increased spacing and Calmer colours retain their existing effects.
 - [ ] Outbound/homebound rows use first/last linked events, configured commute time, home/base postcodes, and correct shift labels.
 - [ ] Mileage, rate, passenger miles/names, and mileage owed are correct.
 - [ ] Parking, Humber toll, bus/rail, and second additional expense obey journey/daily/weekly/monthly frequency rules without double counting.

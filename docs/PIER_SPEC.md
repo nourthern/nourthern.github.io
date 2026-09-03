@@ -30,7 +30,7 @@ Manual/unscheduled work can be added only within the same four-month window. Its
 
 ### Tab 3 — Claim Form
 
-PIER creates one editable preview per selected month. It calculates work-bound and home-bound rows from shift times, commute time, locations, mileage, passenger mileage, and eligible additional expenses. Users can edit cells, add/delete rows, select months, sign, and save PDFs.
+PIER calculates work-bound and home-bound rows from shift times, commute time, locations, mileage, passenger mileage, and eligible additional expenses. In beta, it presents one editable journey table per month selected in Shifts, with a separate A4 payroll-document preview rebuilt from current table values whenever it is opened. Users can edit cells, add/delete rows, select months, sign, and save PDFs.
 
 Saving records the month's exported state and adds it once to the local Expense Log. Regeneration must not duplicate its log row. The PDF is an aid; the user remains responsible for eligibility, accuracy, and receipts.
 

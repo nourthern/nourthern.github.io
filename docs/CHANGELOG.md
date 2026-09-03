@@ -6,8 +6,12 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Refined beta version 54 by restoring the established typography, sizing and general visual treatment while retaining the requested Setup subheadings, conditional passenger fields, weekly shift grouping, display preferences and accessibility behaviours.
+- Replaced Tab 3 journey tickets with one editable journey table per selected month, using white outbound rows and Pale Sunset Peach/Sea Mist return rows; payroll previews are rebuilt from current table data.
+- Moved Display preferences below the tab bar as a right-aligned white control; Larger text also expands the calendar to one month per row.
+- Moved the accessibility statement into an in-app dialog beside the Privacy and feedback footer controls.
 - Corrected beta `/ics` routing so calendar-link POST requests reach the Worker instead of the static asset binding.
-- Added the beta accessibility revision: skip navigation, per-view headings, keyboard tabs, persistent Setup errors, dialog focus handling, readable journey cards, isolated payroll previews, shift-review totals/filters/weekly groups, contextual names, deletion Undo, display preferences, reduced motion, forced-colour support, and narrow-screen reflow.
+- Added the beta accessibility foundation: skip navigation, keyboard tabs, persistent Setup errors, dialog focus handling, an isolated payroll preview, weekly shift groups, contextual names, deletion Undo, display preferences, reduced motion and forced-colour support.
 - Published a beta accessibility statement, criterion record and prioritised issue register without claiming conformance while PDF tagging and physical assistive-technology testing remain open.
 - Kept PIER branding left-aligned on narrow screens, enlarged the active tab without inset corner accents, and added the requested copper interaction colour.
 - Restored Steel Blue/white notification-choice cards with Storm Slate interaction states and expanded the notification Help wording.

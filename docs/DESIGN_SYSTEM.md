@@ -57,6 +57,8 @@ Buttons remain rounded rectangles at the current radius; icon buttons and compac
 
 The page is Warm Background. Content cards are Card White with Steel Blue-derived borders and established shadows/radii. Official claim previews remain visually separate white documents and are not recolored by site theme changes.
 
+In beta, Tab 3 uses one horizontally scrollable editable table per selected month. Outbound journey rows are white; home-bound rows use Pale Sunset Peach with a Sea Mist edge. The established interface font is inherited. The payroll document remains a separate preview opened from the table’s bottom-right action.
+
 The interface font stack is `Arial, Helvetica, sans-serif`. Existing hierarchy, weights, sizes, and official-form typography are intentional constraints. The PIER wordmark uses `icons/pier-logo-navy.png`; the header also includes the “Travel Expense Manager” descriptor. Do not redraw, recolor, crop, or replace the wordmark as an incidental styling change.
 
 The banner image is `icons/pier-sunset-hero.jpg`, positioned to preserve the harbour/sunset composition. The manifest theme is Deep Navy `#123047`; manifest background is Warm Background `#F7F3EA`.
@@ -69,4 +71,4 @@ PIER and the “Travel Expense Manager” subtitle remain left-aligned at every 
 
 ## Accessibility
 
-Target WCAG 2.1 AA. Normal text should meet 4.5:1 contrast where applicable; large text and non-text controls must meet their applicable thresholds. Preserve visible keyboard focus, 44px-class touch targets where practical, semantic labels, dialog focus behavior, and reduced reliance on color. Test all dashboard color overrides for contrast before publishing them.
+Target WCAG 2.2 AA. Normal text should meet 4.5:1 contrast where applicable; large text and non-text controls must meet their applicable thresholds. Preserve visible keyboard focus, 44px-class touch targets where practical, semantic labels, dialog focus behavior, and reduced reliance on color. Test all dashboard color overrides for contrast before publishing them.

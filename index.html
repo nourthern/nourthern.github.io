@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32-v2.png" />
   <link rel="apple-touch-icon" href="icons/icon-192-v2.png" />
   <title>PIER · Travel Expense Manager</title>
-  <link rel="stylesheet" href="styles.css?v=53" />
+  <link rel="stylesheet" href="styles.css?v=54" />
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -44,25 +44,23 @@
   </nav>
 
   <main id="mainContent" tabindex="-1">
-    <p id="resumeMessage" class="resume-message" role="status" hidden></p>
     <section id="setup" class="panel active" role="tabpanel" aria-labelledby="tab-setup">
       <div class="section-heading">
         <div>
-          <h1>Setup</h1>
+          <h2>Setup</h2>
           <p>These details are stored locally on this device and reused on future claims.</p>
         </div>
         <div class="setup-privacy-summary"><p class="privacy-notice">Some privacy-preserving usage data is collected to help improve PIER. <button id="openPrivacy" class="text-link" type="button">Privacy &amp; cookies</button></p></div>
       </div>
 
       <div class="setup-local-tools">
-        <button id="restoreButton" class="secondary" type="button">Load backup</button><input id="restoreInput" class="visually-hidden-file" type="file" accept="application/json" tabindex="-1" aria-hidden="true">
+        <label class="file-btn secondary">Restore<input id="restoreInput" type="file" accept="application/json" hidden></label>
         <span class="hint">Restore PIER from a previously saved backup. This will replace the data currently stored in PIER on this device.</span>
         <button id="prefillExampleData" class="secondary dev-only-action" type="button" hidden>Fill with example data and shifts</button>
         <span class="dev-reminder" hidden>Beta testing only — synthetic details never leave this device.</span>
       </div>
 
       <div class="card calendar-connection-card">
-        <h2 class="setup-group-title">Rota</h2>
         <div class="card-title-row"><h3>Calendar connection</h3><button id="openCalendarHelp" class="link-btn" type="button">Don’t have a link?</button></div>
         <label>ICS calendar URL<input id="icsUrl" type="url" placeholder="https://.../ical/..." autocomplete="url" /></label><p class="hint">The ICS link is saved only on this device and reused for future claims.</p>
       </div>
@@ -139,7 +137,7 @@
     <section id="shifts" class="panel" role="tabpanel" aria-labelledby="tab-shifts" hidden>
       <div class="section-heading">
         <div>
-          <h1>Check shifts</h1>
+          <h2>Check shifts</h2>
           <p>Choose up to four claim months. You can open individual days to check them, but review is optional.</p>
         </div>
         <span id="icsState" class="save-status">No calendar loaded</span>
@@ -177,33 +175,33 @@
     </section>
 
     <section id="claim" class="panel" role="tabpanel" aria-labelledby="tab-claim" hidden>
-      <div class="section-heading"><div><h1>Review and save</h1><p>Review every selected month below. The earliest selected month is shown first.</p></div></div>
-      <p class="hint subsistence-note">Select anywhere to edit table contents, add or remove rows. Page 1 can be edited by going back to Setup tab.</p>
-      <div class="preview-toolbar"><button id="regenerateClaims" class="secondary" type="button">Regenerate claim contents</button><span class="hint">Use this after making any changes to Setup or Shifts tabs. It replaces edits made directly in the claim tables.</span></div>
+      <div class="section-heading"><div><h2>Review and save</h2><p>Review each month selected in Shifts below. The earliest selected month is shown first.</p></div></div>
+      <p class="hint subsistence-note">Select anywhere in the tables to edit, add or remove entries. Click on the preview button to see the payroll document in A4 format. To edit details on Page 1 in the preview, return to Setup.</p>
+      <div class="preview-toolbar"><button id="regenerateClaims" class="secondary" type="button">Regenerate claim contents</button><span class="hint">Use this after making changes in Setup or Shifts. This will regenerate the claim forms and replace any edits made directly in the tables.</span></div>
       <div id="claimsStack" class="claims-stack"></div>
-      <ol class="completion-sequence"><li>Check journeys and expenses.</li><li>Check the totals.</li><li>Save the PDFs.</li><li>Open the payroll email draft.</li></ol>
       <div class="claim-actions"><button id="signAndSaveSelected" class="primary" type="button">Sign and save selected PDFs</button></div>
       <div id="exportFeedback" class="calendar-feedback subtle" role="status" aria-live="polite">Review the selected months, then sign and save the PDFs.</div>
-      <div class="claim-secondary-actions"><button id="humberBridge" class="secondary" type="button" hidden>Humber Bridge Website</button><div class="email-payroll-action"><button id="emailPayroll" class="secondary" type="button">Open payroll email draft</button><p class="hint">This does not send your claim. Attach the generated PDF(s) and any relevant receipts before sending.</p><ul class="attachment-checklist"><li>Generated claim PDF(s)</li><li>Parking, toll or travel receipts</li></ul></div></div>
+      <div class="claim-secondary-actions"><button id="humberBridge" class="secondary" type="button" hidden>Humber Bridge Website</button><button id="emailPayroll" class="secondary" type="button">Email payroll</button></div>
       <div class="optional-feedback-prompt" hidden><button class="secondary open-outcome-survey" type="button">Optional feedback</button></div>
       <div class="actions workflow-actions"><a id="claimContinue" class="primary button-link" href="#log">Continue to Expense Log</a></div>
     </section>
 
     <section id="log" class="panel" role="tabpanel" aria-labelledby="tab-log" hidden>
-      <div class="section-heading"><div><h1>Expense log</h1><p>Created claims are logged locally. You can delete individual entries or export the data for your records.</p></div></div>
-      <div class="table-wrap"><table class="log-table"><caption>Your locally saved claim records</caption><thead><tr><th>Date form created</th><th>Range of dates</th><th>Miles owed</th><th>Miscellaneous owed (£)</th><th>Total owed (£)</th><th>Actions</th></tr></thead><tbody id="logBody"></tbody><tfoot><tr><th colspan="4">Cumulative total</th><th id="logTotal">£0.00</th><th></th></tr></tfoot></table></div>
+      <div class="section-heading"><div><h2>Expense log</h2><p>Exported claims are logged locally. You can delete individual entries or export the data for your records.</p></div></div>
+      <div class="table-wrap"><table class="log-table"><thead><tr><th>Date form exported</th><th>Range of dates</th><th>Miles owed</th><th>Miscellaneous owed (£)</th><th>Total owed (£)</th><th></th></tr></thead><tbody id="logBody"></tbody><tfoot><tr><th colspan="4">Cumulative total</th><th id="logTotal">£0.00</th><th></th></tr></tfoot></table></div>
       <div class="optional-feedback-prompt" hidden><button class="secondary open-outcome-survey" type="button">Optional feedback</button></div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <a class="text-link" href="accessibility.html">Accessibility statement</a>
+    <button id="footerOpenAccessibility" class="text-link" type="button">Accessibility statement</button>
     <button id="footerOpenPrivacy" class="text-link" type="button">Privacy &amp; cookies</button>
     <button id="footerOpenBugReport" class="text-link" type="button">Report a bug / give feedback</button>
   </footer>
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <div id="installHelp" class="install-help" hidden></div>
+  <dialog id="accessibilityDialog"><div class="dialog-head"><h3>Accessibility status</h3><button type="button" data-close-dialog="accessibilityDialog" class="icon-btn" aria-label="Close accessibility statement">×</button></div><div class="dialog-body prose"><p>PIER is actively being improved to meet WCAG 2.2 Level AA standards. Full conformance is not yet claimed because the generated payroll PDF is not tagged or fully selectable, and testing across the full range of assistive technologies has not been carried out.</p><h4>What Has Been Improved</h4><ul><li>Keyboard-operable tabs, visible focus indicators, a skip link, and labelled dialogs.</li><li>Readable journey editing separate from your payroll-document preview.</li><li>Persistent form errors, deletion Undo actions, and explicit shift-review states.</li><li>Responsive layouts, larger controls, reduced-motion support, and display preferences.</li></ul><h4>Known Limitations</h4><ul><li>The official payroll PDF output is canvas-based and does not yet have document tags or a verified screen-reader reading order.</li><li>A typed signature alternative requires payroll approval and is not currently available.</li><li>Full testing with NVDA, VoiceOver, and TalkBack remains to be completed on supported physical devices.</li></ul></div><div class="dialog-actions"><button type="button" data-close-dialog="accessibilityDialog" class="primary">Close</button></div></dialog>
   <dialog id="manualShiftDialog"><form method="dialog" id="manualShiftForm"><div class="dialog-head"><h3>Add unscheduled day travelled into work</h3><button type="button" data-close-manual class="icon-btn">×</button></div><div class="grid two"><label>Date<input id="manualDate" type="date" required></label><label>Reason<input id="manualReason" required placeholder="Swap / extra shift / meeting / teaching / training" /></label><label>Start time<input id="manualStart" type="time" required></label><label>End time<input id="manualEnd" type="time" required></label></div><div class="dialog-actions"><button type="button" data-close-manual class="secondary">Cancel</button><button id="saveManualShift" type="submit" class="primary">Add day</button></div></form></dialog>
   <dialog id="shiftDayDialog" class="shift-day-dialog" aria-labelledby="shiftDayDialogTitle"><div class="shift-day-dialog-head"><h3 id="shiftDayDialogTitle">Shifts</h3><button id="closeShiftDayDialog" class="icon-btn" type="button" aria-label="Close shift details">×</button></div><div id="shiftDayDialogContent" class="shift-day-dialog-content"></div></dialog>
   <dialog id="signatureDialog"><div class="dialog-head"><h3>Claimant signature</h3><button id="closeSig" class="icon-btn">×</button></div><canvas id="signaturePad" width="700" height="220"></canvas><div class="dialog-actions"><button id="clearSig" class="secondary">Clear</button><button id="saveSig" class="primary">Save signature</button></div></dialog>
@@ -223,6 +221,6 @@
     <section id="calendarReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Calendar reminder</h4><p class="hint">Creates a recurring monthly ICS reminder locally. It repeats until deleted from the calendar. No calendar account is connected to this site.</p><div class="grid two compact-grid"><label>Reminder day of each month<select id="calendarReminderDay"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option></select></label><label>Reminder time<input id="calendarReminderTime" type="time" value="17:00"></label></div><button id="saveCalendarReminder" class="primary" type="button">Save monthly reminder to calendar</button></section>
     <section id="pushReminderPanel" class="reminder-dialog-panel" hidden><button class="text-link reminder-back" type="button">← Reminder options</button><h4>Push notifications</h4><p class="hint">Available on supported browsers. On iPhone/iPad, install the site to the Home Screen first.</p><label class="toggle-line"><input id="pushMonthly" type="checkbox" checked> Monthly claim reminder</label><label class="toggle-line"><input id="pushDeadline" type="checkbox" checked> Deadline reminders</label><label class="toggle-line"><input id="pushRota" type="checkbox" checked> Rota change alerts</label><label class="toggle-line"><input id="pushUnfinished" type="checkbox" checked> Unfinished claim reminders</label><details class="advanced-reminders"><summary>Advanced notification settings</summary><div class="grid two compact-grid"><label>Notification time<input id="pushReminderTime" type="time" value="18:00"></label><label>Deadline warning (days before 5th)<input id="pushDeadlineDays" type="number" min="1" max="4" value="3"></label><label>Unfinished claim reminder day<input id="pushUnfinishedDay" type="number" min="1" max="28" value="3"></label></div></details><div class="reminder-buttons"><button id="enablePush" class="primary" type="button">Enable push notifications</button><button id="testPush" class="secondary" type="button" disabled>Send test notification</button><button id="disablePush" class="link-btn" type="button" hidden>Disable push</button></div><div id="pushFeedback" class="hint" aria-live="polite">Push reminders require the notification service to be configured.</div></section>
   </div><div class="dialog-actions"><button type="button" data-close-dialog="notificationSettingsDialog" class="secondary">Done</button></div></dialog>
-  <script src="app.js?v=53"></script>
+  <script src="app.js?v=54"></script>
 </body>
 </html>

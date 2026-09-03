@@ -3,9 +3,6 @@
 const fieldPurpose={date:'date',claimType:'claim type',start:'start time',detail:'journey description',end:'end time',from:'starting location',to:'destination',miles:'mileage',passengerMiles:'passenger mileage',miscLabel:'additional expense description',miscAmount:'additional expense amount',mealFrom:'subsistence start time',mealTo:'subsistence end time',mealAmount:'subsistence amount'};
 let lastDialogOpener=null,undoAction=null;
 
-const requiredSetupMissingBase=requiredSetupMissing;
-requiredSetupMissing=function(){return requiredSetupMissingBase().filter(item=>item.id!=='setupSignature');};
-
 function ensureErrorSummary(){
   let summary=$('setupErrorSummary');
   if(!summary){summary=document.createElement('div');summary.id='setupErrorSummary';summary.className='error-summary';summary.setAttribute('role','alert');summary.tabIndex=-1;summary.hidden=true;$('setup').prepend(summary);}
@@ -40,14 +37,12 @@ function updateResumeMessage(){
 
 function readableClaimEditor(month){
   const rows=state.claims?.[month]?.rows||[],editor=document.createElement('section');editor.className='readable-claim-editor';editor.setAttribute('aria-label',`Journey editor for ${monthLabel(month)}`);
-  const heading=document.createElement('h3');heading.textContent='Journeys and expenses';editor.append(heading);
-  rows.forEach((row,index)=>{
-    const card=document.createElement('fieldset');card.className='journey-card';const legend=document.createElement('legend');legend.textContent=`Journey ${index+1} — ${displayDate(row.date)}`;card.append(legend);
-    const values={date:displayDate(row.date),detail:row.detail,start:parseTimeFromDate(row.start),end:parseTimeFromDate(row.end),from:row.from,to:row.to,miles:row.miles??'',passengerMiles:row.passengerMiles??'',miscLabel:row.miscLabel||'',miscAmount:row.miscAmount??''};
-    for(const [field,value] of Object.entries(values)){const label=document.createElement('label'),input=document.createElement('input');label.textContent=fieldPurpose[field]||field;input.className='row-input';input.dataset.month=month;input.dataset.row=String(index);input.dataset.field=field;input.type=['start','end'].includes(field)?'time':(['miles','passengerMiles','miscAmount'].includes(field)?'number':'text');input.value=value;input.setAttribute('aria-label',`${monthLabel(month)}, journey ${index+1}, ${fieldPurpose[field]||field}`);input.addEventListener('input',onStackRowEdit);label.append(input);card.append(label);}
-    const remove=document.createElement('button');remove.type='button';remove.className='row-delete';remove.dataset.month=month;remove.dataset.row=String(index);remove.textContent='Delete journey';remove.setAttribute('aria-label',`Delete journey ${index+1} from ${monthLabel(month)}`);card.append(remove);editor.append(card);
-  });
-  const add=document.createElement('button');add.type='button';add.className='secondary readable-row-add';add.textContent='Add journey';add.addEventListener('click',()=>{state.claims[month].rows.push(blankRow(month));saveState();renderClaimsStack();});editor.append(add);return editor;
+  const heading=document.createElement('h3');heading.textContent='Journeys and expenses';
+  const wrap=document.createElement('div');wrap.className='journey-table-scroll';wrap.setAttribute('role','region');wrap.setAttribute('aria-label',`Editable journeys for ${monthLabel(month)}`);wrap.tabIndex=0;
+  const table=document.createElement('table');table.className='journey-edit-table';table.innerHTML='<thead><tr><th>Date</th><th>Journey description</th><th>Start time</th><th>End time</th><th>Starting location</th><th>Destination</th><th>Mileage</th><th>Passenger mileage</th><th>Additional expense description</th><th>Additional expense amount</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody></tbody>';
+  const body=table.tBodies[0],fields=['date','detail','start','end','from','to','miles','passengerMiles','miscLabel','miscAmount'];
+  rows.forEach((row,index)=>{const tr=document.createElement('tr');tr.className=isHomeboundRow(row)?'return-journey-row':'outbound-journey-row';for(const field of fields){const td=document.createElement('td'),input=document.createElement('input');input.className='row-input';input.dataset.month=month;input.dataset.row=String(index);input.dataset.field=field;input.type=['start','end'].includes(field)?'time':(['miles','passengerMiles','miscAmount'].includes(field)?'number':'text');input.value=field==='date'?displayDate(row.date):(['start','end'].includes(field)?parseTimeFromDate(row[field]):row[field]??'');input.setAttribute('aria-label',`${monthLabel(month)}, journey ${index+1}, ${fieldPurpose[field]||field}`);input.addEventListener('input',onStackRowEdit);td.append(input);tr.append(td);}const action=document.createElement('td'),remove=document.createElement('button');remove.type='button';remove.className='row-delete';remove.dataset.month=month;remove.dataset.row=String(index);remove.textContent='Delete';remove.setAttribute('aria-label',`Delete journey ${index+1} from ${monthLabel(month)}`);action.append(remove);tr.append(action);body.append(tr);});
+  wrap.append(table);const actions=document.createElement('div');actions.className='journey-table-actions';const add=document.createElement('button');add.type='button';add.className='secondary readable-row-add';add.textContent='Add entry';add.addEventListener('click',()=>{state.claims[month].rows.push(blankRow(month));saveState();renderClaimsStack();});actions.append(add);editor.append(heading,wrap,actions);return editor;
 }
 
 function enhanceClaimContent(){
@@ -60,12 +55,14 @@ function enhanceClaimContent(){
   qsa('.row-delete').forEach(button=>{const row=Number(button.dataset.row)+1;button.setAttribute('aria-label',`Delete journey ${row} from ${monthLabel(button.dataset.month)}`);});
   qsa('.claim-month-card').forEach(card=>{
     if(card.querySelector('.view-payroll-preview'))return;
-    const month=card.dataset.month||card.querySelector('.stack-claim-table')?.dataset.month||'',preview=card.querySelector('.form-page-preview');
+    const month=card.dataset.month||card.querySelector('.stack-claim-table')?.dataset.month||'';let preview=card.querySelector('.form-page-preview');
     if(!preview)return;preview.hidden=true;preview.setAttribute('role','region');preview.setAttribute('aria-label',`Payroll document preview for ${monthLabel(month)}`);preview.tabIndex=0;
-    preview.before(readableClaimEditor(month));card.querySelector('.edit-month-table')?.setAttribute('hidden','');
-    const button=document.createElement('button');button.type='button';button.className='secondary view-payroll-preview';button.textContent='View payroll document';button.setAttribute('aria-expanded','false');
-    button.addEventListener('click',()=>{const opening=preview.hidden;preview.hidden=!opening;button.setAttribute('aria-expanded',String(opening));button.textContent=opening?'Close payroll document':'View payroll document';if(opening)preview.focus();});
-    card.querySelector('.claim-month-heading')?.append(button);
+    const editor=readableClaimEditor(month);preview.before(editor);card.querySelector('.edit-month-table')?.setAttribute('hidden','');
+    const button=document.createElement('button');button.type='button';button.className='secondary view-payroll-preview';button.textContent='Preview payroll document';button.setAttribute('aria-expanded','false');
+    const closePreview=()=>{preview.hidden=true;button.setAttribute('aria-expanded','false');button.focus();};
+    button.addEventListener('click',()=>{if(!preview.hidden){closePreview();return;}const template=document.createElement('template');template.innerHTML=claimMonthCard(month);const fresh=template.content.querySelector('.form-page-preview');if(fresh){fresh.hidden=false;fresh.setAttribute('role','region');fresh.setAttribute('aria-label',`Payroll document preview for ${monthLabel(month)}`);fresh.tabIndex=0;const close=document.createElement('button');close.type='button';close.className='icon-btn payroll-preview-close';close.setAttribute('aria-label','Close payroll document preview');close.textContent='×';close.addEventListener('click',closePreview);fresh.prepend(close);preview.replaceWith(fresh);preview=fresh;}button.setAttribute('aria-expanded','true');preview.hidden=false;preview.focus();});
+    editor.querySelector('.journey-table-actions')?.append(button);
+    document.addEventListener('click',event=>{if(!preview.hidden&&!preview.contains(event.target)&&event.target!==button)closePreview();});
   });
 }
 const renderClaimsStackAccessible=renderClaimsStack;
@@ -98,8 +95,8 @@ document.addEventListener('keydown',event=>{const dialog=qsa('dialog[open]')[0];
 
 document.addEventListener('click',event=>{const button=event.target.closest('.edit-month-table');if(!button)return;queueMicrotask(()=>{const first=qsa(`.row-input[data-month="${button.dataset.month}"]`)[0],replacement=qsa(`.edit-month-table[data-month="${button.dataset.month}"]`)[0];(first||replacement)?.focus();});},true);
 
-const display=document.createElement('details');display.className='display-preferences';display.innerHTML='<summary>Display preferences</summary><label><input id="largerTextPreference" type="checkbox"> Larger text</label><label><input id="increasedSpacingPreference" type="checkbox"> Increased spacing</label><label><input id="calmerBackgroundPreference" type="checkbox"> Calmer background</label>';
-document.querySelector('.site-footer')?.before(display);
+const display=document.createElement('details');display.className='display-preferences';display.innerHTML='<summary>Display preferences</summary><div class="display-preferences-options"><label><input id="largerTextPreference" type="checkbox"> Larger text</label><label><input id="increasedSpacingPreference" type="checkbox"> Increased spacing</label><label><input id="calmerBackgroundPreference" type="checkbox"> Calmer colours</label></div>';
+document.querySelector('.tabs')?.after(display);
 for(const [id,cls] of [['largerTextPreference','pref-large-text'],['increasedSpacingPreference','pref-more-spacing'],['calmerBackgroundPreference','pref-calm']]){$(id)?.addEventListener('change',event=>{document.body.classList.toggle(cls,event.target.checked);});}
 
 function updatePassengerFields(){
@@ -110,22 +107,15 @@ function updatePassengerFields(){
 }
 $('additionalPassengers')?.addEventListener('change',updatePassengerFields);
 
-const shiftTools=document.querySelector('.shift-view-toolbar');
-if(shiftTools){
-  const progress=document.createElement('p');progress.id='completeShiftReviewProgress';progress.className='shift-review-totals';progress.setAttribute('role','status');
-  const needs=document.createElement('button');needs.id='needsReviewFilter';needs.className='secondary';needs.type='button';needs.textContent='Needs review';
-  const next=document.createElement('button');next.id='nextUncheckedShift';next.className='secondary';next.type='button';next.textContent='Next unchecked shift';
-  needs.addEventListener('click',()=>{shiftView='list';renderShifts();qsa('#shiftList .shift').forEach(row=>{const item=selectedShiftItems().find(entry=>entry.id===row.dataset.id);row.hidden=!!item?.reviewed;});});
-  next.addEventListener('click',()=>{shiftView='list';renderShifts();const item=selectedShiftItems().find(entry=>!entry.reviewed),row=item&&document.querySelector(`.shift[data-id="${CSS.escape(item.id)}"]`);row?.focus();row?.scrollIntoView({block:'center'});});
-  shiftTools.append(needs,next,progress);
-}
-
 const renderShiftsAccessible=renderShifts;
-renderShifts=function(){renderShiftsAccessible();const items=selectedShiftItems(),claimed=items.filter(item=>item.status==='Claim'&&item.reviewed).length,excluded=items.filter(item=>item.status!=='Claim'&&item.reviewed).length,unchecked=items.filter(item=>!item.reviewed).length,progress=$('completeShiftReviewProgress');if(progress)progress.textContent=`${items.length-unchecked} of ${items.length} shifts reviewed · ${claimed} claimed · ${excluded} excluded · ${unchecked} unchecked`;
+shiftRowMarkup=function(item,{popup=false}={}){const start=new Date(item.start),end=new Date(item.end||item.start),date=fmtDateTime(item.start).split(' ')[0],cat=['study','leave','work'].includes(item.category)?item.category:'work',status=item.status==='Claim'?'Claim':'Do not claim',summary=item.category==='study'?'Study':item.summary||'Unscheduled travel',label=`${date}, ${summary}`,review=item.category==='study'?`<label class="study-reviewed"><input type="checkbox" ${item.reviewed?'checked':''}> Study day checked</label>`:'',startTime=parseTimeFromDate(start),endTime=parseTimeFromDate(end);return `<div class="shift shift-${cat} status-${status==='Claim'?'claim':'no-claim'} ${item.source==='manual'?'manual':''} ${popup?'popup-shift':''}" data-id="${escapeAttr(item.id)}" data-date="${shiftDateKey(item.start)}" tabindex="-1"><div class="date">${date}</div><div><div class="summary">${escapeHtml(summary)}</div><div class="shift-time-editor"><label>Start <input class="shift-time" data-field="start" type="time" value="${startTime}" aria-label="Start time for ${escapeAttr(label)}"></label><span aria-hidden="true">→</span><label>End <input class="shift-time" data-field="end" type="time" value="${endTime}" aria-label="End time for ${escapeAttr(label)}"></label></div>${review}</div>${shiftStatusOptionsMarkup(item,label,popup?'popup':'list')}<button class="delete" title="Delete shift" aria-label="Delete shift on ${escapeAttr(date)}">×</button></div>`;};
+bindShiftRows=function(scope,items,{popupDate=''}={}){scope.querySelectorAll('.shift').forEach(row=>{const id=row.dataset.id,item=items.find(candidate=>candidate.id===id)||allEventItems().find(candidate=>candidate.id===id);if(!item)return;row.querySelectorAll('input.shift-status').forEach(choice=>choice.addEventListener('change',()=>{if(!choice.checked)return;item.status=choice.value;if(item.category==='study'){item.reviewed=true;const reviewBox=row.querySelector('.study-reviewed input');if(reviewBox)reviewBox.checked=true;}row.classList.toggle('status-claim',choice.value==='Claim');row.classList.toggle('status-no-claim',choice.value!=='Claim');refreshShiftViews();saveState();}));row.querySelectorAll('.shift-time').forEach(input=>input.addEventListener('change',()=>{applyShiftTime(item,input.dataset.field,input.value);refreshShiftViews();if(popupDate)renderShiftDayDialog(popupDate);}));row.querySelector('.study-reviewed input')?.addEventListener('change',event=>{item.reviewed=event.target.checked;refreshShiftViews();saveState();});row.querySelector('.delete').addEventListener('click',()=>{state.events=state.events.filter(candidate=>candidate.id!==id);state.manualEvents=state.manualEvents.filter(candidate=>candidate.id!==id);if(popupDate){refreshShiftViews();const remaining=selectedShiftItems().filter(candidate=>shiftDateKey(candidate.start)===popupDate);if(remaining.length)renderShiftDayDialog(popupDate);else $('shiftDayDialog').close();}else renderAll();saveState();});});};
+renderShifts=function(){renderShiftsAccessible();
   let week='';qsa('#shiftList > .shift').forEach(row=>{const date=new Date(`${row.dataset.date}T12:00:00`),day=(date.getDay()+6)%7;date.setDate(date.getDate()-day);const key=date.toISOString().slice(0,10);if(key===week)return;week=key;const heading=document.createElement('h3');heading.className='shift-week-heading';heading.textContent=`Week commencing ${displayDate(key)}`;row.before(heading);});
 };
 
 const renderExpenseLogAccessible=renderExpenseLog;
 renderExpenseLog=function(){renderExpenseLogAccessible();qsa('.log-delete').forEach(button=>{const item=state.expenseLog.find(entry=>entry.id===button.dataset.id);button.setAttribute('aria-label',`Delete expense-log entry${item?.range?' for '+item.range:''}`);});updateResumeMessage();};
 
+$('footerOpenAccessibility')?.addEventListener('click',event=>{lastDialogOpener=event.currentTarget;$('accessibilityDialog')?.showModal();});
 updatePassengerFields();updateResumeMessage();enhanceClaimContent();renderExpenseLog();renderShifts();
