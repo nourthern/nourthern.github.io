@@ -100,8 +100,8 @@ Use boundary values as well as ordinary examples:
 - [ ] Confirm the empty-date action closes with Escape, outside interaction, scrolling and resizing without trapping focus.
 - [ ] Confirm the Deep Navy banner subtitle and subtle light halo remain readable over the banner image at phone, tablet and desktop widths.
 - [ ] Confirm a beta calendar-link import tries the same-origin `/ics` route first and that the deployed route returns a Worker validation response rather than a static-site response.
-- [ ] Confirm legacy non-Study Needs review shifts migrate to Do not claim with an `×`, while Study review states retain their established `?`, `/` and `✓` sequence.
-- [ ] Confirm desktop shift-list controls sit centrally with Delete beside the date, and narrow layouts stack Claim and Do not claim vertically to the right of the shift details.
+- [ ] Confirm untouched non-Study shifts appear green with `✓` and **Claimable**, while explicit user exclusions remain Do not claim; Study review states must follow `?` until reviewed, then `×` for Do not claim or `✓` for Claim.
+- [ ] Confirm the shift-list Delete `×` sits to the left of the day/date, desktop status controls remain central, and narrow layouts stack Claim and Do not claim vertically to the right of the shift.
 - [ ] In each monthly journey table, confirm Delete is on the left, totals align beneath mileage/passenger mileage/additional expense, and new rows alternate Work bound then Home bound.
 - [ ] Check normal-text contrast at 4.5:1 where applicable, including every dashboard override.
 - [ ] Test narrow phone, tablet, 900px breakpoint, and wide desktop. No clipped action, inaccessible table, or unusable dialog.

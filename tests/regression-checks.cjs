@@ -32,6 +32,20 @@ assert.match(betaWorkerConfig, /"custom_domain": true/);
 assert.doesNotMatch(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
 assert.match(buildScript, /'accessibility\.html'/);
 
+const savedEventHelperStart = app00.indexOf('function editedShiftIds');
+const savedEventHelperEnd = app00.indexOf('let state=', savedEventHelperStart);
+assert.ok(savedEventHelperStart >= 0 && savedEventHelperEnd > savedEventHelperStart, 'Saved shift migration helpers were not found');
+const savedEventSandbox = {snapshot:{events:[
+  {id:'work-default',category:'work',status:'Do not claim',reviewed:true},
+  {id:'work-user-choice',category:'work',status:'Do not claim',reviewed:true},
+  {id:'study-default',category:'study',status:'Do not claim',reviewed:false}
+],telemetry:{workflowMonths:{'2026-09':{editedIds:{'shift:work-user-choice':true}}}}}};
+vm.runInNewContext(`${app00.slice(savedEventHelperStart, savedEventHelperEnd)}\nresult=normalizeSavedEvents(snapshot);`, savedEventSandbox);
+assert.equal(savedEventSandbox.result[0].status, 'Claim');
+assert.equal(savedEventSandbox.result[1].status, 'Do not claim');
+assert.equal(savedEventSandbox.result[2].status, 'Do not claim');
+assert.equal(savedEventSandbox.result[2].reviewed, false);
+
 const phraseStart = app04.indexOf('function naturalJoin');
 const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
 assert.ok(phraseStart >= 0 && phraseEnd > phraseStart, 'Payroll month helpers were not found');
@@ -70,9 +84,9 @@ assert.match(app04, /ctx\.fillText\(money\(claimTotals\.meals\)/);
 assert.match(html, /id="backupBtn"[^>]+aria-label="Back up site data"/);
 assert.match(html, /class="brand-logo" src="icons\/pier-logo-navy\.png"/);
 assert.match(html, /<p>Travel Expense Manager<\/p>/);
-assert.match(html, /styles\.css\?v=57/);
-assert.match(html, /app\.js\?v=57/);
-assert.match(app, /const APP_SHELL_VERSION='57'/);
+assert.match(html, /styles\.css\?v=58/);
+assert.match(html, /app\.js\?v=58/);
+assert.match(app, /const APP_SHELL_VERSION='58'/);
 assert.match(html, /location\.protocol==='http:'[^;]+location\.replace\('https:\/\/'/);
 assert.match(html, /id="channelBadge" class="channel-badge" hidden>Beta/);
 assert.match(html, /placeholder="e\.g\. Nour Alwaa"/);
@@ -111,8 +125,13 @@ assert.match(app06, /marker\.textContent='×'/);
 assert.match(app06, /calendar-day\.blank/);
 assert.match(app06, /Add unscheduled day/);
 assert.match(app06, /event\.key==='Escape'/);
-assert.match(app06, /item\.category!=='study'&&!item\.reviewed/);
-assert.match(app06, /item\.status='Do not claim';item\.reviewed=true/);
+assert.match(app06, /item\.category==='work'&&!shiftStatusWasEdited\(item\)&&item\.status!=='Claim'/);
+assert.match(app06, /item\.status='Claim';item\.reviewed=true/);
+assert.match(app00, /function editedShiftIds\(snapshot\)/);
+assert.match(app00, /event\.category==='work'&&!edited\.has\(event\.id\)\?\{\.\.\.event,status:'Claim',reviewed:true\}:event/);
+assert.match(app02, /preserve=old&&\(c\.category==='study'\|\|shiftStatusWasEdited\(old\)\)/);
+assert.match(app02, /status:preserve\?old\.status:c\.status/);
+assert.match(app06, /status\.textContent='Claimable'/);
 assert.match(app06, /location\.origin\.replace[^\n]+\+'\/ics'/);
 assert.match(app06, /if\(!IS_BETA_DEPLOYMENT\)return fetchTextWithExistingFallbacks/);
 assert.match(app03, /status:'Claim',reviewed:true,category:'work',source:'manual'/);
@@ -125,8 +144,8 @@ assert.match(styles, /\.pref-high-contrast/);
 assert.match(styles, /\.pref-underline-links/);
 assert.match(styles, /\.calendar-add-bubble/);
 assert.match(styles, /\.brand-block p\{display:block[^}]+background:transparent;color:#123047[^}]+font-weight:600[^}]+text-shadow:0 0 2px/);
-assert.match(styles, /grid-template-areas:"date delete status details"/);
-assert.match(styles, /grid-template-areas:"date delete" "details status"/);
+assert.match(styles, /grid-template-areas:"delete date status details"/);
+assert.match(styles, /grid-template-areas:"delete date status" "\. details status"/);
 assert.match(html, /<html lang="en-GB">/);
 assert.match(html, /class="tab-list" role="tablist"/);
 assert.match(html, /<h1>Setup<\/h1>/);
@@ -233,7 +252,7 @@ assert.match(styles, /\.brand-logo\{[^}]*opacity:1;mix-blend-mode:normal;filter:
 assert.match(styles, /\.brand-block p\{[^}]*opacity:1;text-shadow:0 0 2px/);
 assert.match(styles, /background-position:center 78%/);
 assert.match(styles, /@media\(min-width:901px\)\{\.topbar\{justify-content:flex-start/);
-assert.match(sw, /pier-travel-expense-manager-v57/);
+assert.match(sw, /pier-travel-expense-manager-v58/);
 assert.match(sw, /icons\/pier-logo-navy\.png/);
 assert.equal((styles.match(/:root\{/g) || []).length, 1, 'palette must be controlled by one root variable set');
 assert.match(styles, /--deep-navy:#123047/);
@@ -260,7 +279,7 @@ assert.match(app03, /marker=studies\.length\?\(studyClaim\?'✓':studies\.some\(
 assert.match(styles, /0 0 0 3px var\(--dune-gold\),0 0 0 6px var\(--deep-navy\)/);
 assert.match(styles, /colour-blind-mode/);
 assert.match(styles, /Preserve the official claim document preview and print appearance/);
-assert.match(app05, /const APP_VERSION='57'/);
+assert.match(app05, /const APP_VERSION='58'/);
 assert.match(app05, /for\(const \[key,variables\] of Object\.entries\(colourMap\)\)/);
 assert.doesNotMatch(app05, /APP_CHANNEL!=='beta'\)for\(const \[key,variables\]/);
 assert.match(app05, /prompt\.hidden=!!state\.telemetry\?\.surveySubmitted/);
@@ -275,7 +294,7 @@ assert.match(app02, /tag='pier-notification-test'/);
 assert.match(app02, /setTimeout\(\(\)=>resolve\(false\),12000\)/);
 assert.doesNotMatch(app02, /displayed a local test notification instead/);
 assert.match(worker, /tag:'pier-notification-test'/);
-assert.match(sw, /pier-travel-expense-manager-v57/);
+assert.match(sw, /pier-travel-expense-manager-v58/);
 assert.match(sw, /icons\/pier-sunset-hero\.jpg/);
 assert.match(sw, /icons\/icon-192-v2\.png/);
 assert.match(html, /Not affiliated with NLaG Trust or Humber Health Partnership\./);
