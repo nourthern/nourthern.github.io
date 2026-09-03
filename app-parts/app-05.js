@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='52';
+const APP_VERSION='57';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -128,7 +128,7 @@ document.addEventListener('click',event=>{
     editingMonths.has(month)?editingMonths.delete(month):editingMonths.add(month);
     removeEditBubble();
     renderClaimsStack();
-    if(editingMonths.has(month))setTimeout(()=>document.querySelector(`.claim-month-card[data-month="${CSS.escape(month)}"] .stack-claim-table`)?.scrollIntoView({behavior:'smooth',block:'center'}),30);
+    if(editingMonths.has(month))setTimeout(()=>document.querySelector(`.claim-month-card[data-month="${CSS.escape(month)}"] .stack-claim-table`)?.scrollIntoView({block:'center'}),30);
   });
 },{passive:true});
 document.addEventListener('scroll',removeEditBubble,{passive:true});

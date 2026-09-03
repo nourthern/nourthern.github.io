@@ -4,7 +4,7 @@
 
 PIER means **Painless and Intelligent Expenses Reporting**. It is a local-first travel-expense tool that turns rota events into reviewable payroll claim forms while leaving eligibility and accuracy decisions with the user.
 
-PIER should minimise repeated entry, make every journey reviewable, protect sensitive claim data, work over HTTPS, support PWA installation, target WCAG 2.1 AA, and test meaningful changes in beta before production.
+PIER should minimise repeated entry, make every journey reviewable, protect sensitive claim data, work over HTTPS, support PWA installation, target WCAG 2.2 AA, and test meaningful changes in beta before production. Conformance must not be claimed until complete workflow, PDF and assistive-technology evidence passes.
 
 ## Four-tab workflow
 
@@ -30,7 +30,7 @@ Manual/unscheduled work can be added only within the same four-month window. Its
 
 ### Tab 3 — Claim Form
 
-PIER creates one editable preview per selected month. It calculates work-bound and home-bound rows from shift times, commute time, locations, mileage, passenger mileage, and eligible additional expenses. Users can edit cells, add/delete rows, select months, sign, and save PDFs.
+PIER calculates work-bound and home-bound rows from shift times, commute time, locations, mileage, passenger mileage, and eligible additional expenses. In beta, it presents one editable journey table per month selected in Shifts, with a separate A4 payroll-document preview rebuilt from current table values whenever it is opened. Users can edit cells, add/delete rows, select months, sign, and save PDFs.
 
 Saving records the month's exported state and adds it once to the local Expense Log. Regeneration must not duplicate its log row. The PDF is an aid; the user remains responsible for eligibility, accuracy, and receipts.
 
@@ -103,6 +103,10 @@ Bug reports are deliberate submissions. Users can remove technical details and s
 ## Accessibility
 
 Normal text should meet 4.5:1 contrast where applicable. Workflow actions must be keyboard operable, focus-visible, assistive-technology labelled, and usable without colour alone. Mobile and desktop retain equivalent functionality. Colour-blind mode preserves state distinctions.
+
+Beta provides a right-aligned **Display & accessibility** control inside the tab navigation with Larger text, Extra spacing, Reduce colour, High contrast and Underline links options. Larger text and Extra spacing both expand the shift calendar. Ordinary claimable shifts display **Claim**; Study shifts retain their explicit `?`, `/` and tick review sequence.
+
+Each beta claim-month editor shows Delete on the left and totals beneath mileage, passenger mileage and additional expense. New rows alternate their default journey descriptions between **Work bound** and **Home bound**.
 
 ## Beta and production
 

@@ -6,6 +6,21 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Refined beta version 57 by restoring the transparent Deep Navy banner subtitle treatment, adding local signature-image upload, defaulting legacy non-Study review states to Do not claim, and improving responsive shift-list control placement.
+- Made beta calendar-link imports use the deployed same-origin `/ics` Worker route first, retaining the established Worker and direct-calendar fallbacks, and added a deployment smoke check for that route.
+- Refined beta version 56 with weekday labels above dates in the shift list, explicit × markers for reviewed Do not claim days, and keyboard-operable empty calendar dates that offer Add unscheduled day.
+- Hardened beta semantics and accessibility while retaining Sunrise Harbour: one h1 per view, corrected tablist ownership, table captions/scopes, persistent status semantics, keyboard-accessible file inputs, contextual autocomplete and stronger focus handling.
+- Refined beta version 55 with a navigation-bar **Display & accessibility** menu offering Larger text, Extra spacing, Reduce colour, High contrast and Underline links; Larger text and Extra spacing each expand the shift calendar.
+- Reordered Base site and the saved-signature preview in Setup, corrected the push-install wording and removed the Setup disclaimer.
+- Labelled ordinary claimable calendar shifts as **Claim** without changing Study review behaviour.
+- Added mileage, passenger-mileage and additional-expense totals to the readable journey tables; moved Delete to the left, changed home-bound rows to Sea Mist with a Steel Blue edge, and alternated new-row descriptions between Work bound and Home bound.
+- Refined beta version 54 by restoring the established typography, sizing and general visual treatment while retaining the requested Setup subheadings, conditional passenger fields, weekly shift grouping, display preferences and accessibility behaviours.
+- Replaced Tab 3 journey tickets with one editable journey table per selected month, using white outbound rows and Pale Sunset Peach/Sea Mist return rows; payroll previews are rebuilt from current table data.
+- Initially moved Display preferences below the tab bar as a right-aligned white control; version 55 supersedes this placement and wording.
+- Moved the accessibility statement into an in-app dialog beside the Privacy and feedback footer controls.
+- Corrected beta `/ics` routing so calendar-link POST requests reach the Worker instead of the static asset binding.
+- Added the beta accessibility foundation: skip navigation, keyboard tabs, persistent Setup errors, dialog focus handling, an isolated payroll preview, weekly shift groups, contextual names, deletion Undo, display preferences, reduced motion and forced-colour support.
+- Published a beta accessibility statement, criterion record and prioritised issue register without claiming conformance while PDF tagging and physical assistive-technology testing remain open.
 - Kept PIER branding left-aligned on narrow screens, enlarged the active tab without inset corner accents, and added the requested copper interaction colour.
 - Restored Steel Blue/white notification-choice cards with Storm Slate interaction states and expanded the notification Help wording.
 - Replaced Study calendar diamonds with the `?` → `/` or `✓` review-state sequence.
