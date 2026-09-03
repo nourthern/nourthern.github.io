@@ -23,12 +23,14 @@ const migration25 = fs.readFileSync(path.join(root, 'cloudflare-worker', 'migrat
 const migration26 = fs.readFileSync(path.join(root, 'cloudflare-worker', 'migrate-v26.sql'), 'utf8');
 const workerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.jsonc'), 'utf8');
 const betaWorkerConfig = fs.readFileSync(path.join(root, 'cloudflare-worker', 'wrangler.beta.jsonc'), 'utf8');
+const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-site.mjs'), 'utf8');
 
 assert.match(workerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
 assert.match(betaWorkerConfig, /https:\/\/pier-beta\.n-e-alwaa\.workers\.dev/);
 assert.match(betaWorkerConfig, /"pattern": "beta\.pier\.bynour\.uk"/);
 assert.match(betaWorkerConfig, /"custom_domain": true/);
 assert.doesNotMatch(betaWorkerConfig, /"zone_name": "bynour\.uk"/);
+assert.match(buildScript, /'accessibility\.html'/);
 
 const phraseStart = app04.indexOf('function naturalJoin');
 const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
