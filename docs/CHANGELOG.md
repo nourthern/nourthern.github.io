@@ -6,6 +6,7 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Corrected the calendar defaults and saved-state migration so every unedited Work shift appears green with a tick and **Claimable**, including shifts incorrectly persisted as Do not claim by version 57. Explicit user exclusions remain preserved. Study days retain `?` until reviewed, then show `×` for Do not claim or `✓` for Claim. The shift-list Delete `×` now sits to the left of the day and date.
 - Refined beta version 57 by restoring the transparent Deep Navy banner subtitle treatment, adding local signature-image upload, defaulting legacy non-Study review states to Do not claim, and improving responsive shift-list control placement.
 - Made beta calendar-link imports use the deployed same-origin `/ics` Worker route first, retaining the established Worker and direct-calendar fallbacks, and added a deployment smoke check for that route.
 - Refined beta version 56 with weekday labels above dates in the shift list, explicit × markers for reviewed Do not claim days, and keyboard-operable empty calendar dates that offer Add unscheduled day.
