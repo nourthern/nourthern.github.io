@@ -1,82 +1,48 @@
-# PIER · Travel Expense Manager v19
+# PIER · Travel Expense Manager
 
-## v19 highlights
+**Painless and Intelligent Expenses Reporting** is a local-first PWA for preparing monthly travel claims from an Allocate rota.
 
-- PIER visual identity, custom wordmark, approved coastal palette and square app mark.
-- Optional colour-blind friendly shift patterns and local ICS-file dating.
-- Final Help/About copy with claim-form-only user counts and rolling aggregate mileage.
-- More reliable push testing with delivery acknowledgement and a visible local fallback.
-- Password-protected operations dashboard and a separately deployed beta site.
+[Live PIER](https://pier.bynour.uk) · [Beta PIER](https://beta.pier.bynour.uk)
 
-Privacy-first static PWA for preparing monthly travel claims from an Allocate ICS rota.
+## Workflow
 
-## v17 highlights
+1. **Setup:** enter personal and journey details, connect an ICS rota or import a file, and draw or upload a signature.
+2. **Shifts:** review the current and previous three London calendar months in calendar or list view. Work defaults to Claim; Study requires review. Add unscheduled work when needed.
+3. **Claim Form:** review and edit journey rows, preview the payroll document, and save monthly PDFs. Attach the files and receipts yourself when emailing payroll.
+4. **Expense Log:** review exported periods, claimable miles, miscellaneous costs and estimated totals, including cumulative miles and money.
 
-- Generated claim rows are taller and use larger fit-to-cell text without changing any column width.
-- Final-page totals now match the journey-row type size, and page numbers are centred.
+Mileage reimbursement is estimated at **£0.30 per claimable mile**, plus miscellaneous expenses. Claimable miles are the sum of journey mileage, including outbound and home-bound rows. Saved logs are recalculated from their recorded miles when loaded or restored; existing downloaded PDFs are not modified.
 
-## v16 highlights
+## Accessibility and appearance
 
-- About statistics now compare the rolling last three months with the rolling last 12 months on record, using the same locally held expense-log history.
-- Existing aggregate contributions are migrated to a safe baseline that cannot make the 12-month figure smaller than the three-month figure.
+PIER uses the Sunrise Harbour palette. The **Astral Accessibility** access button sits at the right of the navigation bar, replacing the former Display & accessibility menu. It provides text-to-speech, contrast, saturation, text size, text spacing, screen mask and line-height controls. The MIT-licensed bundle is served with PIER and cached for offline use; see [vendor provenance](vendor/astral/README.md).
 
-## v15 highlights
+Keyboard navigation, visible focus, Setup error links, explicit claim states and a separate colour-blind shift option remain available. WCAG 2.2 AA is the target; full conformance is not claimed. Payroll PDFs are image-based, and physical assistive-technology testing remains outstanding.
 
-- Professional header shortcuts with About, Help and notifications at the banner's lower right, and backup beside the local-save status.
-- Notification health indicator, simplified reminder pop-ups and server-reported push delivery failures.
-- End-to-end example data generator with 22 synthetic shifts for pre-release human testing.
-- Flexible recurring fares/parking/toll expenses, with passenger/fare conflict prevention and outbound-only daily, weekly or monthly parking charges.
-- Local ICS-file status, clearer privacy/cookie information and optional compressed feedback screenshots retained for 90 days.
-- Larger generated PDF text, with uniform raised page-one data, a compact final-page legend and no trailing table-edge artefact.
-- All-user longer-period claim aggregate alongside the rolling three-month figure.
-- Automatic release checks and page refreshes keep the installed/offline-capable site current without clearing its local data.
-- The About panel identifies Travel Claims Manager as an independent project not affiliated with NLaG Trust or Humber Health Partnership.
-- Setup supports independent frequency rules for a second parking expense and prevents the same parking/toll category being selected twice.
-- Claim types can be edited per row, miscellaneous headings reflect only configured expenses/passengers, and passenger names no longer carry a redundant prefix.
-- Intermediate PDF table pages use the available page height, and filenames include the claimant's first initial and surname.
+## Privacy and backups
 
-## v13 highlights
+Names, addresses, payroll/vehicle details, signatures, complete rota data and detailed claim histories are stored locally. A live ICS URL is sent to the PIER Worker to retrieve the calendar. Optional telemetry sends limited pseudonymous usage and aggregate amounts/mileage. Deliberately submitted feedback may include reviewed details/screenshots and is retained for 90 days.
 
-- Calendar-link help with direct Loop/iCalendar links, clipboard import and an illustrated guide.
-- Clearer Android/iOS push-notification setup guidance.
-- Study-event warning, mobile preview-to-edit prompt, monthly calendar recurrence wording.
-- PDF page numbering and final-page-only footer.
-- DRAFT Help, About, privacy and bug-reporting panels.
-- Privacy-preserving aggregate usage telemetry, including active-user count and a replaceable all-users three-month claim total; telemetry can be disabled.
+Backups contain local application data, excluding PDFs. Keep them private. Restore replaces the current device's PIER data. Monthly calendar reminders work locally; optional push reminders require the supported Worker/browser setup.
 
-## v12 highlights
+## Development and releases
 
-- Claim previews can be regenerated after Setup or shift changes.
-- Vehicle registrations are normalised to uppercase.
-- Subsistence times, amounts and totals remain visible in the preview and exported PDF.
-- Multi-page PDFs show whole-claim totals only on the final page, including passenger miles.
-- Payroll email month lists group years naturally, including claims spanning New Year.
-- Calendar reminder wording, line break and location have been updated.
+```sh
+pnpm install --frozen-lockfile
+pnpm test
+pnpm run build:site
+```
 
-## v11 reminder highlights
+`index.html`, `styles.css` and ordered `app-parts/` modules form the browser application. `scripts/build-site.mjs` copies public assets to `site-dist/`. Cloudflare Worker services provide the ICS proxy, push reminders, aggregate telemetry, feedback and protected operations dashboard.
 
-- Local recurring `.ics` calendar reminder generator.
-- Optional state-aware Web Push reminders using the existing Cloudflare Worker + D1.
-- Push categories: monthly claim, deadline, rota-change and unfinished-claim reminders.
-- Notification taps deep-link to the relevant app tab and month.
-- Generic lock-screen notification text; claim/rota detail stays local.
-- Sample-signature dialog now says **Save signature** and the saved signature is visibly previewed in Setup.
-- Payroll email uses **“and proof of toll crossings”** when Humber toll is configured.
+GitHub Actions deploys `beta` to beta only and `main` to live only. Verify meaningful changes in beta before production. Keep application, asset-query and service-worker versions aligned. Never commit credentials, personal backups or private calendar URLs.
 
-## Website deployment
+## Maintained project documentation
 
-The static website is served from this GitHub Pages repository. Do not publish secrets.
+Read [AGENTS.md](AGENTS.md) before changing the application. Update this overview when user-visible features, setup, privacy or deployment change; detailed release history belongs in the changelog.
 
-## Cloudflare
-
-ICS fetching continues to use:
-
-`https://travel-claims-ics.n-e-alwaa.workers.dev/`
-
-The Worker and D1 schema must be updated to v19 for notification health, rolling aggregate telemetry, mileage statistics, the private dashboard and screenshot-enabled feedback. See `CLOUDFLARE-WORKER-SETUP.md`.
-
-Calendar `.ics` reminders work even if push/D1 is not configured.
-
-## Privacy boundary
-
-Claim forms, names, addresses, payroll assignment numbers, registrations, signatures, calendar URLs, shift details and PDFs remain local to the user's browser/device. D1 stores minimal pseudonymous reminder data, coarse feature-use counts, replaceable three-month and rolling 12-month cumulative amount/mileage aggregates per installation, and deliberately submitted feedback reports with optional compressed screenshots. Reports and screenshots are deleted after 90 days. No claim rows or individual claim history are stored.
+- [Product specification](docs/PIER_SPEC.md)
+- [Architecture and data boundaries](docs/ARCHITECTURE.md)
+- [Design system](docs/DESIGN_SYSTEM.md)
+- [Testing checklist](docs/TESTING.md)
+- [Changelog](docs/CHANGELOG.md)
