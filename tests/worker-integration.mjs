@@ -6,8 +6,7 @@ const miniflareDirectory=fs.readdirSync('node_modules/.pnpm').find(name=>name.st
 assert.ok(miniflareDirectory,'Miniflare was not found in the Wrangler dependencies.');
 const {Miniflare}=await import(pathToFileURL(`${process.cwd()}/node_modules/.pnpm/${miniflareDirectory}/node_modules/miniflare/dist/src/index.js`));
 const modules={
-  'worker.js':{type:'esm',contents:fs.readFileSync('cloudflare-worker/worker.js','utf8')},
-  'dashboard.js':{type:'esm',contents:fs.readFileSync('cloudflare-worker/dashboard.js','utf8')}
+  'worker.js':{type:'esm',contents:fs.readFileSync('cloudflare-worker/worker.js','utf8')}
 };
 const mf=new Miniflare({
   workers:[{config:{

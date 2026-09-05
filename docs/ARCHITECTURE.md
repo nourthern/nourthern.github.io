@@ -45,7 +45,7 @@ ICS and UI calendar interpretation use `Europe/London`, including GMT/BST conver
 
 D1 stores pseudonymous installation/telemetry aggregates, push-subscription delivery data, bug reports with expiry metadata, telemetry suppressions, and dashboard customization/draft/backup records. It must not store names, addresses, payroll/personal numbers, signatures, full rota data, claim rows, PDFs, or detailed individual claim histories.
 
-Dashboard configuration can override allowed wording, links, and semantic color variables. The browser applies these overrides in both beta and production. Defaults remain in the static bundle.
+Dashboard configuration can override allowed wording, links, and semantic color variables. The browser applies these overrides in both beta and production. Defaults remain in the static bundle. The protected dashboard itself is a separate static asset bundle; the Worker provides authentication and dashboard APIs only. Telemetry ordering/filtering is server-side and bulk deletion writes suppression records before removing pseudonymous installations.
 
 ## Data boundaries
 

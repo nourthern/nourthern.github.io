@@ -112,4 +112,8 @@ Each beta claim-month editor shows Delete on the left and totals beneath mileage
 
 `beta` deploys only the beta Worker/site. `main` deploys only live. Both use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides. Meaningful changes pass beta verification before `main` advances to the tested commit.
 
+## Private dashboard
+
+The protected dashboard separates Overview, reliability and journey insights, telemetry management, content editing and feedback reports. Beta and Live use a two-position sliding environment control. Installation rows support server-side ordering, search/filtering, page selection and bulk removal/restoration. Bulk deletion requires confirmation and permanently suppresses selected pseudonymous installation records from recreation.
+
 Setup journey order: Home address; Base site, Claimable miles and Average commute time on one desktop row; Vehicle registration, Engine and Approved mileage rate; Passenger names and Passenger miles. Smaller screens stack fields. Job title and engine placeholders are IMT3 and 1296. Setup error-list links match tab font, size and weight. Add unscheduled day uses dark text on a light surface. Optional reminders have no introductory body text. The second-expense sharing note appears only when two additional expense types are selected.

@@ -37,6 +37,8 @@ pnpm run build:site
 
 GitHub Actions deploys `beta` to beta only and `main` to live only. Verify meaningful changes in beta before production. Keep application, asset-query and service-worker versions aligned. Never commit credentials, personal backups or private calendar URLs.
 
+The protected dashboard provides separate Beta/Live telemetry, server-side record sorting/filtering, bulk removal/deletion safeguards, and draft/publish controls for authorised wording, colours and banner imagery.
+
 ## Maintained project documentation
 
 Read [AGENTS.md](AGENTS.md) before changing the application. Update this overview when user-visible features, setup, privacy or deployment change; detailed release history belongs in the changelog.

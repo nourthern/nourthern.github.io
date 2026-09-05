@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const out=join(root,'site-dist');
 const files=['index.html','accessibility.html','styles.css','app.js','manifest.json','sw.js','icalendar-page-guide.jpg'];
-const directories=['app-parts','icons','template','vendor'];
+const directories=['app-parts','icons','template','vendor','dashboard-assets'];
 
 await rm(out,{recursive:true,force:true});
 await mkdir(out,{recursive:true});
