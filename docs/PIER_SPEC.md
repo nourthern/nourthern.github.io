@@ -10,7 +10,7 @@ PIER should minimise repeated entry, make every journey reviewable, protect sens
 
 ### Tab 1 — Setup
 
-The user enters the personal and travel values needed by the official claim form: name, base, job title, payroll assignment number, address, vehicle details, claimable one-way mileage, commute time, mileage rate, passenger details, and supported additional-expense settings. Required fields and a sample signature must be complete before claim generation.
+The user enters the personal and travel values needed by the official claim form: name, base, job title, payroll assignment number, address, vehicle details, claimable one-way mileage, commute time, approved mileage rate, passenger details, and supported additional-expense settings. Required fields and a sample signature must be complete before claim generation. The rate starts locked at £0.30; choosing **Edit rate** in its confirmation dialog unlocks it when Payroll has advised a new rate.
 
 The calendar source may be a live ICS URL or an imported `.ics` file. A live link can refresh; a file remains local and must be re-imported for updates. Setup also exposes reminders, privacy controls, backup, restore, install guidance, and beta-only synthetic example data.
 
@@ -24,7 +24,7 @@ PIER offers the current London calendar month and previous three London calendar
 
 Working events default to Claim. Study/SDT and planned leave default to Do not claim. Opening a study event marks it reviewed but does not force a claim. Both Study and SDT display as **Study**.
 
-In calendar view, an unopened Study event shows **?**. Opening it and leaving **Do not claim** selected changes the marker to **/**; selecting **Claim** changes it to **✓**.
+In calendar view, an unopened Study event shows **?**. Opening it and leaving **Do not claim** selected changes the marker to **×**; selecting **Claim** changes it to **✓**.
 
 Manual/unscheduled work can be added only within the same four-month window. Its claim reason is the entered text, or `Unscheduled work` if no reason exists in stored data.
 
@@ -38,7 +38,7 @@ Saving records the month's exported state and adds it once to the local Expense 
 
 ### Tab 4 — Expense Log
 
-The Expense Log records **Exported claims** locally, with date exported, date range, mileage owed, miscellaneous owed (£), total owed (£), and a cumulative total. Rows can be deleted locally or exported for records. Local deletion does not retract an aggregate contribution already transmitted.
+The Expense Log records **Exported claims** locally, with date exported, date range, claimable miles (displayed as x miles), miscellaneous owed (£), total owed (£), and cumulative mileage and monetary totals. Rows can be deleted locally or exported for records. Local deletion does not retract an aggregate contribution already transmitted.
 
 ## Calendar interpretation
 
@@ -76,7 +76,7 @@ Events no more than one hour apart may form one linked work sequence: the first 
 
 ## Expenses and totals
 
-Mileage uses configured journey miles and rate. Passenger mileage requires passenger names. Parking, Humber toll, and bus/rail expenses follow configured per-journey/daily/weekly/monthly frequency rules. Receipts remain the user's responsibility.
+Mileage reimbursement is the sum of journey miles multiplied by the approved rate, rounded to pennies. The default is £0.30 and the field remains locked until the user confirms **Edit rate**. Loading or restoring old state without an explicit user-approved rate uses £0.30 and recalculates log money from each saved mileage snapshot; it does not rewrite downloaded PDFs. Passenger mileage requires passenger names. Parking, Humber toll, and bus/rail expenses follow configured per-journey/daily/weekly/monthly frequency rules. Receipts remain the user's responsibility.
 
 ## Reminders
 
@@ -104,10 +104,12 @@ Bug reports are deliberate submissions. Users can remove technical details and s
 
 Normal text should meet 4.5:1 contrast where applicable. Workflow actions must be keyboard operable, focus-visible, assistive-technology labelled, and usable without colour alone. Mobile and desktop retain equivalent functionality. Colour-blind mode preserves state distinctions.
 
-Beta provides a right-aligned **Display & accessibility** control inside the tab navigation with Larger text, Extra spacing, Reduce colour, High contrast and Underline links options. Larger text and Extra spacing both expand the shift calendar. Ordinary claimable shifts display **Claim**; Study shifts retain their explicit `?`, `/` and tick review sequence.
+Astral Accessibility replaces Display & accessibility at the right of navigation, with text-to-speech, contrast, saturation, text size/spacing, screen mask and line height. Ordinary claimable shifts display **Claim**; Study shifts retain their explicit `?`, `×` and tick review sequence.
 
 Each beta claim-month editor shows Delete on the left and totals beneath mileage, passenger mileage and additional expense. New rows alternate their default journey descriptions between **Work bound** and **Home bound**.
 
 ## Beta and production
 
 `beta` deploys only the beta Worker/site. `main` deploys only live. Both use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides. Meaningful changes pass beta verification before `main` advances to the tested commit.
+
+Setup journey order: Home address; Base site, Claimable miles and Average commute time on one desktop row; Vehicle registration, Engine and Approved mileage rate; Passenger names and Passenger miles. Smaller screens stack fields. Job title and engine placeholders are IMT3 and 1296. Setup error-list links match tab font, size and weight. Add unscheduled day uses dark text on a light surface. Optional reminders have no introductory body text. The second-expense sharing note appears only when two additional expense types are selected.

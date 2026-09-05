@@ -58,7 +58,7 @@ Use boundary values as well as ordinary examples:
 
 - [ ] For every selected month, verify one editable table is shown with the ten specified journey fields; outbound rows are white and home-bound rows use the Pale Sunset Peach/Sea Mist treatment.
 - [ ] Edit each field, then open **Preview payroll document** and verify the A4 preview reflects the latest values. Confirm the preview action sits at the bottom right of its month table.
-- [ ] Verify Larger text and Extra spacing each change the calendar to a single large month per row; Reduce colour retains accessible status cues.
+- [ ] Verify Astral accessibility controls can adjust contrast, saturation, text size/spacing, screen mask and line height without obscuring claim controls or status cues.
 - [ ] Outbound/homebound rows use first/last linked events, configured commute time, home/base postcodes, and correct shift labels.
 - [ ] Mileage, rate, passenger miles/names, and mileage owed are correct.
 - [ ] Parking, Humber toll, bus/rail, and second additional expense obey journey/daily/weekly/monthly frequency rules without double counting.
@@ -67,7 +67,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Generate one and multiple PDFs; inspect page count, filenames, form fields, wrapped text, totals, legend placement, and signatures.
 - [ ] Regenerate a previously exported month: no duplicate Expense Log row; current aggregate replaces prior month contribution.
 - [ ] Delete claim rows and local Expense Log rows; confirm documented local/telemetry consequences.
-- [ ] Expense Log says **Created claims**, **Date form created**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
+- [ ] Expense Log says **Exported claims**, **Date form exported**, **Claimable miles**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
 - [ ] Export Expense Log data and verify values without exposing unrelated local state.
 - [ ] Email payroll produces the correct recipient, natural multi-month wording, and reminder to attach PDFs/receipts.
 
@@ -94,7 +94,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Keyboard-only: tabs, calendar days, dialogs, radio choices, editing, signature controls, export, and restore are reachable with visible focus.
 - [ ] Screen reader: landmarks, tab state, dialog names, calendar-day descriptions, shift status, error/status live regions, and icon labels are meaningful.
 - [ ] Status remains understandable without color; test color-blind mode.
-- [ ] Open Display & accessibility from within the navigation; verify Larger text and Extra spacing each expand the Tab 2 calendar, Reduce colour preserves status cues, High contrast strengthens controls, and Underline links affects link-style controls.
+- [ ] Open Astral Accessibility from the right of navigation; verify its controls work, are keyboard accessible and do not obscure the page’s claim controls.
 - [ ] Confirm ordinary claimable calendar days read Claim while Study days retain `?` until reviewed, then show `×` for Do not claim or `✓` for Claim.
 - [ ] Confirm weekdays appear above list-view dates; reviewed Do not claim calendar days show `×`; and an empty date can open Add unscheduled day using mouse, touch, Enter and Space.
 - [ ] Confirm the empty-date action closes with Escape, outside interaction, scrolling and resizing without trapping focus.
@@ -115,3 +115,10 @@ Use boundary values as well as ordinary examples:
 - [ ] Confirm `main` and `beta` point to the exact tested commit before/after fast-forward promotion as intended.
 - [ ] Push/advance `main`; confirm only live deployment and live migrations run, beta remains unchanged, and both public `/api/site-config` endpoints report the correct channel.
 - [ ] Smoke-test production over HTTPS, install metadata, ICS route, PDF generation, privacy network behavior, and service-worker update.
+
+## Astral and expense-log regressions
+
+- Automated synthetic coverage: legacy log reconciliation, rounding, zero mileage, unchanged snapshots, and cumulative mileage rendering.
+- Verify access icon on navigation right, all seven Astral tools, panel scrolling on narrow screens, Escape/outside/focus-leave dismissal and offline reload. Physical browser/assistive-technology validation is still required.
+- Confirm old display options are absent; Study review and colour-blind shift controls remain.
+- Load/restore an old non-£0.30 state: Setup shows £0.30; recorded mileage stays unchanged and log totals reconcile without duplicate rows.

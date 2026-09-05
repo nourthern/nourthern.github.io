@@ -9,7 +9,7 @@ PIER is **Painless and Intelligent Expenses Reporting**, a local-first travel ex
 5. When colours, visual states, branding, or styling rules change, update `docs/DESIGN_SYSTEM.md`.
 6. Consider every bug fix for regression coverage in `docs/TESTING.md`; important regressions must be documented and tested where practical.
 7. Record significant changes under **Unreleased** in `docs/CHANGELOG.md`.
-8. Do not knowingly leave code and documentation inconsistent.
+8. Update `README.md` when user-visible features, setup, privacy or deployment change; keep the overview consistent with the detailed documents. Do not knowingly leave code and documentation inconsistent.
 9. Do not change documentation merely to make it agree with a software bug.
 10. If implementation contradicts documented intended behaviour and the correct behaviour is unclear, flag the discrepancy instead of silently changing the specification.
 11. Never put secrets, tokens, credentials, private ICS URLs, or user data in repository documentation.

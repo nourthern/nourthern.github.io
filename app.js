@@ -1,7 +1,7 @@
 (async()=>{
 'use strict';
-const APP_SHELL_VERSION='58'; // Keep cache-busting aligned with the deployed shell.
-const parts=['app-parts/app-00.js','app-parts/app-01.js','app-parts/app-02.js','app-parts/app-03.js','app-parts/app-04.js','app-parts/app-05.js','app-parts/app-06.js'];
+const APP_SHELL_VERSION='61'; // Keep cache-busting aligned with the deployed shell.
+const parts=['app-parts/astral.js','app-parts/app-00.js','app-parts/app-01.js','app-parts/app-02.js','app-parts/app-03.js','app-parts/app-04.js','app-parts/app-05.js','app-parts/app-06.js'];
 for(const src of parts){
   await new Promise((resolve,reject)=>{
     const s=document.createElement('script');

@@ -85,8 +85,14 @@ The Cloudflare workflow is triggered independently by `beta` and `main`:
 4. on `beta`, deploy and verify only the beta Worker/assets;
 5. on `main`, apply required D1 migrations, deploy and verify only live.
 
-Concurrency is branch-specific. A production run must not overwrite beta. Promotion normally means fast-forwarding `main` to the exact commit verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `51`) to prevent mixed shells.
+Concurrency is branch-specific. A production run must not overwrite beta. Promotion normally means fast-forwarding `main` to the exact commit verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `61`) to prevent mixed shells.
 
 ## Security
 
 Public operation is HTTPS-only. Worker requests validate method/origin/authorization as appropriate; dashboard operations require authentication. Proxy and feedback inputs are bounded and validated. Privacy boundaries are architectural constraints, not optional conveniences.
+
+## Astral and mileage reconciliation
+
+`app-parts/astral.js` loads the pinned MIT bundle from `vendor/astral/main.js` and adapts its navigation placement and keyboard semantics. The build and service-worker shell include the bundle; no runtime CDN request is needed. The widget uses browser speech synthesis for optional text-to-speech. No claim data is sent to Astral by PIER. Widget preferences are session controls, separate from PIER backups.
+
+`mergeState` resets the approved rate to £0.30 and reconciles Expense Log monetary values from the existing saved miles and miscellaneous amounts. Journey rows and PDF files are unchanged. Shared `mileageAmount` is used for new log and aggregate calculations.

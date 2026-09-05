@@ -59,7 +59,7 @@ The page is Warm Background. Content cards are Card White with Steel Blue-derive
 
 In beta, Tab 3 uses one horizontally scrollable editable table per selected month. Outbound journey rows are white; home-bound rows use Sea Mist with a Steel Blue edge. The established interface font is inherited. The payroll document remains a separate preview opened from the table’s bottom-right action.
 
-The beta navigation contains a right-aligned **Display & accessibility** menu. Larger text and Extra spacing expand Tab 2 calendars to one month per row. Reduce colour tones down decorative surfaces while preserving meaningful status indicators; High contrast strengthens foregrounds and control borders; Underline links adds a non-colour link cue.
+Navigation contains the right-aligned Astral access icon (Deep Navy with a white icon), opening a bounded, scrollable panel. It replaces the old Display & accessibility options. The Setup error-list links use the tab typography (Avenir Next Demi Bold/Segoe UI Semibold/Arial, 16px, weight 800). Add unscheduled day uses Deep Navy on Card White.
 
 The interface font stack is `Arial, Helvetica, sans-serif`. Existing hierarchy, weights, sizes, and official-form typography are intentional constraints. The PIER wordmark uses `icons/pier-logo-navy.png`; the header also includes the “Travel Expense Manager” descriptor. Do not redraw, recolor, crop, or replace the wordmark as an incidental styling change.
 
