@@ -6,6 +6,8 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Browser testing: keep Astral open when its controls rerender after a setting changes; dismiss only when focus moves to another page control, Escape is pressed or the user clicks outside.
+
 - Added bundled Astral accessibility controls on the right of navigation, replacing Display & accessibility.
 - Matched Setup error-list typography to tabs, updated IMT3/1296 placeholders and reordered journey fields.
 - Changed the calendar annotation to Claim and the unscheduled-day action to dark-on-light.

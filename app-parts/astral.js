@@ -22,7 +22,7 @@ async function initializePierAccessibility(){
     const close=()=>{if(host.querySelector('.astral-modal.active'))host.querySelector('.astral-icon')?.click();};
     host.addEventListener('keydown',event=>{if(event.key==='Escape'){close();host.querySelector('.astral-icon')?.focus();event.stopPropagation();}});
     document.addEventListener('pointerdown',event=>{if(!host.contains(event.target))close();});
-    host.addEventListener('focusout',()=>queueMicrotask(()=>{if(!host.contains(document.activeElement))close();}));
+    host.addEventListener('focusout',event=>{if(event.relatedTarget&&!host.contains(event.relatedTarget))close();});
   }catch(error){
     console.error('Accessibility controls could not load',error);
     status.textContent='Accessibility controls could not load. Reload PIER to retry.';slot.replaceChildren(status);
