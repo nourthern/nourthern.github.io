@@ -169,7 +169,6 @@ export default {
     const raw=String(body?.url||'').trim();if(!raw)return jsonError(request,env,400,'Missing calendar URL.');if(raw.length>MAX_URL_LENGTH)return jsonError(request,env,400,'Calendar URL is too long.');try{new URL(raw);}catch{return jsonError(request,env,400,'The calendar URL is not valid.');}
     try{const text=await fetchCalendar(raw,env,request.signal);return new Response(text,{status:200,headers:{...corsHeaders(request,env),'Content-Type':'text/calendar; charset=utf-8','Cache-Control':'no-store, private','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});}catch(error){return jsonError(request,env,502,error?.name==='AbortError'?'Calendar request timed out.':(error?.message||'Unable to fetch calendar.'));}
   }
-  if((url.pathname==='/dashboard'||url.pathname==='/dashboard/')&&deploymentChannel(env)==='beta')return Response.redirect('https://travel-claims-ics.n-e-alwaa.workers.dev/dashboard',302);
   if(url.pathname==='/dashboard'||url.pathname==='/dashboard/'){if(!await dashboardAuthenticated(request,env))return dashboardUnauthorized(env);return await dashboardResponse(request,env);}
   if(url.pathname==='/api/dashboard/data'&&request.method==='GET'){if(!await dashboardAuthenticated(request,env))return dashboardUnauthorized(env);return await dashboardData(request,env);}
   if(url.pathname==='/api/dashboard/config'&&request.method==='GET'){if(!await dashboardAuthenticated(request,env))return dashboardUnauthorized(env);return await dashboardConfigData(request,env);}
