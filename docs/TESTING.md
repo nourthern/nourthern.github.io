@@ -67,7 +67,7 @@ Use boundary values as well as ordinary examples:
 - [ ] Generate one and multiple PDFs; inspect page count, filenames, form fields, wrapped text, totals, legend placement, and signatures.
 - [ ] Regenerate a previously exported month: no duplicate Expense Log row; current aggregate replaces prior month contribution.
 - [ ] Delete claim rows and local Expense Log rows; confirm documented local/telemetry consequences.
-- [ ] Expense Log says **Created claims**, **Date form created**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
+- [ ] Expense Log says **Exported claims**, **Date form exported**, **Claimable miles**, **Miscellaneous owed (£)**, and **Total owed (£)**; cumulative total is correct.
 - [ ] Export Expense Log data and verify values without exposing unrelated local state.
 - [ ] Email payroll produces the correct recipient, natural multi-month wording, and reminder to attach PDFs/receipts.
 
@@ -115,3 +115,10 @@ Use boundary values as well as ordinary examples:
 - [ ] Confirm `main` and `beta` point to the exact tested commit before/after fast-forward promotion as intended.
 - [ ] Push/advance `main`; confirm only live deployment and live migrations run, beta remains unchanged, and both public `/api/site-config` endpoints report the correct channel.
 - [ ] Smoke-test production over HTTPS, install metadata, ICS route, PDF generation, privacy network behavior, and service-worker update.
+
+## Astral and expense-log regressions
+
+- Automated synthetic coverage: legacy log reconciliation, rounding, zero mileage, unchanged snapshots, and cumulative mileage rendering.
+- Verify access icon on navigation right, all seven Astral tools, panel scrolling on narrow screens, Escape/outside/focus-leave dismissal and offline reload. Physical browser/assistive-technology validation is still required.
+- Confirm old display options are absent; Study review and colour-blind shift controls remain.
+- Load/restore an old non-£0.30 state: Setup shows £0.30; recorded mileage stays unchanged and log totals reconcile without duplicate rows.

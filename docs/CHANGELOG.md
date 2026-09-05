@@ -6,6 +6,12 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Added bundled Astral accessibility controls on the right of navigation, replacing Display & accessibility.
+- Matched Setup error-list typography to tabs, updated IMT3/1296 placeholders and reordered journey fields.
+- Changed the calendar annotation to Claim and the unscheduled-day action to dark-on-light.
+- Restored Claimable miles and cumulative miles in the Expense Log; use £0.30 per mile and reconcile older saved log amounts on load/restore.
+- Refreshed README and added explicit README maintenance guidance to AGENTS.md.
+
 - Corrected the calendar defaults and saved-state migration so every unedited Work shift appears green with a tick and **Claimable**, including shifts incorrectly persisted as Do not claim by version 57. Explicit user exclusions remain preserved. Study days retain `?` until reviewed, then show `×` for Do not claim or `✓` for Claim. The shift-list Delete `×` now sits to the left of the day and date.
 - Refined beta version 57 by restoring the transparent Deep Navy banner subtitle treatment, adding local signature-image upload, defaulting legacy non-Study review states to Do not claim, and improving responsive shift-list control placement.
 - Made beta calendar-link imports use the deployed same-origin `/ics` Worker route first, retaining the established Worker and direct-calendar fallbacks, and added a deployment smoke check for that route.
