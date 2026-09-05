@@ -10,7 +10,7 @@ PIER should minimise repeated entry, make every journey reviewable, protect sens
 
 ### Tab 1 — Setup
 
-The user enters the personal and travel values needed by the official claim form: name, base, job title, payroll assignment number, address, vehicle details, claimable one-way mileage, commute time, mileage rate, passenger details, and supported additional-expense settings. Required fields and a sample signature must be complete before claim generation.
+The user enters the personal and travel values needed by the official claim form: name, base, job title, payroll assignment number, address, vehicle details, claimable one-way mileage, commute time, approved mileage rate, passenger details, and supported additional-expense settings. Required fields and a sample signature must be complete before claim generation. The rate starts locked at £0.30; choosing **Edit rate** in its confirmation dialog unlocks it when Payroll has advised a new rate.
 
 The calendar source may be a live ICS URL or an imported `.ics` file. A live link can refresh; a file remains local and must be re-imported for updates. Setup also exposes reminders, privacy controls, backup, restore, install guidance, and beta-only synthetic example data.
 
@@ -76,7 +76,7 @@ Events no more than one hour apart may form one linked work sequence: the first 
 
 ## Expenses and totals
 
-Mileage reimbursement is the sum of journey miles multiplied by £0.30, rounded to pennies. The approved-rate field is read-only. Loading or restoring old state resets the rate to £0.30 and recalculates log money from each saved mileage snapshot; it does not rewrite downloaded PDFs. Passenger mileage requires passenger names. Parking, Humber toll, and bus/rail expenses follow configured per-journey/daily/weekly/monthly frequency rules. Receipts remain the user's responsibility.
+Mileage reimbursement is the sum of journey miles multiplied by the approved rate, rounded to pennies. The default is £0.30 and the field remains locked until the user confirms **Edit rate**. Loading or restoring old state without an explicit user-approved rate uses £0.30 and recalculates log money from each saved mileage snapshot; it does not rewrite downloaded PDFs. Passenger mileage requires passenger names. Parking, Humber toll, and bus/rail expenses follow configured per-journey/daily/weekly/monthly frequency rules. Receipts remain the user's responsibility.
 
 ## Reminders
 
@@ -112,4 +112,4 @@ Each beta claim-month editor shows Delete on the left and totals beneath mileage
 
 `beta` deploys only the beta Worker/site. `main` deploys only live. Both use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides. Meaningful changes pass beta verification before `main` advances to the tested commit.
 
-Setup journey order: Home address; Base site, Claimable miles and Average commute time on one desktop row; Vehicle registration, Engine and Approved mileage rate; Passenger names and Passenger miles. Smaller screens stack fields. Job title and engine placeholders are IMT3 and 1296. Setup error-list links match tab font, size and weight. Add unscheduled day uses dark text on a light surface.
+Setup journey order: Home address; Base site, Claimable miles and Average commute time on one desktop row; Vehicle registration, Engine and Approved mileage rate; Passenger names and Passenger miles. Smaller screens stack fields. Job title and engine placeholders are IMT3 and 1296. Setup error-list links match tab font, size and weight. Add unscheduled day uses dark text on a light surface. Optional reminders have no introductory body text. The second-expense sharing note appears only when two additional expense types are selected.

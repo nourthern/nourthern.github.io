@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION='60';
+const APP_VERSION='61';
 const runtimeErrors=[];
 let telemetryTimer=null;
 
@@ -176,7 +176,7 @@ updateOutcomeSurvey();
 
 function recordClaimMetric(key,existingOnly=false){
   const telemetry=state.telemetry||(state.telemetry=clone(DEFAULT_STATE.telemetry)),ledger=telemetry.claimMonths||(telemetry.claimMonths={});if(existingOnly&&!ledger[key])return false;
-  const rows=state.claims[key]?.rows||[],miles=rows.reduce((sum,row)=>sum+num(row.miles),0),misc=rows.reduce((sum,row)=>sum+num(row.miscAmount),0),claimed=mileageAmount(miles)+misc;
+  const rows=state.claims[key]?.rows||[],miles=rows.reduce((sum,row)=>sum+num(row.miles),0),misc=rows.reduce((sum,row)=>sum+num(row.miscAmount),0),claimed=mileageAmount(miles,state.settings.mileageRate)+misc;
   ledger[key]={updatedAt:new Date().toISOString(),claimedPence:Math.max(0,Math.round(claimed*100)),milesTenths:Math.max(0,Math.round(miles*10))};saveState();return true;
 }
 

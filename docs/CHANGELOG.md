@@ -6,6 +6,10 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Locked the £0.30 approved mileage rate behind an explicit **Edit rate** confirmation, with the Payroll-only guidance. New approved rates persist and feed future claim estimates.
+- Simplified Setup, Shift and Reminder wording; show the combined-expense note only when two extra-cost types are selected.
+- Added shift-selection guidance, positioned calendar-dialog delete controls left of the date, and moved Undo notices to the lower left.
+
 - Browser testing: keep Astral open when its controls rerender after a setting changes; dismiss only when focus moves to another page control, Escape is pressed or the user clicks outside.
 
 - Added bundled Astral accessibility controls on the right of navigation, replacing Display & accessibility.

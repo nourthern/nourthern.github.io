@@ -85,7 +85,7 @@ The Cloudflare workflow is triggered independently by `beta` and `main`:
 4. on `beta`, deploy and verify only the beta Worker/assets;
 5. on `main`, apply required D1 migrations, deploy and verify only live.
 
-Concurrency is branch-specific. A production run must not overwrite beta. Promotion normally means fast-forwarding `main` to the exact commit verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `60`) to prevent mixed shells.
+Concurrency is branch-specific. A production run must not overwrite beta. Promotion normally means fast-forwarding `main` to the exact commit verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `61`) to prevent mixed shells.
 
 ## Security
 
