@@ -41,7 +41,8 @@ const savedEventSandbox = {snapshot:{events:[
   {id:'work-user-choice',category:'work',status:'Do not claim',reviewed:true},
   {id:'study-default',category:'study',status:'Do not claim',reviewed:false}
 ],telemetry:{workflowMonths:{'2026-09':{editedIds:{'shift:work-user-choice':true}}}}}};
-vm.runInNewContext(`${app00.slice(savedEventHelperStart, savedEventHelperEnd)}\nresult=normalizeSavedEvents(snapshot);`, savedEventSandbox);
+vm.runInNewContext(`${app00.slice(savedEventHelperStart, savedEventHelperEnd)}
+result=normalizeSavedEvents(snapshot);`, savedEventSandbox);
 assert.equal(savedEventSandbox.result[0].status, 'Claim');
 assert.equal(savedEventSandbox.result[1].status, 'Do not claim');
 assert.equal(savedEventSandbox.result[2].status, 'Do not claim');
@@ -52,7 +53,8 @@ const phraseEnd = app04.indexOf("$('emailPayroll')", phraseStart);
 assert.ok(phraseStart >= 0 && phraseEnd > phraseStart, 'Payroll month helpers were not found');
 
 const sandbox = {};
-vm.runInNewContext(`${app04.slice(phraseStart, phraseEnd)}\nresult = { monthsPhrase };`, sandbox);
+vm.runInNewContext(`${app04.slice(phraseStart, phraseEnd)}
+result = { monthsPhrase };`, sandbox);
 const { monthsPhrase } = sandbox.result;
 
 assert.equal(monthsPhrase(['2026-10']), 'October 2026');
@@ -66,7 +68,8 @@ assert.equal(
   'October, November and December 2026, and January 2027'
 );
 
-assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\.\\nOpen PIER Travel Expense Manager: \$\{appUrl\}/);
+assert.match(app02, /Payroll's deadline for claims, to be paid end of this month, is on the 5th of the month\.\
+Open PIER Travel Expense Manager: \$\{appUrl\}/);
 assert.match(app02, /appUrl='https:\/\/pier\.bynour\.uk\/#shifts'/);
 assert.doesNotMatch(app02, /icons\/icon-192\.png/);
 assert.match(app02, /LOCATION:\$\{icsEscape\(eventLocation\)\}/);
@@ -134,7 +137,8 @@ assert.match(app00, /event\.category==='work'&&!edited\.has\(event\.id\)\?\{\.\.
 assert.match(app02, /preserve=old&&\(c\.category==='study'\|\|shiftStatusWasEdited\(old\)\)/);
 assert.match(app02, /status:preserve\?old\.status:c\.status/);
 assert.match(app06, /status\.textContent='Claim'/);
-assert.match(app06, /location\.origin\.replace[^\n]+\+'\/ics'/);
+assert.match(app06, /location\.origin\.replace[^
+]+\+'\/ics'/);
 assert.match(app06, /if\(!IS_BETA_DEPLOYMENT\)return fetchTextWithExistingFallbacks/);
 assert.match(app03, /status:'Claim',reviewed:true,category:'work',source:'manual'/);
 assert.match(html, /id="signatureUpload"[^>]+accept="image\/png,image\/jpeg,image\/webp"/);
@@ -245,7 +249,8 @@ assert.match(styles, /\.primary,\.secondary,\.file-btn\{background:var\(--steel-
 assert.match(styles, /\.primary:hover,\.secondary:hover,\.file-btn:hover\{background:var\(--storm-slate\);color:#fff\}/);
 assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]\{background:var\(--sunset-copper\);color:#fff\}/);
 assert.match(styles, /--sunset-copper-interaction:#B15C20/);
-assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]:hover,[^\n]+background:var\(--sunset-copper-interaction\);color:#fff\}/);
+assert.match(styles, /\.button-link\.primary\[id\$="Continue"\]:hover,[^
+]+background:var\(--sunset-copper-interaction\);color:#fff\}/);
 assert.match(styles, /\.dialog-head h3\{font-size:22px;font-weight:900/);
 assert.match(styles, /\.dialog-body\.prose strong\{font-weight:700\}/);
 assert.match(styles, /\.brand-block p\{[^}]*margin:0[^}]*transform:translateY\(-5px\)[^}]*text-align:left/);
@@ -290,7 +295,8 @@ assert.match(app05, /betaDashboardLink'\)\.hidden=!IS_BETA_DEPLOYMENT/);
 assert.match(app05, /badge\.hidden=\(data\.channel\|\|APP_CHANNEL\)!=='beta'/);
 assert.match(app02, /button\.classList\.toggle\('is-active',configured&&!r\.pushFailed\)/);
 assert.match(styles, /\.header-icon-btn,\.notification-bell,\.notification-bell\.needs-attention\{border-color:var\(--deep-navy\);background:var\(--deep-navy\);color:#fff\}/);
-assert.match(styles, /\.header-icon-btn:hover,\.notification-bell:hover,[^\n]+background:var\(--steel-blue\);color:#fff\}/);
+assert.match(styles, /\.header-icon-btn:hover,\.notification-bell:hover,[^
+]+background:var\(--steel-blue\);color:#fff\}/);
 assert.match(app00, /pier-beta\\\.n-e-alwaa\\\.workers\\\.dev/);
 assert.match(app02, /tag='pier-notification-test'/);
 assert.match(app02, /setTimeout\(\(\)=>resolve\(false\),12000\)/);
@@ -334,7 +340,11 @@ assert.match(dashboardHtml, /id="bulkDelete"/);
 assert.match(dashboardHtml, /Appearance and wording/);
 assert.match(dashboard, /sort='last_seen_at'/);
 assert.match(dashboard, /bulkRemove/);
-assert.match(dashboard, /Permanently delete/);\nassert.match(dashboard, /telemetryDefinitions/);\nassert.match(dashboard, /dataset\\.installationId/);\nassert.match(worker, /sortFields=/);\nassert.match(worker, /telemetryWhere/);
+assert.match(dashboard, /Permanently delete/);
+assert.match(dashboard, /telemetryDefinitions/);
+assert.match(dashboard, /dataset\\.installationId/);
+assert.match(worker, /sortFields=/);
+assert.match(worker, /telemetryWhere/);
 assert.doesNotMatch(dashboard, /\.append\([^;]+\)\.firstChild/);
 assert.match(app05, /deepNavy:\['--deep-navy','--cool-dusk','--navy-blue','--primary'\]/);
 assert.doesNotMatch(app05, /coolDusk:\[[^\]]*'--success'/);
@@ -377,7 +387,8 @@ assert.match(manifest, /"background_color":"#F7F3EA"/);
 assert.match(manifest, /"theme_color":"#123047"/);
 assert.match(deployWorkflow, /branches: \[main, beta\]/);
 assert.match(deployWorkflow, /group: pier-cloudflare-\$\{\{ github\.ref_name \}\}/);
-assert.match(deployWorkflow, /Deploy beta Worker and assets\n\s+if: github\.ref == 'refs\/heads\/beta'/);
+assert.match(deployWorkflow, /Deploy beta Worker and assets
+\s+if: github\.ref == 'refs\/heads\/beta'/);
 assert.doesNotMatch(deployWorkflow, /beta-sunrise-harbour/);
 
 function functionSource(source, name) {
