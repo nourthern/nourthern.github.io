@@ -320,6 +320,7 @@ assert.match(worker, /site_customization_backups/);
 assert.match(migration26, /site_customization_drafts/);
 assert.match(workerConfig, /"APP_CHANNEL": "live"/);
 assert.match(betaWorkerConfig, /"APP_CHANNEL": "beta"/);
+assert.match(betaWorkerConfig, /"binding": "ASSETS"/);
 assert.match(betaWorkerConfig, /"run_worker_first": \["\/ics", "\/dashboard", "\/dashboard\/", "\/api\/\*"\]/);
 assert.match(worker, /excluded_from_aggregates=0/);
 assert.match(worker, /\/api\/dashboard\/telemetry\/exclusion/);
