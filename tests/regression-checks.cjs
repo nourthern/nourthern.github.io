@@ -336,7 +336,7 @@ assert.match(dashboard, /sort='last_seen_at'/);
 assert.match(dashboard, /bulkRemove/);
 assert.match(dashboard, /Permanently delete/);
 assert.match(dashboard, /telemetryDefinitions/);
-assert.match(dashboard, /dataset\\.installationId/);
+assert.match(dashboard, /dataset\.installationId/);
 assert.match(worker, /sortFields=/);
 assert.match(worker, /telemetryWhere/);
 assert.doesNotMatch(dashboard, /\.append\([^;]+\)\.firstChild/);
