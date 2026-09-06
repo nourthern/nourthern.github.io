@@ -111,7 +111,9 @@ Use boundary values as well as ordinary examples:
 ## Private dashboard
 
 - [ ] Confirm the header remains visible while scrolling and does not obscure focused dashboard controls.
-- [ ] Confirm every telemetry card has a visible short definition, hover/focus explanation and an accessible Definitions dialog.
+- [ ] Confirm every telemetry figure has hover/focus help, no visible definition text inside its card, and an accessible header Definitions dialog before the Beta/Live control.
+- [ ] Confirm all 18 overview figures remain present, including returning users, ICS file share, shift behaviour, time to first PDF, bridge/payroll clicks and push failures.
+- [ ] Confirm Reliability and Journey insights entries expose hover/focus help; the Definitions dialog explains Network and every journey stage, including Opened, Claim and Log.
 - [ ] Sort every sortable installation-table column in both directions; confirm the first row changes according to the selected column.
 - [ ] Use the top-left checkbox to select and clear the current page, then confirm all bulk-action buttons enable and act on exactly those records.
 - [ ] Remove a record from totals, restore it, and confirm the status changes with a visible success message.

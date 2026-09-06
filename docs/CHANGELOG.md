@@ -6,6 +6,7 @@ This records significant product changes visible from repository evidence. Dates
 
 ### Changed
 
+- Restored all 18 dashboard overview figures from the earlier dashboard, moved Telemetry definitions into the header, removed visible definition copy from cards, explained Reliability and Journey insights, and made the initial Live selector contrast deterministic.
 - Made the private dashboard header sticky and more compact; added telemetry definitions, metric tooltips, reliable table sorting, page selection and restoration feedback.
 - Rebuilt the private dashboard as standalone static assets rather than embedded Worker HTML; added a sliding Beta/Live selector, telemetry searching/filtering, server-side sorting, page selection and bulk management actions.
 
