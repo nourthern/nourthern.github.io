@@ -108,6 +108,14 @@ Use boundary values as well as ordinary examples:
 - [ ] PIER/subtitle remain left-aligned on narrow screens; the active tab is larger without inset corner accents; notification cards and copper interaction states retain white text.
 - [ ] Dashboard colour fields use current Sunrise Harbour semantic names/defaults and do not remap navy or steel to unrelated success/surface roles.
 
+## Private dashboard
+
+- [ ] Confirm the header remains visible while scrolling and does not obscure focused dashboard controls.
+- [ ] Confirm every telemetry card has a visible short definition, hover/focus explanation and an accessible Definitions dialog.
+- [ ] Sort every sortable installation-table column in both directions; confirm the first row changes according to the selected column.
+- [ ] Use the top-left checkbox to select and clear the current page, then confirm all bulk-action buttons enable and act on exactly those records.
+- [ ] Remove a record from totals, restore it, and confirm the status changes with a visible success message.
+
 ## Beta → production promotion
 
 - [ ] Push the candidate to `beta`; confirm only the beta deployment runs and production remains unchanged.

@@ -334,7 +334,7 @@ assert.match(dashboardHtml, /id="bulkDelete"/);
 assert.match(dashboardHtml, /Appearance and wording/);
 assert.match(dashboard, /sort='last_seen_at'/);
 assert.match(dashboard, /bulkRemove/);
-assert.match(dashboard, /Permanently delete/);
+assert.match(dashboard, /Permanently delete/);\nassert.match(dashboard, /telemetryDefinitions/);\nassert.match(dashboard, /dataset\\.installationId/);\nassert.match(worker, /sortFields=/);\nassert.match(worker, /telemetryWhere/);
 assert.doesNotMatch(dashboard, /\.append\([^;]+\)\.firstChild/);
 assert.match(app05, /deepNavy:\['--deep-navy','--cool-dusk','--navy-blue','--primary'\]/);
 assert.doesNotMatch(app05, /coolDusk:\[[^\]]*'--success'/);
