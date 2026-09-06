@@ -335,6 +335,7 @@ assert.match(dashboardHtml, /Appearance and wording/);
 assert.match(dashboard, /sort='last_seen_at'/);
 assert.match(dashboard, /bulkRemove/);
 assert.match(dashboard, /Permanently delete/);
+assert.doesNotMatch(dashboard, /\.append\([^;]+\)\.firstChild/);
 assert.match(app05, /deepNavy:\['--deep-navy','--cool-dusk','--navy-blue','--primary'\]/);
 assert.doesNotMatch(app05, /coolDusk:\[[^\]]*'--success'/);
 assert.match(worker, /dashboard-assets\/index\.html/);
