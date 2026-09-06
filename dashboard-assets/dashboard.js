@@ -1,20 +1,28 @@
 const $=id=>document.getElementById(id),money=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}),number=new Intl.NumberFormat('en-GB');
 let channel='live',page=1,limit=20,sort='last_seen_at',direction='desc',selected=new Set();
-const metricDefinitions={
-  'Active users':'Pseudonymous installations active in the selected environment during the last three months.',
-  'New users · 30 days':'Installations first seen during the last 30 days.',
-  'Claims created':'Total claim forms created by active installations in the last three months.',
-  'PDFs exported':'Total claim PDFs saved by active installations in the last three months.',
-  'Imports successful':'Successful calendar imports recorded by active installations in the last three months.',
-  'Imports failed':'Calendar-import failures recorded by active installations in the last three months.',
-  'Claimed · 3 months':'Aggregate claimed amount recorded over the last three months; it is not an audited payment total.',
-  'Miles · 3 months':'Aggregate claimable mileage recorded over the last three months.'
-};
 async function api(path,init){const r=await fetch(path,{cache:'no-store',...init}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Dashboard request failed');return d}
 function el(tag,value='',cls){const n=document.createElement(tag);n.textContent=value;if(cls)n.className=cls;return n}
 function query(){return new URLSearchParams({channel,page,limit,sort,direction,q:$('search').value,device:$('device').value,status:$('recordStatus').value})}
-function cards(d){const rows=[['Active users',d.uniqueUsers],['New users · 30 days',d.newUsers],['Claims created',d.claimsCreated],['PDFs exported',d.pdfsCreated],['Imports successful',d.calendarImportSuccesses],['Imports failed',d.calendarImportFailures],['Claimed · 3 months',money.format(d.claimedLastThreeMonthsPence/100)],['Miles · 3 months',number.format(d.milesLastThreeMonthsTenths/10)]];$('cards').replaceChildren(...rows.map(([label,value])=>{const card=el('div','card','card');card.tabIndex=0;card.dataset.tooltip=metricDefinitions[label];card.setAttribute('aria-label',`${label}. ${metricDefinitions[label]}`);card.append(el('small',metricDefinitions[label],'metric-definition'),el('strong',value),el('span',label));return card}))}
-function list(id,items){$(id).replaceChildren(...(items.length?items:[['No data yet.',0]]).map(([a,b])=>el('li',a+(b?': '+number.format(b):''))));}
+function cards(d){const importTotal=d.calendarImportSuccesses+d.calendarImportFailures,sourceTotal=d.icsFileImports+d.icsUrlImports,claimCount=Math.max(1,d.claimsCreated),rows=[
+['Active users',d.uniqueUsers,'Pseudonymous installations active in the selected environment during the last three months.'],
+['New users · 30 days',d.newUsers,'Installations first seen during the last 30 days.'],
+['Returning users',d.uniqueUsers?Math.round(d.returningUsers/d.uniqueUsers*100)+'%':'0%','Active installations that were first seen more than 30 days ago.'],
+['Calendar imports successful',importTotal?Math.round(d.calendarImportSuccesses/importTotal*100)+'%':'0%','Share of calendar imports that completed successfully.'],
+['Calendar imports failed',importTotal?Math.round(d.calendarImportFailures/importTotal*100)+'%':'0%','Share of calendar imports that failed, including network and calendar-format problems.'],
+['ICS file share',sourceTotal?Math.round(d.icsFileImports/sourceTotal*100)+'%':'0%','Share of calendar imports made from a local ICS file rather than a live link.'],
+['Shifts imported per claim',(d.shiftsImported/claimCount).toFixed(1),'Average imported shifts for each created claim.'],
+['Shifts edited per claim',(d.shiftsEdited/claimCount).toFixed(1),'Average imported shifts changed by the user for each created claim.'],
+['Shifts added per claim',(d.shiftsAdded/claimCount).toFixed(1),'Average manual shifts added for each created claim.'],
+['Imported shifts edited',d.shiftsImported?Math.round(d.shiftsEdited/d.shiftsImported*100)+'%':'0%','Share of imported shifts later changed by the user.'],
+['Average time to first PDF',(d.averageTimeToFirstPdfMinutes/60).toFixed(1)+' hr','Average elapsed time from first use to saving a claim PDF.'],
+['Claims created',d.claimsCreated,'Total claim forms created by active installations in the last three months.'],
+['PDFs exported',d.pdfsCreated,'Total claim PDFs saved by active installations in the last three months.'],
+['Humber Bridge clicks',d.humberClicks,'Times the Humber Bridge information link was opened.'],
+['Email payroll clicks',d.payrollEmailClicks,'Times the Email payroll action was opened.'],
+['Claimed · 3 months',money.format(d.claimedLastThreeMonthsPence/100),'Aggregate claimed amount recorded over the last three months; it is not an audited payment total.'],
+['Miles · 3 months',number.format(d.milesLastThreeMonthsTenths/10),'Aggregate claimable mileage recorded over the last three months.'],
+['Push failures',d.pushFailures,'Recorded failures sending optional browser push reminders.']
+];$('cards').replaceChildren(...rows.map(([label,value,definition])=>{const card=el('div','', 'card');card.tabIndex=0;card.dataset.tooltip=definition;card.setAttribute('aria-label',`${label}. ${definition}`);card.append(el('strong',value),el('span',label));return card}))}function list(id,items){$(id).replaceChildren(...(items.length?items:[['No data yet.',0]]).map(([a,b])=>el('li',a+(b?': '+number.format(b):''))));}
 function renderRows(rows,total){const body=$('telemetryRows');body.replaceChildren();for(const x of rows){const tr=document.createElement('tr'),check=document.createElement('input');check.type='checkbox';check.dataset.installationId=x.installation_id;check.checked=selected.has(x.installation_id);check.addEventListener('change',()=>{check.checked?selected.add(x.installation_id):selected.delete(x.installation_id);updateSelection()});const cells=[x.installation_id,new Date(x.last_seen_at+'Z').toLocaleString('en-GB'),x.device_type,x.app_version,money.format(x.claimed_last_3_months_pence/100),number.format(x.claims_created)+' / '+number.format(x.pdfs_created),x.funnel_stage||'opened'];const selectionCell=el('td','');selectionCell.append(check);tr.append(selectionCell);for(const v of cells)tr.append(el('td',v));tr.append(el('td',x.excluded_from_aggregates?'Removed':'Included','pill'+(x.excluded_from_aggregates?' removed':'')));const actions=el('td','');const remove=el('button',x.excluded_from_aggregates?'Restore':'Remove','secondary');remove.onclick=()=>exclude([x.installation_id],!x.excluded_from_aggregates);const del=el('button','Delete','danger');del.onclick=()=>removeRows([x.installation_id]);actions.append(remove,del);tr.append(actions);body.append(tr)}$('selectPage').checked=rows.length>0&&rows.every(x=>selected.has(x.installation_id));$('pageStatus').textContent=`Page ${page} · ${number.format(total)} records`;$('prevPage').disabled=page===1;$('nextPage').disabled=page*limit>=total;updateSelection()}
 function updateSelection(){const n=selected.size;$('selectionStatus').textContent=n?`${n} selected`:'No records selected';for(const id of ['bulkRemove','bulkRestore','bulkDelete'])$(id).disabled=!n}
 async function load(){try{$('status').hidden=false;const d=await api('/api/dashboard/data?'+query());cards(d);list('failures',Object.entries(d.failureReasons||{}));list('funnel',(d.funnel||[]).map(x=>[x.label,x.value]));renderRows(d.telemetry||[],d.telemetryTotal||0);renderReports(d.reports||[]);setEditor(await api('/api/dashboard/config?channel='+channel));$('content').hidden=false;$('status').hidden=true}catch(e){$('status').hidden=false;$('status').textContent=e.message}}
