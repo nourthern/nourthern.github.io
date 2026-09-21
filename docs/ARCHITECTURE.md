@@ -77,15 +77,11 @@ The browser accumulates bounded counters and replaceable per-month amount/mileag
 
 ## Deployment
 
-The Cloudflare workflow is triggered independently by `beta` and `main`:
+Pull requests into `beta` or `main` run locked dependency installation, regression/integration checks, and the static build without deployment credentials. A push to `beta` repeats validation, deploys only the beta Worker/assets, and verifies the beta endpoints.
 
-1. install locked dependencies;
-2. run regression/integration checks;
-3. build static assets;
-4. on `beta`, deploy and verify only the beta Worker/assets;
-5. on `main`, apply required D1 migrations, deploy and verify only live.
+Production no longer deploys automatically from a push to `main`. It requires a manual workflow dispatch from `main`, a full 40-character release SHA, and the confirmation text `DEPLOY LIVE`. Before migrations or deployment, the workflow verifies that the checked-out candidate, remote `main`, and remote `beta` all equal that SHA. The `production` GitHub environment provides a separate place for approval rules and production secrets.
 
-Concurrency is branch-specific. A production run must not overwrite beta. Promotion normally means fast-forwarding `main` to the exact commit verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `61`) to prevent mixed shells.
+Concurrency is workflow/ref-specific and deployment runs are not cancelled in progress. A production run must not overwrite beta or deploy an unverified merge commit. Promotion therefore requires reconciling the branches and fast-forwarding `main` to the exact commit already verified on `beta`. Asset query versions, application version, and service-worker cache version are kept aligned (currently `61`) to prevent mixed shells.
 
 ## Security
 

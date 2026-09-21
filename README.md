@@ -35,7 +35,7 @@ pnpm run build:site
 
 `index.html`, `styles.css` and ordered `app-parts/` modules form the browser application. `scripts/build-site.mjs` copies public assets to `site-dist/`. Cloudflare Worker services provide the ICS proxy, push reminders, aggregate telemetry, feedback and protected operations dashboard.
 
-GitHub Actions deploys `beta` to beta only and `main` to live only. Verify meaningful changes in beta before production. Keep application, asset-query and service-worker versions aligned. Never commit credentials, personal backups or private calendar URLs.
+GitHub Actions validates pull requests and automatically deploys pushes to `beta` only. Production is a manual release: fast-forward `main` to the exact commit verified on `beta`, then dispatch the workflow from `main` with that full commit SHA and the `DEPLOY LIVE` confirmation. The workflow refuses the release unless `main`, `beta`, and the requested SHA are identical. Keep application, asset-query and service-worker versions aligned. Never commit credentials, personal backups or private calendar URLs.
 
 The protected dashboard provides separate Beta/Live telemetry, server-side record sorting/filtering, bulk removal/deletion safeguards, and draft/publish controls for authorised wording, colours and banner imagery.
 
