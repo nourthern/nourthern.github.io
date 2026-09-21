@@ -384,15 +384,15 @@ assert.match(html, /Total owed \(£\)/);
 assert.match(app04, /No exported claims yet/);
 assert.match(manifest, /"background_color":"#F7F3EA"/);
 assert.match(manifest, /"theme_color":"#123047"/);
-assert.match(deployWorkflow, /push:\\n\\s+branches: \\[beta\\]/);
-assert.match(deployWorkflow, /pull_request:\\n\\s+branches: \\[main, beta\\]/);
-assert.match(deployWorkflow, /group: pier-cloudflare-\\$\\{\\{ github\\.workflow \\}\\}-\\$\\{\\{ github\\.ref \\}\\}/);
-assert.match(deployWorkflow, /Deploy beta\\n\\s+needs: validate\\n\\s+if: github\\.event_name == 'push' && github\\.ref == 'refs\\/heads\\/beta'/);
-assert.match(deployWorkflow, /Deploy production[\\s\\S]+if: github\\.event_name == 'workflow_dispatch'/);
-assert.match(deployWorkflow, /test "\\$main_sha" = "\\$RELEASE_SHA"/);
-assert.match(deployWorkflow, /test "\\$beta_sha" = "\\$RELEASE_SHA"/);
+assert.match(deployWorkflow, /push:\n\s+branches: \[beta\]/);
+assert.match(deployWorkflow, /pull_request:\n\s+branches: \[main, beta\]/);
+assert.match(deployWorkflow, /group: pier-cloudflare-\$\{\{ github\.workflow \}\}-\$\{\{ github\.ref \}\}/);
+assert.match(deployWorkflow, /Deploy beta\n\s+needs: validate\n\s+if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/beta'/);
+assert.match(deployWorkflow, /Deploy production[\s\S]+if: github\.event_name == 'workflow_dispatch'/);
+assert.match(deployWorkflow, /test "\$main_sha" = "\$RELEASE_SHA"/);
+assert.match(deployWorkflow, /test "\$beta_sha" = "\$RELEASE_SHA"/);
 assert.match(deployWorkflow, /name: production/);
-assert.doesNotMatch(deployWorkflow, /push:\\n\\s+branches: \\[main, beta\\]/);
+assert.doesNotMatch(deployWorkflow, /push:\n\s+branches: \[main, beta\]/);
 assert.doesNotMatch(deployWorkflow, /beta-sunrise-harbour/);
 
 function functionSource(source, name) {
