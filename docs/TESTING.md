@@ -120,10 +120,13 @@ Use boundary values as well as ordinary examples:
 
 ## Beta → production promotion
 
-- [ ] Push the candidate to `beta`; confirm only the beta deployment runs and production remains unchanged.
+- [ ] Open a pull request into `beta`; confirm validation runs without a Cloudflare deployment.
+- [ ] Push the candidate to `beta`; confirm validation passes, only the beta deployment runs, and production remains unchanged.
 - [ ] Verify beta badge, beta synthetic-data affordance, beta API channel, dashboard overrides, Sunrise Harbour defaults, and all relevant checklist cases.
-- [ ] Confirm `main` and `beta` point to the exact tested commit before/after fast-forward promotion as intended.
-- [ ] Push/advance `main`; confirm only live deployment and live migrations run, beta remains unchanged, and both public `/api/site-config` endpoints report the correct channel.
+- [ ] Confirm a production dispatch fails when the confirmation is not exactly `DEPLOY LIVE`, the SHA is not 40 hexadecimal characters, or `main`, `beta`, and the requested SHA differ.
+- [ ] Reconcile branch divergence, then fast-forward `main` to the exact commit tested on `beta`; do not introduce a promotion merge commit.
+- [ ] Dispatch production from `main` with the tested full SHA and confirmation; approve the `production` environment if protection is configured.
+- [ ] Confirm live migrations/deployment run only after validation, beta remains unchanged, and both public `/api/site-config` endpoints report the correct channel.
 - [ ] Smoke-test production over HTTPS, install metadata, ICS route, PDF generation, privacy network behavior, and service-worker update.
 
 ## Astral and expense-log regressions
