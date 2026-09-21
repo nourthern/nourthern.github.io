@@ -110,7 +110,7 @@ Each beta claim-month editor shows Delete on the left and totals beneath mileage
 
 ## Beta and production
 
-`beta` deploys only the beta Worker/site. `main` deploys only live. Both use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides. Meaningful changes pass beta verification before `main` advances to the tested commit.
+`beta` deploys only the beta Worker/site after automated validation. Advancing `main` does not automatically deploy live: production requires a deliberate manual release of the exact full commit SHA shared by `beta` and `main`, after validation and beta verification. Both channels use Sunrise Harbour defaults and authorised dashboard appearance/wording overrides.
 
 ## Private dashboard
 
